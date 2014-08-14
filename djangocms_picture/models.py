@@ -62,8 +62,8 @@ class Picture(CMSPlugin):
             # added if, because it raised attribute error when file wasn't
             # defined.
             try:
-                return u"%s" % os.path.basename(self.image.path)
-            except:
+                return u"%s" % os.path.basename(self.image.name)
+            except AttributeError:
                 pass
         return u"<empty>"
 
