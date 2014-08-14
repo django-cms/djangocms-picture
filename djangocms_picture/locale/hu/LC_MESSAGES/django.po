@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Tibor Balogh, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: django-cms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-06 14:10+0100\n"
-"PO-Revision-Date: 2014-02-06 13:31+0000\n"
-"Last-Translator: Kim Thoenen <kim@smuzey.ch>\n"
+"PO-Revision-Date: 2014-03-06 19:40+0000\n"
+"Last-Translator: Tibor Balogh\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/django-cms/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -43,7 +44,7 @@ msgstr "hivatkozás"
 
 #: models.py:27
 msgid "If present, clicking on image will take user to link."
-msgstr ""
+msgstr "Megadása esetén, a képre kattintva átirányítja a felhasználót a megadott linkre."
 
 #: models.py:30
 msgid "page"
@@ -51,7 +52,7 @@ msgstr "oldal"
 
 #: models.py:32
 msgid "If present, clicking on image will take user to specified page."
-msgstr ""
+msgstr "A képre kattintva a megadott oldalra irányítja a felhasználót."
 
 #: models.py:36
 msgid "alternate text"
@@ -61,7 +62,7 @@ msgstr "helyettesítő szöveg"
 msgid ""
 "Specifies an alternate text for an image, if the imagecannot be "
 "displayed.<br />Is also used by search enginesto classify the image."
-msgstr ""
+msgstr "Alternatív szöveg, amely akkor látszik, ha a kép nem jeleníthető meg.<br />A keresők is használják ezt a képek osztályozásához."
 
 #: models.py:42
 msgid "long description"
@@ -69,7 +70,7 @@ msgstr "hosszú leírás"
 
 #: models.py:43
 msgid "When user hovers above picture, this text will appear in a popup."
-msgstr ""
+msgstr "Ha a felhasználó a kép fölé viszi az egérkurzort, ez a szöveg fog megjelenni egy felugró dobozban."
 
 #: models.py:47
 msgid "side"
@@ -77,8 +78,8 @@ msgstr "szegély"
 
 #: models.py:48
 msgid "Move image left, right or center."
-msgstr ""
+msgstr "Kép mozgatása balra, jobbra vagy középre"
 
 #: models.py:65
 msgid "You can enter a Link or a Page, but not both."
-msgstr ""
+msgstr "Megadhat egy linket vagy egy oldalt, de egyszerre mindkettőt nem."

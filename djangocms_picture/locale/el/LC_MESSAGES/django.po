@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# dotoree <vdotoree@yahoo.gr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: django-cms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-06 14:10+0100\n"
-"PO-Revision-Date: 2014-02-06 13:31+0000\n"
-"Last-Translator: Kim Thoenen <kim@smuzey.ch>\n"
+"PO-Revision-Date: 2014-06-26 09:05+0000\n"
+"Last-Translator: dotoree <vdotoree@yahoo.gr>\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/django-cms/language/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,7 +32,7 @@ msgstr "δεξιά"
 
 #: models.py:21
 msgid "center"
-msgstr ""
+msgstr "κέντρο"
 
 #: models.py:24
 msgid "image"
@@ -77,7 +78,7 @@ msgstr "πλευρά"
 
 #: models.py:48
 msgid "Move image left, right or center."
-msgstr ""
+msgstr "Μετακίνηστε την εικόνα προς τα αριστερά, δεξιά ή στο κέντρο."
 
 #: models.py:65
 msgid "You can enter a Link or a Page, but not both."
