@@ -8,7 +8,7 @@ import cms.models.pluginmodel
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0001_initial'),
+        ('cms', '__first__'),
     ]
 
     operations = [
