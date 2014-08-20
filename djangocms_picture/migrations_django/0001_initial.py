@@ -15,13 +15,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Picture',
             fields=[
-                ('image', models.ImageField(upload_to=cms.models.pluginmodel.get_plugin_media_path, verbose_name='image')),
-                ('url', models.CharField(help_text='If present, clicking on image will take user to link.', max_length=255, null=True, verbose_name='link', blank=True)),
-                ('alt', models.CharField(help_text='Specifies an alternate text for an image, if the imagecannot be displayed.<br />Is also used by search enginesto classify the image.', max_length=255, null=True, verbose_name='alternate text', blank=True)),
-                ('longdesc', models.CharField(help_text='When user hovers above picture, this text will appear in a popup.', max_length=255, null=True, verbose_name='long description', blank=True)),
-                ('float', models.CharField(choices=[(b'left', 'left'), (b'right', 'right'), (b'center', 'center')], max_length=10, blank=True, help_text='Move image left, right or center.', null=True, verbose_name='side')),
-                ('cmsplugin_ptr', models.OneToOneField(auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin')),
-                ('page_link', models.ForeignKey(blank=True, to='cms.Page', help_text='If present, clicking on image will take user to specified page.', null=True, verbose_name='page')),
+                ('cmsplugin_ptr', models.OneToOneField(serialize=False, parent_link=True, auto_created=True, to='cms.CMSPlugin', primary_key=True)),
+                ('image', models.ImageField(verbose_name='image', upload_to=cms.models.pluginmodel.get_plugin_media_path)),
+                ('url', models.CharField(help_text='If present, clicking on image will take user to link.', blank=True, null=True, max_length=255, verbose_name='link')),
+                ('alt', models.CharField(help_text='Specifies an alternate text for an image, if the imagecannot be displayed.<br />Is also used by search enginesto classify the image.', blank=True, null=True, max_length=255, verbose_name='alternate text')),
+                ('longdesc', models.CharField(help_text='When user hovers above picture, this text will appear in a popup.', blank=True, null=True, max_length=255, verbose_name='long description')),
+                ('float', models.CharField(help_text='Move image left, right or center.', blank=True, max_length=10, choices=[('left', 'left'), ('right', 'right'), ('center', 'center')], verbose_name='side', null=True)),
+                ('page_link', models.ForeignKey(help_text='If present, clicking on image will take user to specified page.', blank=True, verbose_name='page', to='cms.Page', null=True)),
             ],
             options={
                 'abstract': False,
