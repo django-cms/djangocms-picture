@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# mimisha <dev.mnk@gmail.com>, 2014
 # Oleg Rybkin <okfish@yandex.ru>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: django-cms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-06 14:10+0100\n"
-"PO-Revision-Date: 2014-03-09 20:30+0000\n"
-"Last-Translator: Oleg Rybkin <okfish@yandex.ru>\n"
+"PO-Revision-Date: 2014-08-14 16:11+0000\n"
+"Last-Translator: mimisha <dev.mnk@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/django-cms/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -82,4 +83,4 @@ msgstr "Поместить изображение слева, справа ил�
 
 #: models.py:65
 msgid "You can enter a Link or a Page, but not both."
-msgstr "Вы можете ввести Ссыку или Страницу, но не обе сразу."
+msgstr "Вы можете ввести Ссылку или Страницу, но не обе сразу."

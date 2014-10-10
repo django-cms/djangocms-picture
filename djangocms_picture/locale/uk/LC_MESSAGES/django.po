@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Vusheslavov Eduard <vey@live.ru>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: django-cms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-06 14:10+0100\n"
-"PO-Revision-Date: 2014-02-06 13:31+0000\n"
-"Last-Translator: Chive <kim@smuzey.ch>\n"
+"PO-Revision-Date: 2014-09-26 13:20+0000\n"
+"Last-Translator: Vusheslavov Eduard <vey@live.ru>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/django-cms/language/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,7 +32,7 @@ msgstr "праворуч"
 
 #: models.py:21
 msgid "center"
-msgstr ""
+msgstr "центр"
 
 #: models.py:24
 msgid "image"
@@ -65,11 +66,11 @@ msgstr ""
 
 #: models.py:42
 msgid "long description"
-msgstr ""
+msgstr "Повний опис"
 
 #: models.py:43
 msgid "When user hovers above picture, this text will appear in a popup."
-msgstr ""
+msgstr "Коли користувач наводить вище зображення, цей текст з'явиться у спливаючому вікні."
 
 #: models.py:47
 msgid "side"
@@ -77,8 +78,8 @@ msgstr ""
 
 #: models.py:48
 msgid "Move image left, right or center."
-msgstr ""
+msgstr "Переміщення зображення вліво, вправо або по центру."
 
 #: models.py:65
 msgid "You can enter a Link or a Page, but not both."
-msgstr ""
+msgstr "Ви можете ввести посилання або сторінку, але не обидва."
