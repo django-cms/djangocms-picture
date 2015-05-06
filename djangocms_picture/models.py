@@ -2,6 +2,7 @@ import os
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import CMSPlugin, Page
@@ -28,6 +29,7 @@ class Picture(CMSPlugin):
                      (RIGHT, _("right")),
                      (CENTER, _("center")),
                      )
+    STYLE_CHOICES = getattr(settings, 'DJANGOCMS_PICTURE_STYLES', None)
 
     image = models.ImageField(_("image"), upload_to=get_plugin_media_path)
     url = models.CharField(
@@ -54,6 +56,10 @@ class Picture(CMSPlugin):
     float = models.CharField(
         _("side"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES,
         help_text=_("Move image left, right or center."))
+
+    style = models.CharField(
+        _("style"), max_length=255, blank=True, null=True, choices=STYLE_CHOICES,
+        help_text=_("Select an optional image style."))
 
     def __str__(self):
         if self.alt:
