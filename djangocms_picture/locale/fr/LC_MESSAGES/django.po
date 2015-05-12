@@ -80,6 +80,18 @@ msgstr "côté"
 msgid "Move image left, right or center."
 msgstr "Déplacer l'image vers la gauche, droite ou le centre."
 
+#: models.py:50
+msgid "width"
+msgstr "largeur"
+
+#: models.py:51 models.py:53
+msgid "Pixel"
+msgstr "Pixel"
+
+#: models.py:52
+msgid "height"
+msgstr "hauteur"
+
 #: models.py:65
 msgid "You can enter a Link or a Page, but not both."
 msgstr "Vous pouvez saisir un Lien ou une Page, mais pas les deux."
