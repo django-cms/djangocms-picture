@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-06 14:10+0100\n"
+"POT-Creation-Date: 2015-10-18 20:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,64 +21,76 @@ msgstr ""
 msgid "Picture"
 msgstr ""
 
-#: models.py:19
+#: models.py:27
 msgid "left"
 msgstr ""
 
-#: models.py:20
+#: models.py:28
 msgid "right"
 msgstr ""
 
-#: models.py:21
+#: models.py:29
 msgid "center"
 msgstr ""
 
-#: models.py:24
+#: models.py:32
 msgid "image"
 msgstr ""
 
-#: models.py:26
+#: models.py:34
 msgid "link"
 msgstr ""
 
-#: models.py:27
+#: models.py:35
 msgid "If present, clicking on image will take user to link."
 msgstr ""
 
-#: models.py:30
+#: models.py:38
 msgid "page"
 msgstr ""
 
-#: models.py:32
+#: models.py:40
 msgid "If present, clicking on image will take user to specified page."
 msgstr ""
 
-#: models.py:36
+#: models.py:44
 msgid "alternate text"
 msgstr ""
 
-#: models.py:37
+#: models.py:45
 msgid ""
 "Specifies an alternate text for an image, if the imagecannot be displayed."
 "<br />Is also used by search enginesto classify the image."
 msgstr ""
 
-#: models.py:42
+#: models.py:50
 msgid "long description"
 msgstr ""
 
-#: models.py:43
+#: models.py:51
 msgid "When user hovers above picture, this text will appear in a popup."
 msgstr ""
 
-#: models.py:47
+#: models.py:55
 msgid "side"
 msgstr ""
 
-#: models.py:48
+#: models.py:56
 msgid "Move image left, right or center."
 msgstr ""
 
-#: models.py:65
+#: models.py:58
+msgid "width"
+msgstr ""
+
+#: models.py:59 models.py:61
+msgid "Pixel"
+msgstr ""
+
+#: models.py:60
+msgid "height"
+msgstr ""
+
+#: models.py:78
 msgid "You can enter a Link or a Page, but not both."
 msgstr ""
