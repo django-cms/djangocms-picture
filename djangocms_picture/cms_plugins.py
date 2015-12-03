@@ -2,7 +2,11 @@
 
 from __future__ import unicode_literals
 
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    from urllib import parse as urlparse
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
