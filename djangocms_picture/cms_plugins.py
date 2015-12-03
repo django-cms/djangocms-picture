@@ -1,3 +1,4 @@
+import urlparse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -28,7 +29,9 @@ class PicturePlugin(CMSPluginBase):
         return context
 
     def icon_src(self, instance):
-        # TODO - possibly use 'instance' and provide a thumbnail image
-        return settings.STATIC_URL + u"cms/img/icons/plugins/image.png"
+        if getattr(settings, 'PICTURE_FULL_IMAGE_AS_ICON', False):
+            return instance.image.url
+        else:
+            return urlparse.urljoin(settings.STATIC_URL, u"cms/img/icons/plugins/image.png")
 
 plugin_pool.register_plugin(PicturePlugin)
