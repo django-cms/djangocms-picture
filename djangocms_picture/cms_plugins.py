@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import urlparse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -32,6 +36,7 @@ class PicturePlugin(CMSPluginBase):
         if getattr(settings, 'PICTURE_FULL_IMAGE_AS_ICON', False):
             return instance.image.url
         else:
-            return urlparse.urljoin(settings.STATIC_URL, u"cms/img/icons/plugins/image.png")
+            return urlparse.urljoin(
+                settings.STATIC_URL, "cms/img/icons/plugins/image.png")
 
 plugin_pool.register_plugin(PicturePlugin)

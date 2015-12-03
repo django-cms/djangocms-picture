@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import os
 
 from django.core.exceptions import ValidationError
@@ -10,7 +14,8 @@ try:
 except ImportError:
     def get_plugin_media_path(instance, filename):
         """
-        See cms.models.pluginmodel.get_plugin_media_path on django CMS 3.0.4+ for information
+        See cms.models.pluginmodel.get_plugin_media_path on django CMS 3.0.4+
+        for information
         """
         return instance.get_media_path(filename)
 from cms.utils.compat.dj import python_2_unicode_compatible
