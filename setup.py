@@ -25,7 +25,11 @@ setup(
     author='Divio AG',
     author_email='info@divio.ch',
     url='https://github.com/divio/djangocms-picture',
-    packages=['djangocms_picture', 'djangocms_picture.migrations', 'djangocms_picture.migrations_django'],
+    packages=[
+        'djangocms_picture',
+        'djangocms_picture.migrations',
+        'djangocms_picture.migrations_django'
+    ],
     license='LICENSE.txt',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
