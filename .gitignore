@@ -4,3 +4,5 @@
 local_settings.py
 .idea/
 *.egg-info/
+build
+dist
