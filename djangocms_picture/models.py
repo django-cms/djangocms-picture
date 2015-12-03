@@ -55,6 +55,11 @@ class Picture(CMSPlugin):
         _("side"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES,
         help_text=_("Move image left, right or center."))
 
+    width = models.IntegerField(_("width"), blank=True, null=True,
+                                help_text=_("Pixel"))
+    height = models.IntegerField(_("height"), blank=True, null=True,
+                                 help_text=_("Pixel"))
+
     def __str__(self):
         if self.alt:
             return self.alt[:40]
