@@ -34,6 +34,13 @@ class Picture(CMSPlugin):
                      (CENTER, _("center")),
                      )
 
+    # Add an app namespace to related_name to avoid field name clashes
+    # with any other plugins that have a field with the same name as the
+    # lowercase of the class name of this model.
+    # https://github.com/divio/django-cms/issues/5030
+    cmsplugin_ptr = models.OneToOneField(
+        CMSPlugin, related_name='djangocms_picture_picture', parent_link=True)
+
     image = models.ImageField(_("image"), upload_to=get_plugin_media_path)
     url = models.CharField(
         _("link"), max_length=255, blank=True, null=True,
