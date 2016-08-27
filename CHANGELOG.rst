@@ -7,6 +7,8 @@ Changelog
 ==================
 
 * Cleaned up file structure
+* Removed Django <1.8 support
+* Adapted ``README.txt``
 
 
 0.2.0 (2015-02-12)
