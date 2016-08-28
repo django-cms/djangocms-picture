@@ -8,6 +8,7 @@ Changelog
 
 * Cleaned up file structure
 * Removed Django <1.8 support
+* Removed ``alt`` attribute and migrated data to Filer
 * Adapted ``README.txt``
 
 

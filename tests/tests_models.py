@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.utils.html import escapejs
+
 from djangocms_picture.models import Picture
 
 

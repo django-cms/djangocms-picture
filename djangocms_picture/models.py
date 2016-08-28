@@ -34,36 +34,64 @@ class Picture(CMSPlugin):
                      (CENTER, _("center")),
                      )
 
-    image = models.ImageField(_("image"), upload_to=get_plugin_media_path)
+    image = models.ImageField(
+        _("image"),
+        upload_to=get_plugin_media_path,
+    )
     url = models.CharField(
-        _("link"), max_length=255, blank=True, null=True,
-        help_text=_("If present, clicking on image will take user to link."))
-
+        _("link"),
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text=_("If present, clicking on image will take user to link."),
+    )
     page_link = models.ForeignKey(
-        Page, verbose_name=_("page"), null=True,
-        limit_choices_to={'publisher_is_draft': True}, blank=True,
+        Page,
+        verbose_name=_("page"),
+        null=True,
+        limit_choices_to={'publisher_is_draft': True},
+        blank=True,
         help_text=_("If present, clicking on image will take user to "
-                    "specified page."))
-
+                    "specified page."),
+    )
     alt = models.CharField(
-        _("alternate text"), max_length=255, blank=True, null=True,
+        _("alternate text"),
+        max_length=255,
+        blank=True,
+        null=True,
         help_text=_("Specifies an alternate text for an image, if the image"
                     "cannot be displayed.<br />Is also used by search engines"
-                    "to classify the image."))
-
+                    "to classify the image."),
+    )
     longdesc = models.CharField(
-        _("long description"), max_length=255, blank=True, null=True,
+        _("long description"),
+        max_length=255,
+        blank=True,
+        null=True,
         help_text=_("When user hovers above picture, this text will appear "
-                    "in a popup."))
-
+                    "in a popup."),
+    )
     float = models.CharField(
-        _("side"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES,
-        help_text=_("Move image left, right or center."))
+        _("side"),
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=FLOAT_CHOICES,
+        help_text=_("Move image left, right or center."),
+    )
 
-    width = models.IntegerField(_("width"), blank=True, null=True,
-                                help_text=_("Pixel"))
-    height = models.IntegerField(_("height"), blank=True, null=True,
-                                 help_text=_("Pixel"))
+    width = models.IntegerField(
+        _("width"),
+        blank=True,
+        null=True,
+        help_text=_("Pixel"),
+    )
+    height = models.IntegerField(
+        _("height"),
+        blank=True,
+        null=True,
+        help_text=_("Pixel"),
+    )
 
     def __str__(self):
         if self.alt:
