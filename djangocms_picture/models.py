@@ -1,111 +1,180 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
+"""
+Enables the user to add a "Picture" plugin that displays an image
+using the HTML <img> tag.
+"""
 import os
 
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 from cms.models import CMSPlugin, Page
-try:
-    from cms.models import get_plugin_media_path
-except ImportError:
-    def get_plugin_media_path(instance, filename):
-        """
-        See cms.models.pluginmodel.get_plugin_media_path on django CMS 3.0.4+
-        for information
-        """
-        return instance.get_media_path(filename)
-from cms.utils.compat.dj import python_2_unicode_compatible
+
+from djangocms_attributes_field.fields import AttributesField
+
+from filer.models import ThumbnailOption
+from filer.fields.image import FilerImageField
+from filer.fields.file import FilerFileField
+
+
+# add setting for image alignment, renders a class or inline styles
+# depending on your template setup
+PICTURE_ALIGNMENT = getattr(
+    settings,
+    'DJANGOCMS_PICTURE_ALIGN',
+    (
+        ('left', _('Align left')),
+        ('right', _('Align right')),
+        ('left', _('Align center')),
+    )
+)
+
+LINK_TARGET = (
+    ('_blank', _('Open in new window.')),
+    ('_self', _('Open in same window.')),
+    ('_parent', _('Delegate to parent.')),
+    ('_top', _('Delegate to top.')),
+)
 
 
 @python_2_unicode_compatible
 class Picture(CMSPlugin):
     """
-    A Picture with or without a link.
+    Renders an image with the option of adding a link
     """
-    LEFT = "left"
-    RIGHT = "right"
-    CENTER = "center"
-    FLOAT_CHOICES = ((LEFT, _("left")),
-                     (RIGHT, _("right")),
-                     (CENTER, _("center")),
-                     )
-
-    image = models.ImageField(
-        _("image"),
-        upload_to=get_plugin_media_path,
-    )
-    url = models.CharField(
-        _("link"),
-        max_length=255,
+    picture = FilerImageField(
+        verbose_name=_('Picture'),
         blank=True,
         null=True,
-        help_text=_("If present, clicking on image will take user to link."),
+        on_delete=models.SET_NULL,
+        related_name='+',
     )
-    page_link = models.ForeignKey(
-        Page,
-        verbose_name=_("page"),
-        null=True,
-        limit_choices_to={'publisher_is_draft': True},
-        blank=True,
-        help_text=_("If present, clicking on image will take user to "
-                    "specified page."),
-    )
-    alt = models.CharField(
-        _("alternate text"),
-        max_length=255,
-        blank=True,
-        null=True,
-        help_text=_("Specifies an alternate text for an image, if the image"
-                    "cannot be displayed.<br />Is also used by search engines"
-                    "to classify the image."),
-    )
-    longdesc = models.CharField(
-        _("long description"),
-        max_length=255,
-        blank=True,
-        null=True,
-        help_text=_("When user hovers above picture, this text will appear "
-                    "in a popup."),
-    )
-    float = models.CharField(
-        _("side"),
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=FLOAT_CHOICES,
-        help_text=_("Move image left, right or center."),
-    )
-
     width = models.IntegerField(
-        _("width"),
+        verbose_name=_('Width'),
         blank=True,
         null=True,
-        help_text=_("Pixel"),
+        help_text=_('The image width as number in pixel. '
+            'Example: "720" and not "720px".'),
     )
     height = models.IntegerField(
-        _("height"),
+        verbose_name=_('Height'),
         blank=True,
         null=True,
-        help_text=_("Pixel"),
+        help_text=_('The image height as number in pixel. '
+            'Example: "720" and not "720px".'),
+    )
+    alignment = models.CharField(
+        verbose_name=_('Alignment'),
+        choices=PICTURE_ALIGNMENT,
+        blank=True,
+        max_length=255,
+        help_text=_('Aligns the image to the selected option.'),
+    )
+    caption_text = models.TextField(
+        verbose_name=_('Caption text'),
+        blank=True,
+        help_text=_('Usually used to display figurative or copyright information.')
+    )
+    attributes = AttributesField(
+        verbose_name=_('Attributes'),
+        blank=True,
+        excluded_keys=['src', 'width', 'height'],
+    )
+    # link models
+    link_url = models.URLField(
+        verbose_name=_('External URL'),
+        blank=True,
+        max_length=255,
+        help_text=_('Wrapps a link around the image '
+            'leading to an external url.'),
+    )
+    link_page = models.ForeignKey(
+        Page,
+        verbose_name=_('Internal URL'),
+        blank=True,
+        null=True,
+        limit_choices_to={
+            'publisher_is_draft': True
+        },
+        help_text=_('Wraps a link around the image '
+            'leading to an internal (page) url.'),
+    )
+    link_target = models.CharField(
+        verbose_name=_('Link target'),
+        choices=LINK_TARGET,
+        blank=True,
+        max_length=255,
+    )
+    link_attributes = AttributesField(
+        verbose_name=_('Link attributes'),
+        blank=True,
+        excluded_keys=['href', 'target'],
+    )
+    # cropping models
+    # active per default
+    use_automatic_scaling = models.BooleanField(
+        verbose_name=_('Automatic scaling'),
+        blank=True,
+        default=True,
+        help_text=_('Uses the placeholder size to automatically calculate the size.'),
+    )
+    # ignores all other cropping options
+    # throws validation error if other cropping options are selected
+    use_no_cropping = models.BooleanField(
+        verbose_name=_('Use original image.'),
+        blank=True,
+        default=False,
+        help_text=_('Outputs the raw image without cropping.'),
+    )
+    # upscale and crop work together
+    # throws validation error if other cropping options are selected
+    use_crop = models.BooleanField(
+        verbose_name=_('Crop image'),
+        blank=True,
+        default=False,
+        help_text=_('Crops the image according to the given thumbnail settings in the template.'),
+    )
+    use_upscale = models.BooleanField(
+        verbose_name=_('Upscale image'),
+        blank=True,
+        default=False,
+        help_text=_('Upscales the image to the size of the thumbnail settings in the template.')
+    )
+    # overrides all other options
+    # throws validation error if other cropping options are selected
+    use_thumbnail = models.ForeignKey(
+        ThumbnailOption,
+        verbose_name=_('Thumbnail options'),
+        blank=True,
+        null=True,
+        help_text=_('Overrides width, height, crop and upscale with the provided preset.'),
     )
 
     def __str__(self):
-        if self.alt:
-            return self.alt[:40]
-        elif self.image:
-            # added if, because it raised attribute error when file wasn't
-            # defined.
-            try:
-                return u"%s" % os.path.basename(self.image.name)
-            except AttributeError:
-                pass
-        return u"<empty>"
+        if self.picture and self.picture.label:
+            return self.picture.label
+        return str(self.link_url or self.pk)
 
     def clean(self):
-        if self.url and self.page_link:
+        if self.link_url and self.link_page:
             raise ValidationError(
-                _("You can enter a Link or a Page, but not both."))
+                ugettext('You have defined an external and internal link. '
+                    'Only one option is allowed.')
+            )
+        if (self.use_automatic_scaling and self.use_no_cropping or
+            self.use_automatic_scaling and self.use_crop or
+            self.use_automatic_scaling and self.use_upscale or
+            self.use_automatic_scaling and self.use_thumbnail or
+            self.use_no_cropping and self.use_crop or
+            self.use_no_cropping and self.use_upscale or
+            self.use_no_cropping and self.use_thumbnail or
+            self.use_thumbnail and self.use_crop or
+            self.use_thumbnail and self.use_upscale):
+                # TODO add additional info about the error
+                raise ValidationError(
+                    ugettext('The cropping selection is not valid. '
+                        'You cannot combine certain options.')
+                )

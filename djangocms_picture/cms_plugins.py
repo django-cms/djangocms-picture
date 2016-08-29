@@ -23,10 +23,10 @@ class PicturePlugin(CMSPluginBase):
     text_enabled = True
 
     def render(self, context, instance, placeholder):
-        if instance.url:
-            link = instance.url
-        elif instance.page_link:
-            link = instance.page_link.get_absolute_url()
+        if instance.link_url:
+            link = instance.link_url
+        elif instance.link_page:
+            link = instance.link_page.get_absolute_url()
         else:
             link = ""
         context.update({
