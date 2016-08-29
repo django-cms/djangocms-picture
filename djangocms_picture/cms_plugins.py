@@ -1,13 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
-try:
-    import urlparse
-except ImportError:
-    from urllib import parse as urlparse
-
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
@@ -18,22 +9,44 @@ from . import models
 
 class PicturePlugin(CMSPluginBase):
     model = models.Picture
-    name = _("Picture")
-    render_template = "djangocms_picture/picture.html"
+    name = _('Picture')
+    render_template = 'djangocms_picture/picture.html'
     text_enabled = True
 
-    def render(self, context, instance, placeholder):
-        if instance.link_url:
-            link = instance.link_url
-        elif instance.link_page:
-            link = instance.link_page.get_absolute_url()
-        else:
-            link = ""
-        context.update({
-            'picture': instance,
-            'link': link,
-            'placeholder': placeholder
+    fieldsets = [
+        (None, {
+            'fields': (
+                'picture',
+                'alignment',
+            )
+        }),
+        (_('Advanced settings'), {
+            'classes': ('collapse',),
+            'fields': (
+                ('width', 'height'),
+                'caption_text',
+                'attributes',
+            )
+        }),
+        (_('Link settings'), {
+            'classes': ('collapse',),
+            'fields': (
+                ('link_url', 'link_page'),
+                'link_target',
+                'link_attributes',
+            )
+        }),
+        (_('Cropping settings'), {
+            'classes': ('collapse',),
+            'fields': (
+                ('use_automatic_scaling', 'use_no_cropping'),
+                ('use_crop', 'use_upscale'),
+                'use_thumbnail',
+            )
         })
+    ]
+
+    def render(self, context, instance, placeholder):
         return context
 
 

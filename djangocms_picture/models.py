@@ -3,15 +3,14 @@
 Enables the user to add a "Picture" plugin that displays an image
 using the HTML <img> tag.
 """
-import os
-
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-from cms.models import CMSPlugin, Page
+from cms.models import CMSPlugin
+from cms.models.fields import PageField
 
 from djangocms_attributes_field.fields import AttributesField
 
@@ -91,14 +90,11 @@ class Picture(CMSPlugin):
         help_text=_('Wrapps a link around the image '
             'leading to an external url.'),
     )
-    link_page = models.ForeignKey(
-        Page,
+    link_page = PageField(
         verbose_name=_('Internal URL'),
         blank=True,
         null=True,
-        limit_choices_to={
-            'publisher_is_draft': True
-        },
+        on_delete=models.SET_NULL,
         help_text=_('Wraps a link around the image '
             'leading to an internal (page) url.'),
     )

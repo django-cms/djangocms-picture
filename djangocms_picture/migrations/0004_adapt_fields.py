@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.db.models.deletion
 import djangocms_attributes_field.fields
+import cms.models.fields
 
 
 class Migration(migrations.Migration):
@@ -45,7 +47,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='use_no_cropping',
-            field=models.BooleanField(default=False, help_text='Outputs the raw image without scaling.', verbose_name='Use original image.'),
+            field=models.BooleanField(default=False, help_text='Outputs the raw image without cropping.', verbose_name='Use original image.'),
         ),
         migrations.AddField(
             model_name='picture',
@@ -91,7 +93,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='link_page',
-            field=models.ForeignKey(blank=True, to='cms.Page', help_text='Wraps a link around the image leading to an internal (page) url.', null=True, verbose_name='Internal URL'),
+            field=cms.models.fields.PageField(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='cms.Page', help_text='Wraps a link around the image leading to an internal (page) url.', null=True, verbose_name='Internal URL'),
         ),
         migrations.AlterField(
             model_name='picture',
