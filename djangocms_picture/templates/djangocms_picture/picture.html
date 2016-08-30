@@ -41,15 +41,11 @@
     </a>
 {% endif %}
 
-
-
 {# // https://github.com/aldryn/aldryn-bootstrap3/blob/master/aldryn_bootstrap3/models.py#L315#}
 <pre>
     thumb: {{ thumbnail }}
     size : {{ instance.get_size }}
 </pre>
-
-
 
 {% comment %}
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/image
@@ -78,32 +74,4 @@
     {{ instance.use_crop }}
     {{ instance.use_upscale }}
     {{ instance.use_thumbnail }}
-{% endcomment %}
-
-
-
-
-
-{% comment %}
-
-# https://cloudfour.com/thinks/responsive-images-part-10-conclusion/
-vw = viewport width
-100vw = 100%
-33vw = 33%
-" If the viewport is 480 pixels wide or smaller,
-the image will be 100% of the viewport width."
-
-<img src="" srcset="
-    image-320.jpg 320w,
-    image-640.jpg 640w,
-    image-1024.jpg 1024w,
-    image.jpg,
-    image-2x.jpg 2x
-"
-    sizes="
-    (max_width: 480px) 100vw,
-    (max_width: 900px) 33vw,
-    254px // fallback, image will be 254px wide
-
-">
 {% endcomment %}
