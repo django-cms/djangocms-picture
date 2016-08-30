@@ -17,13 +17,14 @@ class PicturePlugin(CMSPluginBase):
         (None, {
             'fields': (
                 'picture',
-                'alignment',
+                'external_picture',
             )
         }),
         (_('Advanced settings'), {
             'classes': ('collapse',),
             'fields': (
                 ('width', 'height'),
+                'alignment',
                 'caption_text',
                 'attributes',
             )
@@ -47,6 +48,17 @@ class PicturePlugin(CMSPluginBase):
     ]
 
     def render(self, context, instance, placeholder):
+        classes = ''
+        if instance.alignment:
+            classes += 'align-{}'.format(instance.alignment)
+            if 'class' in instance.attributes:
+                classes += ' {}'.format(instance.attributes['class'])
+            # adapt new class
+            instance.attributes['class'] = classes
+
+        context.update({
+            'instance': instance,
+        })
         return context
 
 

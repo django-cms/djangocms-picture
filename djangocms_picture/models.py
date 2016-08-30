@@ -16,7 +16,6 @@ from djangocms_attributes_field.fields import AttributesField
 
 from filer.models import ThumbnailOption
 from filer.fields.image import FilerImageField
-from filer.fields.file import FilerFileField
 
 
 # add setting for image alignment, renders a class or inline styles
@@ -51,14 +50,21 @@ class Picture(CMSPlugin):
         on_delete=models.SET_NULL,
         related_name='+',
     )
-    width = models.IntegerField(
+    external_picture = models.URLField(
+        verbose_name=_('External picture'),
+        blank=True,
+        max_length=255,
+        help_text=_('If provided overrides embedded picture. '
+            'Certain options such as cropping are not applicable for external pictures.')
+    )
+    width = models.PositiveIntegerField(
         verbose_name=_('Width'),
         blank=True,
         null=True,
         help_text=_('The image width as number in pixel. '
             'Example: "720" and not "720px".'),
     )
-    height = models.IntegerField(
+    height = models.PositiveIntegerField(
         verbose_name=_('Height'),
         blank=True,
         null=True,
@@ -154,12 +160,55 @@ class Picture(CMSPlugin):
             return self.picture.label
         return str(self.link_url or self.pk)
 
+    def get_size(self):
+        # automatic scaling
+        width = 0
+        height = 0
+        crop = False
+        upscale = False
+
+        # use width and height attributes
+        if self.width:
+            width = self.width
+        if self.height:
+            height = self.height
+        # use field cropping options
+        if self.use_crop:
+            crop = self.use_crop
+        if self.use_upscale:
+            upscale = self.use_upscale
+        # use field thumbnail settings
+        if self.use_thumbnail:
+            width = self.use_thumbnail.width
+            height = self.use_thumbnail.height
+            crop = self.use_thumbnail.crop
+            upscale = self.use_thumbnail.upscale
+
+        options = {
+            'size': (width, height),
+            'crop': crop,
+            'upscale': upscale,
+        }
+        return options
+
+    def get_link(self):
+        if self.link_url:
+            return self.link_url
+        if self.link_page:
+            return self.link_page.get_absolute_url()
+        return False
+
     def clean(self):
+        # there can be only one link type
         if self.link_url and self.link_page:
             raise ValidationError(
                 ugettext('You have defined an external and internal link. '
                     'Only one option is allowed.')
             )
+        # you shall only set one image kind
+        if not self.picture and not self.external_picture:
+            raise ValidationError('You need to add either a picture or an external link.')
+        # certain cropping settings don't play nice with one another
         if (self.use_automatic_scaling and self.use_no_cropping or
             self.use_automatic_scaling and self.use_crop or
             self.use_automatic_scaling and self.use_upscale or

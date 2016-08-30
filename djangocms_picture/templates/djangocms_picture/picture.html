@@ -1,17 +1,97 @@
-<span class="djangocms-picture
-    {% if picture.float %} align-{{ picture.float }}{% endif %}">
-    {% if link %}
-        <a href="{{ link }}">
-    {% endif %}
-        <img src="{{ picture.image.url }}" alt="{{ picture.alt }}"
-            {% if picture.longdesc %} title="{{ picture.longdesc }}"{% endif %}
-            {% if picture.width %} width="{{ picture.width }}px"{% endif %}
-            {% if picture.height %} height="{{ picture.height }}px"{% endif %}
-        >
-    {% if link %}
-        </a>
-    {% endif %}
-</span>
+ {% load thumbnail %}
+
+{% if instance.get_link %}
+    <a href="{{ instance.get_link }}"
+    {% if instance.link_target %} target="{{ instance.link_target }}"{% endif %}
+    {{ instance.link_attributes_str }}>
+{% endif %}
+
+{# start render figure/figcaption #}
+{% if instance.caption_text %}
+    <figure>
+{% endif %}
+{# end render figure/figcaption #}
+
+{% thumbnail instance.picture instance.get_size.size crop=instance.get_size.crop upscale=instance.get_size.upscale as thumbnail %}
+
+<img src="{% spaceless %}
+    {% if instance.external_picture %}
+        {{ instance.external_picture }}
+    {% else %}
+        {% if instance.use_no_cropping %}
+            {{ instance.picture.url }}
+        {% else %}
+            {{ thumbnail.url }}
+        {% endif %}
+    {% endif %}{% endspaceless %}"
+    {% if instance.picture.alt %} alt="{{ instance.picture.alt }}"{% endif %}
+    {% if instance.width %} width="{{ instance.width }}"{% endif %}
+    {% if instance.height %} width="{{ instance.height }}"{% endif %}
+    {{ instance.attributes_str }}
+>
+
+{# start render figure/figcaption #}
+{% if instance.caption_text %}
+        <figcaption>{{ instance.caption_text }}</figcaption>
+    </figure>
+{% endif %}
+{# end render figure/figcaption #}
+
+{% if instance.get_link %}
+    </a>
+{% endif %}
+
+
+
+{# // https://github.com/aldryn/aldryn-bootstrap3/blob/master/aldryn_bootstrap3/models.py#L315#}
+<pre>
+    thumb: {{ thumbnail }}
+    size : {{ instance.get_size }}
+</pre>
+
+
+
+{% comment %}
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/image
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figure
+    # https://github.com/divio/django-filer/blob/master/filer/models/filemodels.py
+    # http://easy-thumbnails.readthedocs.io/en/2.1/usage/#templates
+    {{ instance.picture }}
+    # Available variables:
+    {{ instance.width }}
+    {{ instance.height }}
+    {{ instance.alignment }}
+    {{ instance.caption_text }}
+    {{ instance.attributes_str }}
+    # picture helper
+    {{ instance.get_size }}
+    # link settings
+    {{ instance.link_url }}
+    {{ instance.link_page }}
+    {{ instance.link_target }}
+    {{ instance.link_attributes_str }}
+    # link helper
+    {{ instance.get_link }}
+    # cropping settings
+    {{ instance.use_automatic_scaling }}
+    {{ instance.use_no_cropping }}
+    {{ instance.use_crop }}
+    {{ instance.use_upscale }}
+    {{ instance.use_thumbnail }}
+{% endcomment %}
+
+
+
+
+
+{% comment %}
+
+# https://cloudfour.com/thinks/responsive-images-part-10-conclusion/
+vw = viewport width
+100vw = 100%
+33vw = 33%
+" If the viewport is 480 pixels wide or smaller,
+the image will be 100% of the viewport width."
 
 <img src="" srcset="
     image-320.jpg 320w,
@@ -25,11 +105,5 @@
     (max_width: 900px) 33vw,
     254px // fallback, image will be 254px wide
 
-"
-
-# https://cloudfour.com/thinks/responsive-images-part-10-conclusion/
-vw = viewport width
-100vw = 100%
-33vw = 33%
-" If the viewport is 480 pixels wide or smaller,
-the image will be 100% of the viewport width."
+">
+{% endcomment %}

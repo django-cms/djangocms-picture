@@ -59,6 +59,11 @@ class Migration(migrations.Migration):
             name='use_thumbnail',
             field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, crop and upscale with the provided preset.', null=True, verbose_name='Thumbnail options'),
         ),
+        migrations.AddField(
+            model_name='picture',
+            name='external_picture',
+            field=models.URLField(help_text='If provided overrides embedded picture. Certain options such as cropping are not applicable for external pictures.', max_length=255, verbose_name='External picture', blank=True),
+        ),
         migrations.RenameField(
             model_name='picture',
             old_name='float',
@@ -83,12 +88,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='height',
-            field=models.IntegerField(help_text='The image height as number in pixel. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
+            field=models.PositiveIntegerField(help_text='The image height as number in pixel. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
         ),
         migrations.AlterField(
             model_name='picture',
             name='width',
-            field=models.IntegerField(help_text='The image width as number in pixel. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
+            field=models.PositiveIntegerField(help_text='The image width as number in pixel. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
         ),
         migrations.AlterField(
             model_name='picture',
