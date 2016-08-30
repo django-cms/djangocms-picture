@@ -106,4 +106,9 @@ class Migration(migrations.Migration):
             field=models.URLField(default='', help_text='Wrapps a link around the image leading to an external url.', max_length=255, verbose_name='External URL', blank=True),
             preserve_default=False,
         ),
+        migrations.AlterField(
+            model_name='picture',
+            name='cmsplugin_ptr',
+            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
+        ),
     ]

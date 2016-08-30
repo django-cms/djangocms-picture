@@ -155,6 +155,16 @@ class Picture(CMSPlugin):
         help_text=_('Overrides width, height, crop and upscale with the provided preset.'),
     )
 
+    # Add an app namespace to related_name to avoid field name clashes
+    # with any other plugins that have a field with the same name as the
+    # lowercase of the class name of this model.
+    # https://github.com/divio/django-cms/issues/5030
+    cmsplugin_ptr = models.OneToOneField(
+        CMSPlugin,
+        related_name='%(app_label)s_%(class)s',
+        parent_link=True,
+    )
+
     def __str__(self):
         if self.picture and self.picture.label:
             return self.picture.label
