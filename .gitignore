@@ -1,8 +1,8 @@
-*.log
-*.pot
 *.pyc
-local_settings.py
+*.egg-info
+.DS_Store
 .idea/
-*.egg-info/
-build
-dist
+.tox/
+.eggs/
+dist/
+build/
