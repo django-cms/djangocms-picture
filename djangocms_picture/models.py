@@ -18,7 +18,7 @@ from filer.models import ThumbnailOption
 from filer.fields.image import FilerImageField
 
 
-# add setting for image alignment, renders a class or inline styles
+# add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
 PICTURE_ALIGNMENT = getattr(
     settings,
@@ -41,7 +41,7 @@ LINK_TARGET = (
 @python_2_unicode_compatible
 class Picture(CMSPlugin):
     """
-    Renders an image with the option of adding a link
+    Renders a picture with the option of adding a link
     """
     picture = FilerImageField(
         verbose_name=_('Picture'),
@@ -54,21 +54,21 @@ class Picture(CMSPlugin):
         verbose_name=_('External picture'),
         blank=True,
         max_length=255,
-        help_text=_('If provided overrides embedded picture. '
+        help_text=_('If provided, overrides embedded picture. '
             'Certain options such as cropping are not applicable for external pictures.')
     )
     width = models.PositiveIntegerField(
         verbose_name=_('Width'),
         blank=True,
         null=True,
-        help_text=_('The image width as number in pixel. '
+        help_text=_('The picture width as number in pixels. '
             'Example: "720" and not "720px".'),
     )
     height = models.PositiveIntegerField(
         verbose_name=_('Height'),
         blank=True,
         null=True,
-        help_text=_('The image height as number in pixel. '
+        help_text=_('The Picture height as number in pixels. '
             'Example: "720" and not "720px".'),
     )
     alignment = models.CharField(
@@ -76,12 +76,12 @@ class Picture(CMSPlugin):
         choices=PICTURE_ALIGNMENT,
         blank=True,
         max_length=255,
-        help_text=_('Aligns the image to the selected option.'),
+        help_text=_('Aligns the picture to the selected option.'),
     )
     caption_text = models.TextField(
         verbose_name=_('Caption text'),
         blank=True,
-        help_text=_('Usually used to display figurative or copyright information.')
+        help_text=_('Provide a description, attribution, copyright or other information.')
     )
     attributes = AttributesField(
         verbose_name=_('Attributes'),
@@ -93,16 +93,14 @@ class Picture(CMSPlugin):
         verbose_name=_('External URL'),
         blank=True,
         max_length=255,
-        help_text=_('Wrapps a link around the image '
-            'leading to an external url.'),
+        help_text=_('Wraps the picture in a link to an external URL.'),
     )
     link_page = PageField(
         verbose_name=_('Internal URL'),
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        help_text=_('Wraps a link around the image '
-            'leading to an internal (page) url.'),
+        help_text=_('Wraps the picture in a link to an internal (page) URL.'),
     )
     link_target = models.CharField(
         verbose_name=_('Link target'),
@@ -121,29 +119,29 @@ class Picture(CMSPlugin):
         verbose_name=_('Automatic scaling'),
         blank=True,
         default=True,
-        help_text=_('Uses the placeholder size to automatically calculate the size.'),
+        help_text=_('Uses the placeholder dimenstions to automatically calculate the size.'),
     )
     # ignores all other cropping options
     # throws validation error if other cropping options are selected
     use_no_cropping = models.BooleanField(
-        verbose_name=_('Use original image.'),
+        verbose_name=_('Use original picture.'),
         blank=True,
         default=False,
-        help_text=_('Outputs the raw image without cropping.'),
+        help_text=_('Outputs the raw picture without cropping.'),
     )
     # upscale and crop work together
     # throws validation error if other cropping options are selected
     use_crop = models.BooleanField(
-        verbose_name=_('Crop image'),
+        verbose_name=_('Crop picture'),
         blank=True,
         default=False,
-        help_text=_('Crops the image according to the given thumbnail settings in the template.'),
+        help_text=_('Crops the picture according to the given thumbnail settings in the template.'),
     )
     use_upscale = models.BooleanField(
-        verbose_name=_('Upscale image'),
+        verbose_name=_('Upscale picture'),
         blank=True,
         default=False,
-        help_text=_('Upscales the image to the size of the thumbnail settings in the template.')
+        help_text=_('Upscales the picture to the size of the thumbnail settings in the template.')
     )
     # overrides all other options
     # throws validation error if other cropping options are selected
@@ -215,7 +213,7 @@ class Picture(CMSPlugin):
                 ugettext('You have defined an external and internal link. '
                     'Only one option is allowed.')
             )
-        # you shall only set one image kind
+        # you shall only set one picture kind
         if not self.picture and not self.external_picture:
             raise ValidationError('You need to add either a picture or an external link.')
         # certain cropping settings don't play nice with one another
