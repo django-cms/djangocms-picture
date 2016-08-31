@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import find_packages, setup
 
-from djangocms_picture import __version__
+from djangocms_image import __version__
 
 
 REQUIREMENTS = [
@@ -33,12 +33,12 @@ CLASSIFIERS = [
 
 
 setup(
-    name='djangocms-picture',
+    name='djangocms-image',
     version=__version__,
-    description='Adds picture plugin to django CMS',
+    description='Adds an image plugin to django CMS',
     author='Divio AG',
     author_email='info@divio.ch',
-    url='https://github.com/divio/djangocms-picture',
+    url='https://github.com/divio/djangocms-image',
     license='BSD',
     long_description=open('README.rst').read(),
     packages=find_packages(),

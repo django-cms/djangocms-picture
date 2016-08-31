@@ -10,7 +10,7 @@ def migrate_to_filer(apps, schema_editor):
     # Because filer is polymorphic, Djangos migration can't handle
     # Image = apps.get_model('filer', 'Image')
     from filer.models import Image
-    Picture = apps.get_model('djangocms_picture', 'Picture')
+    Picture = apps.get_model('djangocms_image', 'Picture')
     plugins = Picture.objects.all()
 
     for plugin in plugins:
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('filer', '0006_auto_20160623_1627'),
-        ('djangocms_picture', '0002_auto_20151018_1927'),
+        ('djangocms_image', '0002_auto_20151018_1927'),
     ]
 
     operations = [
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(parent_link=True, related_name='djangocms_image_image', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
         migrations.AlterField(
             model_name='picture',

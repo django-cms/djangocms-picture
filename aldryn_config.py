@@ -20,5 +20,5 @@ class Form(forms.BaseForm):
     def to_settings(self, data, settings):
         # validate aldryn settings
         if data['alignment']:
-            settings['DJANGOCMS_PICTURE_ALIGN'] = [(item, item) for item in data['settings']]
+            settings['DJANGOCMS_IMAGE_ALIGN'] = [(item, item) for item in data['settings']]
         return settings

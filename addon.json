@@ -1,6 +1,6 @@
 {
-    "package-name": "djangocms-picture",
+    "package-name": "djangocms-image",
     "installed-apps": [
-        "djangocms_picture"
+        "djangocms_image"
     ]
 }

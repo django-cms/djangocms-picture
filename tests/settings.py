@@ -19,7 +19,7 @@ HELPER_SETTINGS = {
 
 def run():
     from djangocms_helper import runner
-    runner.cms('djangocms_picture')
+    runner.cms('djangocms_image')
 
 if __name__ == '__main__':
     run()

@@ -5,12 +5,13 @@ from django.db import migrations, models
 import django.db.models.deletion
 import djangocms_attributes_field.fields
 import cms.models.fields
+import filer.fields.image
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djangocms_picture', '0003_migrate_to_filer'),
+        ('djangocms_image', '0003_migrate_to_filer'),
     ]
 
     operations = [
@@ -22,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='caption_text',
-            field=models.TextField(help_text='Usually used to display figurative or copyright information.', verbose_name='Caption text', blank=True),
+            field=models.TextField(help_text='Provide a description, attribution, copyright or other information.', verbose_name='Caption text', blank=True),
         ),
         migrations.AddField(
             model_name='picture',
@@ -37,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='use_automatic_scaling',
-            field=models.BooleanField(default=True, help_text='Uses the placeholder size to automatically calculate the size.', verbose_name='Automatic scaling'),
+            field=models.BooleanField(default=True, help_text='Uses the placeholder dimenstions to automatically calculate the size.', verbose_name='Automatic scaling'),
         ),
         migrations.AddField(
             model_name='picture',
@@ -62,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='external_picture',
-            field=models.URLField(help_text='If provided overrides embedded picture. Certain options such as cropping are not applicable for external pictures.', max_length=255, verbose_name='External picture', blank=True),
+            field=models.URLField(help_text='If provided, overrides the embedded image. Certain options such as cropping are not applicable for external images.', max_length=255, verbose_name='External image', blank=True),
         ),
         migrations.RenameField(
             model_name='picture',
@@ -88,27 +89,32 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='height',
-            field=models.PositiveIntegerField(help_text='The image height as number in pixel. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
+            field=models.PositiveIntegerField(help_text='The image height as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
         ),
         migrations.AlterField(
             model_name='picture',
             name='width',
-            field=models.PositiveIntegerField(help_text='The image width as number in pixel. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
+            field=models.PositiveIntegerField(help_text='The image width as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
         ),
         migrations.AlterField(
             model_name='picture',
             name='link_page',
-            field=cms.models.fields.PageField(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='cms.Page', help_text='Wraps a link around the image leading to an internal (page) url.', null=True, verbose_name='Internal URL'),
+            field=cms.models.fields.PageField(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='cms.Page', help_text='Wraps the image in a link to an internal (page) URL.', null=True, verbose_name='Internal URL'),
         ),
         migrations.AlterField(
             model_name='picture',
             name='link_url',
-            field=models.URLField(default='', help_text='Wrapps a link around the image leading to an external url.', max_length=255, verbose_name='External URL', blank=True),
+            field=models.URLField(default='', help_text='Wraps the image in a link to an external URL.', max_length=255, verbose_name='External URL', blank=True),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='picture',
+            name='picture',
+            field=filer.fields.image.FilerImageField(related_name='+', on_delete=django.db.models.deletion.SET_NULL, verbose_name='Image', blank=True, to='filer.Image', null=True),
+        ),
+        migrations.AlterField(
+            model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(parent_link=True, related_name='djangocms_image_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
     ]
