@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='float',
-            field=models.CharField(choices=[(b'left', 'Align left'), (b'right', 'Align right'), (b'left', 'Align center')], max_length=10, blank=True, help_text='Move image left, right or center.', null=True, verbose_name='side'),
+            field=models.CharField(choices=[('left', 'Align left'), ('right', 'Align right'), ('left', 'Align center')], max_length=10, blank=True, help_text='Move image left, right or center.', null=True, verbose_name='side'),
         ),
         migrations.RunPython(migrate_to_filer),
         migrations.RemoveField(

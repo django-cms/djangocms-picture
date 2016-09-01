@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='link_target',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[(b'_blank', 'Open in new window.'), (b'_self', 'Open in same window.'), (b'_parent', 'Delegate to parent.'), (b'_top', 'Delegate to top.')]),
+            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[('_blank', 'Open in new window.'), ('_self', 'Open in same window.'), ('_parent', 'Delegate to parent.'), ('_top', 'Delegate to top.')]),
         ),
         migrations.AddField(
             model_name='picture',
@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='alignment',
-            field=models.CharField(default='', choices=[(b'left', 'Align left'), (b'right', 'Align right'), (b'left', 'Align center')], max_length=255, blank=True, help_text='Aligns the image to the selected option.', verbose_name='Alignment'),
+            field=models.CharField(default='', choices=[('left', 'Align left'), ('right', 'Align right'), ('left', 'Align center')], max_length=255, blank=True, help_text='Aligns the image to the selected option.', verbose_name='Alignment'),
             preserve_default=False,
         ),
         migrations.AlterField(
