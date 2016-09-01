@@ -5,10 +5,12 @@ from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 
 from . import models
+from . import forms
 
 
 class PicturePlugin(CMSPluginBase):
     model = models.Picture
+    form = forms.PictureForm
     name = _('Image')
     render_template = 'djangocms_picture/picture.html'
     text_enabled = True
