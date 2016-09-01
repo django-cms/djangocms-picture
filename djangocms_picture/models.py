@@ -22,7 +22,7 @@ from filer.fields.image import FilerImageField
 # depending on your template setup
 IMAGE_ALIGNMENT = getattr(
     settings,
-    'DJANGOCMS_IMAGE_ALIGN',
+    'DJANGOCMS_PICTURE_ALIGN',
     (
         ('left', _('Align left')),
         ('right', _('Align right')),

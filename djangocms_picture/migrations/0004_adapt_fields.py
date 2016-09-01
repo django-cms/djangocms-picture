@@ -11,7 +11,7 @@ import filer.fields.image
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djangocms_image', '0003_migrate_to_filer'),
+        ('djangocms_picture', '0003_migrate_to_filer'),
     ]
 
     operations = [
@@ -115,6 +115,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_image_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
     ]

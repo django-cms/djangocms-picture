@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 
-from djangocms_image.models import Picture
+from djangocms_picture.models import Picture
 
 
 EXAMPLE_IMAGE = 'https://www.google.com/images/logo.png'

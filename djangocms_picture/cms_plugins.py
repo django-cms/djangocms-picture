@@ -10,7 +10,7 @@ from . import models
 class PicturePlugin(CMSPluginBase):
     model = models.Picture
     name = _('Image')
-    render_template = 'djangocms_image/image.html'
+    render_template = 'djangocms_picture/picture.html'
     text_enabled = True
 
     fieldsets = [

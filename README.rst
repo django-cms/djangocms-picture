@@ -9,7 +9,7 @@ django CMS Image
 that allows you to add images on your site.
 
 This addon is compatible with `Aldryn <http://aldryn.com>`_ and is also available on the
-`django CMS Marketplace <https://marketplace.django-cms.org/en/addons/browse/djangocms-image/>`_
+`django CMS Marketplace <https://marketplace.django-cms.org/en/addons/browse/djangocms-picture/>`_
 for easy installation.
 
 .. image:: preview.gif
@@ -24,13 +24,13 @@ pull request, please review our `contribution guidelines
 <http://docs.django-cms.org/en/latest/contributing/index.html>`_.
 
 One of the easiest contributions you can make is helping to translate this addon on
-`Transifex <https://www.transifex.com/projects/p/djangocms-image/>`_.
+`Transifex <https://www.transifex.com/projects/p/djangocms-picture/>`_.
 
 
 Documentation
 =============
 
-See ``REQUIREMENTS`` in the `setup.py <https://github.com/divio/djangocms-image/blob/master/setup.py>`_
+See ``REQUIREMENTS`` in the `setup.py <https://github.com/divio/djangocms-picture/blob/master/setup.py>`_
 file for additional dependencies:
 
 * Python 2.7, 3.3 or higher
@@ -45,9 +45,9 @@ Installation
 
 For a manual install:
 
-* run ``pip install djangocms-image``
-* add ``djangocms_image`` to your ``INSTALLED_APPS``
-* run ``python manage.py migrate djangocms_image``
+* run ``pip install djangocms-picture``
+* add ``djangocms_picture`` to your ``INSTALLED_APPS``
+* run ``python manage.py migrate djangocms_picture``
 
 
 Configuration
@@ -55,7 +55,7 @@ Configuration
 
 You can override the alignment styles through the following setting:
 
-    DJANGOCMS_IMAGE_ALIGN = [
+    DJANGOCMS_PICTURE_ALIGN = [
         ('top', _('Top Aligned')),
     ]
 
@@ -78,9 +78,9 @@ You can run tests by executing::
     python setup.py test
 
 
-.. |pypi| image:: https://badge.fury.io/py/djangocms-image.svg
-    :target: http://badge.fury.io/py/djangocms-image
-.. |build| image:: https://travis-ci.org/divio/djangocms-image.svg?branch=master
-    :target: https://travis-ci.org/divio/djangocms-image
-.. |coverage| image:: https://codecov.io/gh/divio/djangocms-image/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/divio/djangocms-image
+.. |pypi| image:: https://badge.fury.io/py/djangocms-picture.svg
+    :target: http://badge.fury.io/py/djangocms-picture
+.. |build| image:: https://travis-ci.org/divio/djangocms-picture.svg?branch=master
+    :target: https://travis-ci.org/divio/djangocms-picture
+.. |coverage| image:: https://codecov.io/gh/divio/djangocms-picture/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/divio/djangocms-picture
