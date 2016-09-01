@@ -53,6 +53,9 @@ For a manual install:
 Configuration
 -------------
 
+Note that the provided templates are very minimal by design. You are encouraged
+to adapt and override them to your project's requirements.
+
 You can override the alignment styles through the following setting:
 
     DJANGOCMS_PICTURE_ALIGN = [

@@ -20,7 +20,7 @@ from filer.fields.image import FilerImageField
 
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
-IMAGE_ALIGNMENT = getattr(
+PICTURE_ALIGNMENT = getattr(
     settings,
     'DJANGOCMS_PICTURE_ALIGN',
     (
@@ -73,7 +73,7 @@ class Picture(CMSPlugin):
     )
     alignment = models.CharField(
         verbose_name=_('Alignment'),
-        choices=IMAGE_ALIGNMENT,
+        choices=PICTURE_ALIGNMENT,
         blank=True,
         max_length=255,
         help_text=_('Aligns the image to the selected option.'),
@@ -166,10 +166,13 @@ class Picture(CMSPlugin):
     def __str__(self):
         if self.picture and self.picture.label:
             return self.picture.label
-        return str(self.link_url or self.pk)
+        if self.link_url:
+            return self.link_url
+        return ugettext('<file is missing>')
 
     def get_size(self):
         # automatic scaling
+        # TODO need to get the base values
         width = 0
         height = 0
         crop = False
