@@ -56,7 +56,7 @@ Configuration
 Note that the provided templates are very minimal by design. You are encouraged
 to adapt and override them to your project's requirements.
 
-You can override the alignment styles through the following setting:
+You can override the alignment styles through the following setting::
 
     DJANGOCMS_PICTURE_ALIGN = [
         ('top', _('Top Aligned')),
@@ -65,6 +65,20 @@ You can override the alignment styles through the following setting:
 This will generate a class prefixing "align-". The above written example
 would result in ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
+
+We are using the `golden ratio <https://en.wikipedia.org/wiki/golden_ratio>`_
+to calculate the width or height if any of the values are missing. You can
+override this using::
+
+    DJANGOCMS_PICTURE_RATIO = 1.618
+
+The system is first using the width or height provided by the *Thumbnail options*
+followed by *Autoscale* and finally the *Width* and *Height*. We recommend to
+set width or height values around a placeholder so *Autoscale* works best::
+
+    {% with 720 as width and 480 as height %}
+        {% placeholder content %}
+    {% endwith %}
 
 Further configuration can be achieved through
 `django Filer <https://django-filer.readthedocs.io/en/latest/settings.html>`_.

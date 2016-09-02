@@ -242,8 +242,6 @@ class Picture(CMSPlugin):
         # list defines the disallowed options used in the ``clean`` method
         invalid_option_pairs = [
             ('use_automatic_scaling', 'use_no_cropping'),
-            ('use_automatic_scaling', 'use_crop'),
-            ('use_automatic_scaling', 'use_upscale'),
             ('use_automatic_scaling', 'use_thumbnail'),
             ('use_no_cropping', 'use_crop'),
             ('use_no_cropping', 'use_upscale'),
