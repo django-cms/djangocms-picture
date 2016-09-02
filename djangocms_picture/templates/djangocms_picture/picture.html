@@ -12,17 +12,14 @@
 {% endif %}
 {# end render figure/figcaption #}
 
-{% thumbnail instance.picture get_size.size crop=get_size.crop upscale=get_size.upscale subject_location=instance.picture.subject_location as thumbnail %}
-
 <img src="{% spaceless %}
     {% if instance.external_picture %}
         {{ instance.external_picture }}
+    {% elif instance.use_no_cropping %}
+        {{ instance.picture.url }}
     {% else %}
-        {% if instance.use_no_cropping %}
-            {{ instance.picture.url }}
-        {% else %}
-            {{ thumbnail.url }}
-        {% endif %}
+        {% thumbnail instance.picture get_size.size crop=get_size.crop upscale=get_size.upscale subject_location=instance.picture.subject_location as thumbnail %}
+        {{ thumbnail.url }}
     {% endif %}{% endspaceless %}"
     {% if instance.picture.alt %} alt="{{ instance.picture.alt }}"{% endif %}
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
