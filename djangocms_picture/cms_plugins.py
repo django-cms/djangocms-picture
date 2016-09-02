@@ -4,13 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 
-from . import models
-from . import forms
+from .models import Picture
+from .forms import PictureForm
 
 
 class PicturePlugin(CMSPluginBase):
-    model = models.Picture
-    form = forms.PictureForm
+    model = Picture
+    form = PictureForm
     name = _('Image')
     render_template = 'djangocms_picture/picture.html'
     text_enabled = True
@@ -52,16 +52,17 @@ class PicturePlugin(CMSPluginBase):
     def render(self, context, instance, placeholder):
         classes = ''
         if instance.alignment:
-            classes += 'align-{}'.format(instance.alignment)
-            if 'class' in instance.attributes:
-                classes += ' {}'.format(instance.attributes['class'])
-            # adapt new class
-            instance.attributes['class'] = classes
+            classes += 'align-{} '.format(instance.alignment)
+        if 'class' in instance.attributes:
+            classes += '{} '.format(instance.attributes['class'])
+        # we actually want to modify the class in attributes
+        # this saves a simple if/else in the template
+        instance.attributes['class'] = classes
+        # assign link to a context variable to be performant
+        context['get_link'] = instance.get_link
+        context['get_size'] = instance.get_size(context, placeholder)
 
-        context.update({
-            'instance': instance,
-        })
-        return context
+        return super(PicturePlugin, self).render(context, instance, placeholder)
 
 
 plugin_pool.register_plugin(PicturePlugin)

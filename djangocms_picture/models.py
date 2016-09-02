@@ -30,6 +30,9 @@ PICTURE_ALIGNMENT = getattr(
     )
 )
 
+# use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
+PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
+
 LINK_TARGET = (
     ('_blank', _('Open in new window.')),
     ('_self', _('Open in same window.')),
@@ -166,34 +169,47 @@ class Picture(CMSPlugin):
     def __str__(self):
         if self.picture and self.picture.label:
             return self.picture.label
+        return str(self.pk)
+
+    def get_short_description(self):
+        if self.picture and self.picture.label:
+            return self.picture.label
         if self.link_url:
             return self.link_url
         return ugettext('<file is missing>')
 
-    def get_size(self):
-        # automatic scaling
-        # TODO need to get the base values
-        width = 0
-        height = 0
-        crop = False
-        upscale = False
+    def copy_relations(self, oldinstance):
+        # Because we have a ForeignKey, it's required to copy over
+        # the reference from the instance to the new plugin.
+        self.picture = oldinstance.picture
 
-        # use width and height attributes
-        if self.width:
-            width = self.width
-        if self.height:
-            height = self.height
-        # use field cropping options
-        if self.use_crop:
-            crop = self.use_crop
-        if self.use_upscale:
-            upscale = self.use_upscale
+    def get_size(self, context, placeholder):
+        crop = self.use_crop or False
+        upscale = self.use_upscale or False
         # use field thumbnail settings
         if self.use_thumbnail:
             width = self.use_thumbnail.width
             height = self.use_thumbnail.height
             crop = self.use_thumbnail.crop
             upscale = self.use_thumbnail.upscale
+        elif self.use_automatic_scaling:
+            width = context.get('width', None)
+            height = context.get('height', None)
+        else:
+            width = self.width or None
+            height = self.height or None
+
+        # calculate height when not given according to the
+        # golden ratio
+        if not height and width:
+            height = int(width / PICTURE_RATIO)
+        if not width and height:
+            width = int(height * PICTURE_RATIO)
+
+        print ""
+        print "##############"
+        print "width", width
+        print "height", height
 
         options = {
             'size': (width, height),
@@ -206,7 +222,7 @@ class Picture(CMSPlugin):
         if self.link_url:
             return self.link_url
         if self.link_page:
-            return self.link_page.get_absolute_url()
+            return self.link_page.get_absolute_url(language=self.language)
         return False
 
     def clean(self):
@@ -216,21 +232,40 @@ class Picture(CMSPlugin):
                 ugettext('You have defined an external and internal link. '
                     'Only one option is allowed.')
             )
+
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
-            raise ValidationError('You need to add either an image or an external link.')
-        # certain cropping settings don't play nice with one another
-        if (self.use_automatic_scaling and self.use_no_cropping or
-            self.use_automatic_scaling and self.use_crop or
-            self.use_automatic_scaling and self.use_upscale or
-            self.use_automatic_scaling and self.use_thumbnail or
-            self.use_no_cropping and self.use_crop or
-            self.use_no_cropping and self.use_upscale or
-            self.use_no_cropping and self.use_thumbnail or
-            self.use_thumbnail and self.use_crop or
-            self.use_thumbnail and self.use_upscale):
-                # TODO add additional info about the error
-                raise ValidationError(
-                    ugettext('The cropping selection is not valid. '
-                        'You cannot combine certain options.')
+            raise ValidationError('You need to add either an image or '
+                'an external link to an image.')
+
+        # certain cropping options do not work together, the following
+        # list defines the disallowed options used in the ``clean`` method
+        invalid_option_pairs = [
+            ('use_automatic_scaling', 'use_no_cropping'),
+            ('use_automatic_scaling', 'use_crop'),
+            ('use_automatic_scaling', 'use_upscale'),
+            ('use_automatic_scaling', 'use_thumbnail'),
+            ('use_no_cropping', 'use_crop'),
+            ('use_no_cropping', 'use_upscale'),
+            ('use_no_cropping', 'use_thumbnail'),
+            ('use_thumbnail', 'use_crop'),
+            ('use_thumbnail', 'use_upscale'),
+        ]
+        # invalid_option_pairs
+        invalid_option_pair = None
+
+        for pair in invalid_option_pairs:
+            if getattr(self, pair[0]) and getattr(self, pair[1]):
+                invalid_option_pair = pair
+                break
+
+        if invalid_option_pair:
+            field_1 = self._meta.get_field(invalid_option_pair[0])
+            field_2 = self._meta.get_field(invalid_option_pair[1])
+            message = ugettext('The cropping selection is not valid. '
+                'You cannot combine "{field_a}" with "{field_b}".'.format(
+                    field_a = field_1.verbose_name,
+                    field_b = field_2.verbose_name
                 )
+            )
+            raise ValidationError(message)

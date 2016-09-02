@@ -1,7 +1,7 @@
  {% load thumbnail %}
 
-{% if instance.get_link %}
-    <a href="{{ instance.get_link }}"
+{% if get_link %}
+    <a href="{{ get_link }}"
     {% if instance.link_target %} target="{{ instance.link_target }}"{% endif %}
     {{ instance.link_attributes_str }}>
 {% endif %}
@@ -12,7 +12,7 @@
 {% endif %}
 {# end render figure/figcaption #}
 
-{% thumbnail instance.picture instance.get_size.size crop=instance.get_size.crop upscale=instance.get_size.upscale as thumbnail %}
+{% thumbnail instance.picture get_size.size crop=get_size.crop upscale=get_size.upscale subject_location=instance.picture.subject_location as thumbnail %}
 
 <img src="{% spaceless %}
     {% if instance.external_picture %}
@@ -26,7 +26,7 @@
     {% endif %}{% endspaceless %}"
     {% if instance.picture.alt %} alt="{{ instance.picture.alt }}"{% endif %}
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
-    {% if instance.height %} width="{{ instance.height }}"{% endif %}
+    {% if instance.height %} height="{{ instance.height }}"{% endif %}
     {{ instance.attributes_str }}
 >
 
@@ -41,16 +41,10 @@
     </a>
 {% endif %}
 
-{# // https://github.com/aldryn/aldryn-bootstrap3/blob/master/aldryn_bootstrap3/models.py#L315#}
-<pre>
-    thumb: {{ thumbnail }}
-    size : {{ instance.get_size }}
-</pre>
-
 {% comment %}
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/image
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figure
-    # https://github.com/divio/django-filer/blob/master/filer/models/filemodels.py
+    # https://github.com/divio/django-filer/blob/master/filer/models/imagemodels.py
     # http://easy-thumbnails.readthedocs.io/en/2.1/usage/#templates
     {{ instance.picture }}
     # Available variables:
@@ -67,7 +61,7 @@
     {{ instance.link_target }}
     {{ instance.link_attributes_str }}
     # link helper
-    {{ instance.get_link }}
+    {{ instance.get_link }} or {{ get_link }}
     # cropping settings
     {{ instance.use_automatic_scaling }}
     {{ instance.use_no_cropping }}

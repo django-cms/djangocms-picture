@@ -43,11 +43,6 @@ class Migration(migrations.Migration):
             name='cmsplugin_ptr',
             field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
-        migrations.AlterField(
-            model_name='picture',
-            name='float',
-            field=models.CharField(choices=[('left', 'Align left'), ('right', 'Align right'), ('left', 'Align center')], max_length=10, blank=True, help_text='Move image left, right or center.', null=True, verbose_name='side'),
-        ),
         migrations.RunPython(migrate_to_filer),
         migrations.RemoveField(
             model_name='picture',
