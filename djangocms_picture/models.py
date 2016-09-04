@@ -206,11 +206,6 @@ class Picture(CMSPlugin):
         if not width and height:
             width = int(height * PICTURE_RATIO)
 
-        print ""
-        print "##############"
-        print "width", width
-        print "height", height
-
         options = {
             'size': (width, height),
             'crop': crop,
