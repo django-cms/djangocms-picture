@@ -56,6 +56,30 @@ Configuration
 Note that the provided templates are very minimal by design. You are encouraged
 to adapt and override them to your project's requirements.
 
+This addon provides a ``default`` template for all instances. You can provide
+additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``
+setting::
+
+    DJANGOCMS_PICTURE_TEMPLATES = [
+        ('background', _('Background image')),
+    ]
+
+You'll need to create the `feature` folder inside ``templates/djangocms_picture/``
+otherwise you will get a *template does not exist* error. You can do this by
+copying the ``default`` folder inside that directory and renaming it to
+``background``.
+
+The above mentioned example is very helpful if you want to render a background
+image instead of a normal image. There is another variable available to support
+such a scenario::
+
+    DJANGOCMS_PICTURE_NESTING = True
+
+The default is ``False``. If set to ``True`` you will be able to add additional
+plugins inside the picture plugin. This is helpful if you want to create a
+container that hols a background image while adding additional content inside
+like text or icons.
+
 You can override the alignment styles through the following setting::
 
     DJANGOCMS_PICTURE_ALIGN = [

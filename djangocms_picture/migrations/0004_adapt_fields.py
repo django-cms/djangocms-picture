@@ -65,6 +65,11 @@ class Migration(migrations.Migration):
             name='external_picture',
             field=models.URLField(help_text='If provided, overrides the embedded image. Certain options such as cropping are not applicable for external images.', max_length=255, verbose_name='External image', blank=True),
         ),
+        migrations.AddField(
+            model_name='picture',
+            name='template',
+            field=models.CharField(default=b'default', max_length=255, verbose_name='Template', choices=[(b'default', 'Default')]),
+        ),
         migrations.RenameField(
             model_name='picture',
             old_name='float',

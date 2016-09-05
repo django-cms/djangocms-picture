@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
@@ -8,11 +9,15 @@ from .models import Picture
 from .forms import PictureForm
 
 
+# enable nesting of plugins inside the picture plugin
+PICTURE_NESTING = getattr(settings, 'DJANGOCMS_PICTURE_NESTING', False)
+
+
 class PicturePlugin(CMSPluginBase):
     model = Picture
     form = PictureForm
     name = _('Image')
-    render_template = 'djangocms_picture/picture.html'
+    allow_children = PICTURE_NESTING
     text_enabled = True
 
     fieldsets = [
@@ -25,6 +30,7 @@ class PicturePlugin(CMSPluginBase):
         (_('Advanced settings'), {
             'classes': ('collapse',),
             'fields': (
+                'template',
                 ('width', 'height'),
                 'alignment',
                 'caption_text',
@@ -48,6 +54,9 @@ class PicturePlugin(CMSPluginBase):
             )
         })
     ]
+
+    def get_render_template(self, context, instance, placeholder):
+        return 'djangocms_picture/{}/picture.html'.format(instance.template)
 
     def render(self, context, instance, placeholder):
         classes = ''

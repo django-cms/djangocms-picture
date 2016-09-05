@@ -40,12 +40,32 @@ LINK_TARGET = (
     ('_top', _('Delegate to top.')),
 )
 
+# Add additional choices through the ``settings.py``.
+def get_templates():
+    choices = getattr(
+        settings,
+        'DJANGOCMS_PICTURE_TEMPLATES',
+        [],
+    )
+    return choices
+
 
 @python_2_unicode_compatible
 class Picture(CMSPlugin):
     """
     Renders an image with the option of adding a link
     """
+    TEMPLATE_CHOICES = [
+        ('default', _('Default')),
+    ]
+
+    # The label will be displayed as help text in the structure board view.
+    template = models.CharField(
+        verbose_name=_('Template'),
+        choices=TEMPLATE_CHOICES + get_templates(),
+        default=TEMPLATE_CHOICES[0][0],
+        max_length=255,
+    )
     picture = FilerImageField(
         verbose_name=_('Image'),
         blank=True,
