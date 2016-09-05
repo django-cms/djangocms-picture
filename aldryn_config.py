@@ -15,10 +15,10 @@ class Form(forms.BaseForm):
         'The ratio used to calculate the missing width or height, default "1.618"',
         required=False,
     )
-    nesting = forms.BooleanField(
+    nesting = forms.CheckboxField(
         'Allow plugins to be nested inside the picture plugin.',
         required=False,
-        default=False,
+        initial=False,
     )
 
     def clean(self):

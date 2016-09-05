@@ -1,11 +1,11 @@
-================
-django CMS Image
-================
+==================
+django CMS Picture
+==================
 
 
 |pypi| |build| |coverage|
 
-**django CMS Image** is a plugin for `django CMS <http://django-cms.org>`_
+**django CMS Picture** is a plugin for `django CMS <http://django-cms.org>`_
 that allows you to add images on your site.
 
 This addon is compatible with `Aldryn <http://aldryn.com>`_ and is also available on the
@@ -69,36 +69,43 @@ otherwise you will get a *template does not exist* error. You can do this by
 copying the ``default`` folder inside that directory and renaming it to
 ``background``.
 
-The above mentioned example is very helpful if you want to render a background
-image instead of a normal image. There is another variable available to support
-such a scenario::
+Another setting is ``DJANGOCMS_PICTURE_NESTING``, which allows you to render an image
+as the background image of a container that also contains other content (text, icons
+and so on).
+::
 
     DJANGOCMS_PICTURE_NESTING = True
 
-The default is ``False``. If set to ``True`` you will be able to add additional
-plugins inside the picture plugin. This is helpful if you want to create a
-container that hols a background image while adding additional content inside
-like text or icons.
+will enable this (the default is ``False``). When set to ``True``, you'll be able to place additional
+plugins inside the picture plugin.
 
-You can override the alignment styles through the following setting::
+You can override alignment styles with ``DJANGOCMS_PICTURE_ALIGN``, for example::
 
     DJANGOCMS_PICTURE_ALIGN = [
         ('top', _('Top Aligned')),
     ]
 
-This will generate a class prefixing "align-". The above written example
-would result in ``class="align-top"``. Adding a ``class`` key to the image
+This will generate a class prefixed with ``align-``. The example above
+would produce a ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
 
-We are using the `golden ratio <https://en.wikipedia.org/wiki/golden_ratio>`_
-to calculate the width or height if any of the values are missing. You can
-override this using::
+You can use ``DJANGOCMS_PICTURE_RATIO`` to set the width/height ratio of images
+if these values are not set explicitly on the image::
 
     DJANGOCMS_PICTURE_RATIO = 1.618
 
-The system is first using the width or height provided by the *Thumbnail options*
-followed by *Autoscale* and finally the *Width* and *Height*. We recommend to
-set width or height values around a placeholder so *Autoscale* works best::
+We use the `golden ratio <https://en.wikipedia.org/wiki/golden_ratio>`_,
+approximately 1.618, as a default value for this.
+
+When working out sizes for the image, the system will use the following values,
+of preference:
+
+* the width or height set in the *Thumbnail options*
+* *Autoscale*
+* the *Width* and *Height*
+
+We recommend setting width or height values around a placeholder so
+when the plugin uses *Autoscale* it can discover them::
 
     {% with 720 as width and 480 as height %}
         {% placeholder content %}
