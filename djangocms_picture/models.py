@@ -222,9 +222,9 @@ class Picture(CMSPlugin):
         # golden ratio or fallback to the picture size
         if not height and width:
             height = int(width / PICTURE_RATIO)
-        if not width and height:
+        elif not width and height:
             width = int(height * PICTURE_RATIO)
-        if not width or not height:
+        elif not width and not height:
             width = self.picture.width
             height = self.picture.height
 
@@ -278,7 +278,7 @@ class Picture(CMSPlugin):
             message = ugettext('The cropping selection is not valid. '
                 'You cannot combine "{field_a}" with "{field_b}".')
             message = message.format(
-                field_a=self._meta.get_field(invalid_option_pair[0]),
-                field_b=self._meta.get_field(invalid_option_pair[1]),
+                field_a=self._meta.get_field(invalid_option_pair[0]).verbose_name,
+                field_b=self._meta.get_field(invalid_option_pair[1]).verbose_name,
             )
             raise ValidationError(message)

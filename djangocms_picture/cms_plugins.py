@@ -59,14 +59,12 @@ class PicturePlugin(CMSPluginBase):
         return 'djangocms_picture/{}/picture.html'.format(instance.template)
 
     def render(self, context, instance, placeholder):
-        classes = ''
         if instance.alignment:
-            classes += 'align-{} '.format(instance.alignment)
-        if 'class' in instance.attributes:
-            classes += '{} '.format(instance.attributes['class'])
-        # we actually want to modify the class in attributes
-        # this saves a simple if/else in the template
-        instance.attributes['class'] = classes
+            classes = instance.attributes_str.get('class', '')
+            classes += ' align-{}'.format(instance.alignment)
+            # Set the class attribute to include the alignment html class
+            # This is done to leverage the attributes_str property
+            instance.attributes['class'] = classes
         # assign link to a context variable to be performant
         context['picture_link'] = instance.get_link()
         context['picture_size'] = instance.get_size(
