@@ -18,7 +18,6 @@
     {% elif instance.use_no_cropping %}
         {{ instance.picture.url }}
     {% else %}
-        {# TODO thumbnail not rendered in #}
         {% thumbnail instance.picture picture_size.size crop=picture_size.crop upscale=picture_size.upscale subject_location=instance.picture.subject_location as thumbnail %}
         {{ thumbnail.url }}
     {% endif %}{% endspaceless %}"

@@ -196,7 +196,7 @@ class Picture(CMSPlugin):
     def get_short_description(self):
         if self.picture and self.picture.label:
             return self.picture.label
-        if self.link_page_id:
+        if self.link_url:
             return self.link_url
         return ugettext('<file is missing>')
 
@@ -219,11 +219,14 @@ class Picture(CMSPlugin):
             height = self.height
 
         # calculate height when not given according to the
-        # golden ratio
+        # golden ratio or fallback to the picture size
         if not height and width:
             height = int(width / PICTURE_RATIO)
         if not width and height:
             width = int(height * PICTURE_RATIO)
+        if not width or not height:
+            width = self.picture.width
+            height = self.picture.height
 
         options = {
             'size': (width, height),
