@@ -42,7 +42,10 @@ LINK_TARGET = (
 
 # Add additional choices through the ``settings.py``.
 def get_templates():
-    choices = getattr(
+    choices = [
+        ('default', _('Default')),
+    ]
+    choices += getattr(
         settings,
         'DJANGOCMS_PICTURE_TEMPLATES',
         [],
@@ -61,7 +64,7 @@ class Picture(CMSPlugin):
 
     template = models.CharField(
         verbose_name=_('Template'),
-        choices=TEMPLATE_CHOICES + get_templates(),
+        choices=get_templates(),
         default=TEMPLATE_CHOICES[0][0],
         max_length=255,
     )
@@ -167,7 +170,7 @@ class Picture(CMSPlugin):
     )
     # overrides all other options
     # throws validation error if other cropping options are selected
-    use_thumbnail = models.ForeignKey(
+    thumbnail_options = models.ForeignKey(
         ThumbnailOption,
         verbose_name=_('Thumbnail options'),
         blank=True,
@@ -193,7 +196,7 @@ class Picture(CMSPlugin):
     def get_short_description(self):
         if self.picture and self.picture.label:
             return self.picture.label
-        if self.link_url:
+        if self.link_page_id:
             return self.link_url
         return ugettext('<file is missing>')
 
@@ -203,14 +206,14 @@ class Picture(CMSPlugin):
         self.picture = oldinstance.picture
 
     def get_size(self, context, placeholder):
-        crop = self.use_crop or False
-        upscale = self.use_upscale or False
+        crop = self.use_crop
+        upscale = self.use_upscale
         # use field thumbnail settings
-        if self.use_thumbnail:
-            width = self.use_thumbnail.width
-            height = self.use_thumbnail.height
-            crop = self.use_thumbnail.crop
-            upscale = self.use_thumbnail.upscale
+        if self.thumbnail_options:
+            width = self.thumbnail_options.width
+            height = self.thumbnail_options.height
+            crop = self.thumbnail_options.crop
+            upscale = self.thumbnail_options.upscale
         elif self.use_automatic_scaling:
             width = context.get('width', None)
             height = context.get('height', None)
@@ -235,7 +238,7 @@ class Picture(CMSPlugin):
     def get_link(self):
         if self.link_url:
             return self.link_url
-        if self.link_page:
+        if self.link_page_id:
             return self.link_page.get_absolute_url(language=self.language)
         return False
 
@@ -256,12 +259,12 @@ class Picture(CMSPlugin):
         # list defines the disallowed options used in the ``clean`` method
         invalid_option_pairs = [
             ('use_automatic_scaling', 'use_no_cropping'),
-            ('use_automatic_scaling', 'use_thumbnail'),
+            ('use_automatic_scaling', 'thumbnail_options'),
             ('use_no_cropping', 'use_crop'),
             ('use_no_cropping', 'use_upscale'),
-            ('use_no_cropping', 'use_thumbnail'),
-            ('use_thumbnail', 'use_crop'),
-            ('use_thumbnail', 'use_upscale'),
+            ('use_no_cropping', 'thumbnail_options'),
+            ('thumbnail_options', 'use_crop'),
+            ('thumbnail_options', 'use_upscale'),
         ]
         # invalid_option_pairs
         invalid_option_pair = None
@@ -272,12 +275,10 @@ class Picture(CMSPlugin):
                 break
 
         if invalid_option_pair:
-            field_1 = self._meta.get_field(invalid_option_pair[0])
-            field_2 = self._meta.get_field(invalid_option_pair[1])
             message = ugettext('The cropping selection is not valid. '
-                'You cannot combine "{field_a}" with "{field_b}".'.format(
-                    field_a = field_1.verbose_name,
-                    field_b = field_2.verbose_name
-                )
+                'You cannot combine "{field_a}" with "{field_b}".')
+            message.format(
+                field_a=self._meta.get_field(invalid_option_pair[0]),
+                field_b=self._meta.get_field(invalid_option_pair[1])
             )
             raise ValidationError(message)

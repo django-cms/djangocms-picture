@@ -50,7 +50,7 @@ class PicturePlugin(CMSPluginBase):
             'fields': (
                 ('use_automatic_scaling', 'use_no_cropping'),
                 ('use_crop', 'use_upscale'),
-                'use_thumbnail',
+                'thumbnail_options',
             )
         })
     ]

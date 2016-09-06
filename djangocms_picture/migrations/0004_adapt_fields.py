@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='picture',
-            name='use_thumbnail',
+            name='thumbnail_options',
             field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, crop and upscale with the provided preset.', null=True, verbose_name='Thumbnail options'),
         ),
         migrations.AddField(

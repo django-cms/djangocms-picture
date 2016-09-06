@@ -2,6 +2,10 @@
 from aldryn_client import forms
 
 
+def split_and_strip(string):
+    return [item.strip() for item in string.split(',') if item]
+
+
 class Form(forms.BaseForm):
     templates = forms.CharField(
         'List of additional templates (comma separated)',
@@ -24,21 +28,32 @@ class Form(forms.BaseForm):
     def clean(self):
         data = super(Form, self).clean()
 
-        def split_and_strip(string):
-            return [item.strip() for item in string.split(',') if item]
+        # older versions of this addon had a bug where the values would be
+        # saved to settings.json as a list instead of a string.
+        if isinstance(data['templates'], list):
+            data['templates'] = ', '.join(data['templates'])
+        if isinstance(data['alignment'], list):
+            data['alignment'] = ', '.join(data['alignment'])
 
-        data['templates'] = split_and_strip(data['templates'])
-        data['alignment'] = split_and_strip(data['alignment'])
+        # prettify
+        data['templates'] = ', '.join(split_and_strip(data['templates']))
+        data['alignment'] = ', '.join(split_and_strip(data['alignment']))
         return data
 
     def to_settings(self, data, settings):
-        # validate aldryn settings
         if data['templates']:
-            settings['DJANGOCMS_PICTURE_TEMPLATES'] = [(item, item) for item in data['templates']]
+            settings['DJANGOCMS_PICTURE_TEMPLATES'] = [
+                (item, item)
+                for item in split_and_strip(data['templates'])
+            ]
         if data['alignment']:
-            settings['DJANGOCMS_PICTURE_ALIGN'] = [(item, item) for item in data['alignment']]
+            settings['DJANGOCMS_PICTURE_ALIGN'] = [
+                (item, item)
+                for item in split_and_strip(data['alignment'])
+            ]
         if data['ratio']:
             settings['DJANGOCMS_PICTURE_RATIO'] = data['ratio']
         if data['nesting']:
             settings['DJANGOCMS_PICTURE_NESTING'] = data['nesting']
+
         return settings
