@@ -205,7 +205,7 @@ class Picture(CMSPlugin):
         # the reference from the instance to the new plugin.
         self.picture = oldinstance.picture
 
-    def get_size(self, context, placeholder):
+    def get_size(self, width=None, height=None):
         crop = self.use_crop
         upscale = self.use_upscale
         # use field thumbnail settings
@@ -214,12 +214,9 @@ class Picture(CMSPlugin):
             height = self.thumbnail_options.height
             crop = self.thumbnail_options.crop
             upscale = self.thumbnail_options.upscale
-        elif self.use_automatic_scaling:
-            width = context.get('width', None)
-            height = context.get('height', None)
-        else:
-            width = self.width or None
-            height = self.height or None
+        elif not self.use_automatic_scaling:
+            width = self.width
+            height = self.height
 
         # calculate height when not given according to the
         # golden ratio
@@ -236,7 +233,7 @@ class Picture(CMSPlugin):
         return options
 
     def get_link(self):
-        if self.link_url_id:
+        if self.link_url:
             return self.link_url
         if self.link_page_id:
             return self.link_page.get_absolute_url(language=self.language)
@@ -277,8 +274,8 @@ class Picture(CMSPlugin):
         if invalid_option_pair:
             message = ugettext('The cropping selection is not valid. '
                 'You cannot combine "{field_a}" with "{field_b}".')
-            message.format(
+            message = message.format(
                 field_a=self._meta.get_field(invalid_option_pair[0]),
-                field_b=self._meta.get_field(invalid_option_pair[1])
+                field_b=self._meta.get_field(invalid_option_pair[1]),
             )
             raise ValidationError(message)

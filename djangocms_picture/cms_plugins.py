@@ -68,8 +68,11 @@ class PicturePlugin(CMSPluginBase):
         # this saves a simple if/else in the template
         instance.attributes['class'] = classes
         # assign link to a context variable to be performant
-        context['get_link'] = instance.get_link
-        context['get_size'] = instance.get_size(context, placeholder)
+        context['picture_link'] = instance.get_link()
+        context['picture_size'] = instance.get_size(
+            width=context.get('width'),
+            height=context.get('height'),
+        )
 
         return super(PicturePlugin, self).render(context, instance, placeholder)
 
