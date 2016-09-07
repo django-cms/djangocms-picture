@@ -60,8 +60,8 @@ class PicturePlugin(CMSPluginBase):
 
     def render(self, context, instance, placeholder):
         if instance.alignment:
-            classes = instance.attributes_str.get('class', '')
-            classes += ' align-{}'.format(instance.alignment)
+            classes = 'align-{} '.format(instance.alignment)
+            classes += instance.attributes.get('class', '')
             # Set the class attribute to include the alignment html class
             # This is done to leverage the attributes_str property
             instance.attributes['class'] = classes

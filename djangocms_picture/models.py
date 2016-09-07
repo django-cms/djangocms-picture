@@ -247,13 +247,15 @@ class Picture(CMSPlugin):
         if self.link_page_id and self.link_page:
             raise ValidationError(
                 ugettext('You have defined an external and internal link. '
-                    'Only one option is allowed.')
+                         'Only one option is allowed.')
             )
 
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
-            raise ValidationError('You need to add either an image or '
-                'an external link to an image.')
+            raise ValidationError(
+                ugettext('You need to add either an image or '
+                         'an external link to an image.')
+            )
 
         # certain cropping options do not work together, the following
         # list defines the disallowed options used in the ``clean`` method
