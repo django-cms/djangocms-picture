@@ -6,7 +6,9 @@ from djangocms_picture import __version__
 
 
 REQUIREMENTS = [
-    'django-cms>=3.3.1',
+    'django-cms>=3.2.0',
+    'django-filer>=1.2.4',
+    'djangocms-attributes-field>=0.1.1',
 ]
 
 
@@ -33,7 +35,7 @@ CLASSIFIERS = [
 setup(
     name='djangocms-picture',
     version=__version__,
-    description='Adds picture plugin to django CMS',
+    description='Adds an image plugin to django CMS',
     author='Divio AG',
     author_email='info@divio.ch',
     url='https://github.com/divio/djangocms-picture',
