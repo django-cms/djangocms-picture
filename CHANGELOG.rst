@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.0.0 (unreleased)
+1.0.0 (unreleased)
 ==================
 
 * Added additional settings
@@ -11,9 +11,10 @@ Changelog
 * Removed Django < 1.8 support
 * Removed ``alt`` attribute and migrated data to Filer
 * Adapted ``README.txt``
+* Updated translations
 
 
-1.0.0 (2016-03-04)
+0.2.0 (2015-02-12)
 ==================
 
 * Use this version for Django < 1.8 support

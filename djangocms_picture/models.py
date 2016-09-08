@@ -34,10 +34,10 @@ PICTURE_ALIGNMENT = getattr(
 PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
 
 LINK_TARGET = (
-    ('_blank', _('Open in new window.')),
-    ('_self', _('Open in same window.')),
-    ('_parent', _('Delegate to parent.')),
-    ('_top', _('Delegate to top.')),
+    ('_blank', _('Open in new window')),
+    ('_self', _('Open in same window')),
+    ('_parent', _('Delegate to parent')),
+    ('_top', _('Delegate to top')),
 )
 
 # Add additional choices through the ``settings.py``.
@@ -58,14 +58,10 @@ class Picture(CMSPlugin):
     """
     Renders an image with the option of adding a link
     """
-    TEMPLATE_CHOICES = [
-        ('default', _('Default')),
-    ]
-
     template = models.CharField(
         verbose_name=_('Template'),
         choices=get_templates(),
-        default=TEMPLATE_CHOICES[0][0],
+        default=get_templates()[0][0],
         max_length=255,
     )
     picture = FilerImageField(
@@ -149,7 +145,7 @@ class Picture(CMSPlugin):
     # ignores all other cropping options
     # throws validation error if other cropping options are selected
     use_no_cropping = models.BooleanField(
-        verbose_name=_('Use original image.'),
+        verbose_name=_('Use original image'),
         blank=True,
         default=False,
         help_text=_('Outputs the raw image without cropping.'),
@@ -194,10 +190,10 @@ class Picture(CMSPlugin):
         return str(self.pk)
 
     def get_short_description(self):
+        if self.external_picture:
+            return self.external_picture
         if self.picture and self.picture.label:
             return self.picture.label
-        if self.link_url:
-            return self.link_url
         return ugettext('<file is missing>')
 
     def copy_relations(self, oldinstance):
