@@ -34,10 +34,10 @@ PICTURE_ALIGNMENT = getattr(
 PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
 
 LINK_TARGET = (
-    ('_blank', _('Open in new window.')),
-    ('_self', _('Open in same window.')),
-    ('_parent', _('Delegate to parent.')),
-    ('_top', _('Delegate to top.')),
+    ('_blank', _('Open in new window')),
+    ('_self', _('Open in same window')),
+    ('_parent', _('Delegate to parent')),
+    ('_top', _('Delegate to top')),
 )
 
 # Add additional choices through the ``settings.py``.
@@ -58,14 +58,10 @@ class Picture(CMSPlugin):
     """
     Renders an image with the option of adding a link
     """
-    TEMPLATE_CHOICES = [
-        ('default', _('Default')),
-    ]
-
     template = models.CharField(
         verbose_name=_('Template'),
         choices=get_templates(),
-        default=TEMPLATE_CHOICES[0][0],
+        default=get_templates()[0][0],
         max_length=255,
     )
     picture = FilerImageField(
@@ -80,7 +76,7 @@ class Picture(CMSPlugin):
         blank=True,
         max_length=255,
         help_text=_('If provided, overrides the embedded image. '
-            'Certain options such as cropping are not applicable for external images.')
+            'Certain options such as cropping are not applicable to external images.')
     )
     width = models.PositiveIntegerField(
         verbose_name=_('Width'),
@@ -101,7 +97,7 @@ class Picture(CMSPlugin):
         choices=PICTURE_ALIGNMENT,
         blank=True,
         max_length=255,
-        help_text=_('Aligns the image to the selected option.'),
+        help_text=_('Aligns the image according to the selected option.'),
     )
     caption_text = models.TextField(
         verbose_name=_('Caption text'),
@@ -149,7 +145,7 @@ class Picture(CMSPlugin):
     # ignores all other cropping options
     # throws validation error if other cropping options are selected
     use_no_cropping = models.BooleanField(
-        verbose_name=_('Use original image.'),
+        verbose_name=_('Use original image'),
         blank=True,
         default=False,
         help_text=_('Outputs the raw image without cropping.'),
@@ -160,7 +156,7 @@ class Picture(CMSPlugin):
         verbose_name=_('Crop image'),
         blank=True,
         default=False,
-        help_text=_('Crops the image according to the given thumbnail settings in the template.'),
+        help_text=_('Crops the image according to the thumbnail settings provided in the template.'),
     )
     use_upscale = models.BooleanField(
         verbose_name=_('Upscale image'),
@@ -175,7 +171,7 @@ class Picture(CMSPlugin):
         verbose_name=_('Thumbnail options'),
         blank=True,
         null=True,
-        help_text=_('Overrides width, height, crop and upscale with the provided preset.'),
+        help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
     )
 
     # Add an app namespace to related_name to avoid field name clashes
@@ -194,10 +190,10 @@ class Picture(CMSPlugin):
         return str(self.pk)
 
     def get_short_description(self):
+        if self.external_picture:
+            return self.external_picture
         if self.picture and self.picture.label:
             return self.picture.label
-        if self.link_url:
-            return self.link_url
         return ugettext('<file is missing>')
 
     def copy_relations(self, oldinstance):
@@ -246,15 +242,15 @@ class Picture(CMSPlugin):
         # there can be only one link type
         if self.link_page_id and self.link_page:
             raise ValidationError(
-                ugettext('You have defined an external and internal link. '
+                ugettext('You have given both external and internal links. '
                          'Only one option is allowed.')
             )
 
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
             raise ValidationError(
-                ugettext('You need to add either an image or '
-                         'an external link to an image.')
+                ugettext('You need to add either an image, '
+                         'or a URL linking to an external image.')
             )
 
         # certain cropping options do not work together, the following
@@ -277,7 +273,7 @@ class Picture(CMSPlugin):
                 break
 
         if invalid_option_pair:
-            message = ugettext('The cropping selection is not valid. '
+            message = ugettext('Invalid cropping settings. '
                 'You cannot combine "{field_a}" with "{field_b}".')
             message = message.format(
                 field_a=self._meta.get_field(invalid_option_pair[0]).verbose_name,
