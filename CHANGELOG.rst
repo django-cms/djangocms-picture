@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-1.0.0 (unreleased)
+2.0.0 (unreleased)
 ==================
 
 * Added additional settings
@@ -14,7 +14,7 @@ Changelog
 * Updated translations
 
 
-0.2.0 (2015-02-12)
+1.0.0 (2016-03-04)
 ==================
 
 * Use this version for Django < 1.8 support
