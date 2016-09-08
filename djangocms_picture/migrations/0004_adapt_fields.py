@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='link_target',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[('_blank', 'Open in new window.'), ('_self', 'Open in same window.'), ('_parent', 'Delegate to parent.'), ('_top', 'Delegate to top.')]),
+            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[(b'_blank', 'Open in new window'), (b'_self', 'Open in same window'), (b'_parent', 'Delegate to parent'), (b'_top', 'Delegate to top')]),
         ),
         migrations.AddField(
             model_name='picture',
@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='use_no_cropping',
-            field=models.BooleanField(default=False, help_text='Outputs the raw image without cropping.', verbose_name='Use original image.'),
+            field=models.BooleanField(default=False, help_text='Outputs the raw image without cropping.', verbose_name='Use original image'),
         ),
         migrations.AddField(
             model_name='picture',
