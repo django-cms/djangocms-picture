@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='link_target',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[(b'_blank', 'Open in new window'), (b'_self', 'Open in same window'), (b'_parent', 'Delegate to parent'), (b'_top', 'Delegate to top')]),
+            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[('_blank', 'Open in new window'), ('_self', 'Open in same window'), ('_parent', 'Delegate to parent'), ('_top', 'Delegate to top')]),
         ),
         migrations.AddField(
             model_name='picture',
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='template',
-            field=models.CharField(default=b'default', max_length=255, verbose_name='Template', choices=[(b'default', 'Default')]),
+            field=models.CharField(default='default', max_length=255, verbose_name='Template', choices=[('default', 'Default')]),
         ),
         migrations.RenameField(
             model_name='picture',
