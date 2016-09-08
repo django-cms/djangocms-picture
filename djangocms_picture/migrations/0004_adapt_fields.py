@@ -109,7 +109,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='link_url',
-            field=models.URLField(default='', help_text='Wraps the image in a link to an external URL.', max_length=255, verbose_name='External URL', blank=True),
+            field=models.URLField(default='', help_text='Wraps the image in a link to an external URL.', max_length=2040, verbose_name='External URL', blank=True),
             preserve_default=False,
         ),
         migrations.AlterField(

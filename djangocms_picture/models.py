@@ -113,7 +113,7 @@ class Picture(CMSPlugin):
     link_url = models.URLField(
         verbose_name=_('External URL'),
         blank=True,
-        max_length=255,
+        max_length=2040,
         help_text=_('Wraps the image in a link to an external URL.'),
     )
     link_page = PageField(
