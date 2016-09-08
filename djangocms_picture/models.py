@@ -240,7 +240,7 @@ class Picture(CMSPlugin):
 
     def clean(self):
         # there can be only one link type
-        if self.link_page_id and self.link_page:
+        if self.link_url and self.link_page_id:
             raise ValidationError(
                 ugettext('You have given both external and internal links. '
                          'Only one option is allowed.')
