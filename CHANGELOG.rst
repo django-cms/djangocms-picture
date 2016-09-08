@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.0.0 (unreleased)
+2.0.0 (2016-09-08)
 ==================
 
 * Added additional settings
