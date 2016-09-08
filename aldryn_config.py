@@ -15,7 +15,7 @@ class Form(forms.BaseForm):
         'List of alignment types, default "left, center, right" (comma separated)',
         required=False,
     )
-    ratio = forms.NumberField(
+    ratio = forms.CharField(
         'The ratio used to calculate the missing width or height, default "1.618"',
         required=False,
     )
@@ -52,7 +52,7 @@ class Form(forms.BaseForm):
                 for item in split_and_strip(data['alignment'])
             ]
         if data['ratio']:
-            settings['DJANGOCMS_PICTURE_RATIO'] = data['ratio']
+            settings['DJANGOCMS_PICTURE_RATIO'] = float(data['ratio'])
         if data['nesting']:
             settings['DJANGOCMS_PICTURE_NESTING'] = data['nesting']
 
