@@ -76,7 +76,7 @@ class Picture(CMSPlugin):
         blank=True,
         max_length=255,
         help_text=_('If provided, overrides the embedded image. '
-            'Certain options such as cropping are not applicable for external images.')
+            'Certain options such as cropping are not applicable to external images.')
     )
     width = models.PositiveIntegerField(
         verbose_name=_('Width'),
@@ -97,7 +97,7 @@ class Picture(CMSPlugin):
         choices=PICTURE_ALIGNMENT,
         blank=True,
         max_length=255,
-        help_text=_('Aligns the image to the selected option.'),
+        help_text=_('Aligns the image according to the selected option.'),
     )
     caption_text = models.TextField(
         verbose_name=_('Caption text'),
@@ -156,7 +156,7 @@ class Picture(CMSPlugin):
         verbose_name=_('Crop image'),
         blank=True,
         default=False,
-        help_text=_('Crops the image according to the given thumbnail settings in the template.'),
+        help_text=_('Crops the image according to the thumbnail settings provided in the template.'),
     )
     use_upscale = models.BooleanField(
         verbose_name=_('Upscale image'),
@@ -171,7 +171,7 @@ class Picture(CMSPlugin):
         verbose_name=_('Thumbnail options'),
         blank=True,
         null=True,
-        help_text=_('Overrides width, height, crop and upscale with the provided preset.'),
+        help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
     )
 
     # Add an app namespace to related_name to avoid field name clashes
@@ -242,15 +242,15 @@ class Picture(CMSPlugin):
         # there can be only one link type
         if self.link_page_id and self.link_page:
             raise ValidationError(
-                ugettext('You have defined an external and internal link. '
+                ugettext('You have given both external and internal links. '
                          'Only one option is allowed.')
             )
 
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
             raise ValidationError(
-                ugettext('You need to add either an image or '
-                         'an external link to an image.')
+                ugettext('You need to add either an image, '
+                         'or a URL linking to an external image.')
             )
 
         # certain cropping options do not work together, the following
@@ -273,7 +273,7 @@ class Picture(CMSPlugin):
                 break
 
         if invalid_option_pair:
-            message = ugettext('The cropping selection is not valid. '
+            message = ugettext('Invalid cropping settings. '
                 'You cannot combine "{field_a}" with "{field_b}".')
             message = message.format(
                 field_a=self._meta.get_field(invalid_option_pair[0]).verbose_name,

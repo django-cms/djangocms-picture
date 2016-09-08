@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='use_crop',
-            field=models.BooleanField(default=False, help_text='Crops the image according to the given thumbnail settings in the template.', verbose_name='Crop image'),
+            field=models.BooleanField(default=False, help_text='Crops the image according to the thumbnail settings provided in the template.', verbose_name='Crop image'),
         ),
         migrations.AddField(
             model_name='picture',
@@ -58,12 +58,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='thumbnail_options',
-            field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, crop and upscale with the provided preset.', null=True, verbose_name='Thumbnail options'),
+            field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, and crop; scales up to the provided preset dimensions.', null=True, verbose_name='Thumbnail options'),
         ),
         migrations.AddField(
             model_name='picture',
             name='external_picture',
-            field=models.URLField(help_text='If provided, overrides the embedded image. Certain options such as cropping are not applicable for external images.', max_length=255, verbose_name='External image', blank=True),
+            field=models.URLField(help_text='If provided, overrides the embedded image. Certain options such as cropping are not applicable to external images.', max_length=255, verbose_name='External image', blank=True),
         ),
         migrations.AddField(
             model_name='picture',
@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='alignment',
-            field=models.CharField(default='', choices=[('left', 'Align left'), ('right', 'Align right'), ('left', 'Align center')], max_length=255, blank=True, help_text='Aligns the image to the selected option.', verbose_name='Alignment'),
+            field=models.CharField(default='', choices=[('left', 'Align left'), ('right', 'Align right'), ('left', 'Align center')], max_length=255, blank=True, help_text='Aligns the image according to the selected option.', verbose_name='Alignment'),
             preserve_default=False,
         ),
         migrations.AlterField(

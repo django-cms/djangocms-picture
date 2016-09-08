@@ -76,7 +76,7 @@ msgstr ""
 #: models.py:78
 msgid ""
 "If provided, overrides the embedded image. Certain options such as cropping "
-"are not applicable for external images."
+"are not applicable to external images."
 msgstr ""
 
 #: models.py:82
@@ -102,7 +102,7 @@ msgid "Alignment"
 msgstr ""
 
 #: models.py:100
-msgid "Aligns the image to the selected option."
+msgid "Aligns the image according to the selected option."
 msgstr ""
 
 #: models.py:103
@@ -163,7 +163,7 @@ msgstr ""
 
 #: models.py:159
 msgid ""
-"Crops the image according to the given thumbnail settings in the template."
+"Crops the image according to the thumbnail settings provided in the template."
 msgstr ""
 
 #: models.py:162
@@ -180,7 +180,7 @@ msgid "Thumbnail options"
 msgstr ""
 
 #: models.py:174
-msgid "Overrides width, height, crop and upscale with the provided preset."
+msgid "Overrides width, height, and crop; scales up to the provided preset dimensions."
 msgstr ""
 
 #: models.py:197
@@ -189,16 +189,16 @@ msgstr ""
 
 #: models.py:245
 msgid ""
-"You have defined an external and internal link. Only one option is allowed."
+"You have given both external and internal links. Only one option is allowed."
 msgstr ""
 
 #: models.py:252
-msgid "You need to add either an image or an external link to an image."
+msgid "You need to add either an image, or a URL linking to an external image."
 msgstr ""
 
 #: models.py:276
 #, python-brace-format
 msgid ""
-"The cropping selection is not valid. You cannot combine \"{field_a}\" with "
+"Invalid cropping settings. You cannot combine \"{field_a}\" with "
 "\"{field_b}\"."
 msgstr ""
