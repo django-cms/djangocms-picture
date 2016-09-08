@@ -1,86 +1,224 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-# Translators:
-# Hendrik Richter <hendrikr@gnome.org>, 2014
-# Patrick Lauber <patrick.lauber@divio.ch>, 2014
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: django-cms\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-06 14:10+0100\n"
-"PO-Revision-Date: 2014-10-03 15:50+0000\n"
-"Last-Translator: Hendrik Richter <hendrikr@gnome.org>\n"
-"Language-Team: German (http://www.transifex.com/projects/p/django-cms/language/de/)\n"
+"POT-Creation-Date: 2016-09-08 14:12+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: danielastreuli <daniela.streuli@divio.ch>, 2016\n"
+"Language-Team: German (https://www.transifex.com/divio/teams/58664/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: cms_plugins.py:12
-msgid "Picture"
+#: cms_plugins.py:19 models.py:68
+msgid "Image"
 msgstr "Bild"
 
-#: models.py:19
-msgid "left"
-msgstr "Links"
+#: cms_plugins.py:30
+msgid "Advanced settings"
+msgstr "Erweiterte Einstellungen"
 
-#: models.py:20
-msgid "right"
-msgstr "Rechts"
+#: cms_plugins.py:40
+msgid "Link settings"
+msgstr "Link-Einstellungen"
 
-#: models.py:21
-msgid "center"
-msgstr "Mittig"
-
-#: models.py:24
-msgid "image"
-msgstr "Bild"
-
-#: models.py:26
-msgid "link"
-msgstr "Link"
+#: cms_plugins.py:48
+msgid "Cropping settings"
+msgstr "Zuschneiden-Einstellungen"
 
 #: models.py:27
-msgid "If present, clicking on image will take user to link."
-msgstr "Falls vorhanden, führt den Benutzer ein Klick auf das Bild zum Link."
+msgid "Align left"
+msgstr "Links ausrichten"
 
-#: models.py:30
-msgid "page"
-msgstr "Seite"
+#: models.py:28
+msgid "Align right"
+msgstr "Rechts ausrichten"
 
-#: models.py:32
-msgid "If present, clicking on image will take user to specified page."
-msgstr "Falls vorhanden, führt den Benutzer ein Klick auf das Bild zur angegebenen Seite."
-
-#: models.py:36
-msgid "alternate text"
-msgstr "Alternativer Text"
+#: models.py:29
+msgid "Align center"
+msgstr "Zentriert ausrichten"
 
 #: models.py:37
+msgid "Open in new window"
+msgstr "In neuem Fenster öffnen"
+
+#: models.py:38
+msgid "Open in same window"
+msgstr "Im gleichen Fenster öffnen"
+
+#: models.py:39
+msgid "Delegate to parent"
+msgstr "Zum nächsten Fenster delegieren"
+
+#: models.py:40
+msgid "Delegate to top"
+msgstr "Zum obersten Fenster delegieren"
+
+#: models.py:46
+msgid "Default"
+msgstr "Standard"
+
+#: models.py:62
+msgid "Template"
+msgstr "Template"
+
+#: models.py:75
+msgid "External image"
+msgstr "Externes Bild"
+
+#: models.py:78
 msgid ""
-"Specifies an alternate text for an image, if the imagecannot be "
-"displayed.<br />Is also used by search enginesto classify the image."
-msgstr "Alternativ-Text für das Bild, wenn das Bild nicht angezeigt werden kann.<br />Dieser Text wird auch von Suchmaschinen verwendet um das Bild zu klassifizieren."
+"If provided, overrides the embedded image. Certain options such as cropping "
+"are not applicable to external images."
+msgstr ""
+"Überschreibt das vorhandene Bild, falls gegeben. Manche Optionen wie "
+"Zuschneiden sind für externe Bilder nicht verfügbar."
 
-#: models.py:42
-msgid "long description"
-msgstr "Lange Beschreibung"
+#: models.py:82
+msgid "Width"
+msgstr "Breite"
 
-#: models.py:43
-msgid "When user hovers above picture, this text will appear in a popup."
-msgstr "Wenn der Benutzer mit der Maus über as Bild fährt, dann erscheint dieser Text in einem Popup."
+#: models.py:85
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "Die Bildbreite als Zahl in Pixel. Beispiel: \"720\" und nicht \"720px\""
 
-#: models.py:47
-msgid "side"
+#: models.py:89
+msgid "Height"
+msgstr "Höhe"
+
+#: models.py:92
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "Die Bildhöhe als Zahl in Pixel. Beispiel: \"720\" und nicht \"720px\""
+
+#: models.py:96
+msgid "Alignment"
 msgstr "Ausrichtung"
 
-#: models.py:48
-msgid "Move image left, right or center."
-msgstr "Bild nach links, rechts oder in die Mitte verschieben."
+#: models.py:100
+msgid "Aligns the image according to the selected option."
+msgstr "Richtet das Bild an der ausgewählten Option aus."
 
-#: models.py:65
-msgid "You can enter a Link or a Page, but not both."
-msgstr "Sie können entweder einen Link oder eine Seite angeben, aber nicht beides."
+#: models.py:103
+msgid "Caption text"
+msgstr "Legendentext"
+
+#: models.py:105
+msgid "Provide a description, attribution, copyright or other information."
+msgstr ""
+"Angaben wie Beschreibung, Zuschreibung, Copyright oder andere Informationen."
+
+#: models.py:108
+msgid "Attributes"
+msgstr "Attribute"
+
+#: models.py:114
+msgid "External URL"
+msgstr "Externe URL"
+
+#: models.py:117
+msgid "Wraps the image in a link to an external URL."
+msgstr "Umschliesst das Bild mit einem Link zu einer externen URL."
+
+#: models.py:120
+msgid "Internal URL"
+msgstr "Interne URL"
+
+#: models.py:124
+msgid "Wraps the image in a link to an internal (page) URL."
+msgstr "Umschliesst das Bild mit einem Link zu einer internen (Seiten-) URL."
+
+#: models.py:127
+msgid "Link target"
+msgstr "Linkverweis"
+
+#: models.py:133
+msgid "Link attributes"
+msgstr "Linkattribute"
+
+#: models.py:140
+msgid "Automatic scaling"
+msgstr "Automatische Skalierung"
+
+#: models.py:143
+msgid "Uses the placeholder dimenstions to automatically calculate the size."
+msgstr ""
+"Nutzt die \"placeholder\" Dimensionen, um die Grösse automatisch zu "
+"berechnen."
+
+#: models.py:148
+msgid "Use original image"
+msgstr "Originalgrösse verwenden"
+
+#: models.py:151
+msgid "Outputs the raw image without cropping."
+msgstr "Gibt das RAW-Bild aus, ohne dieses zuzuschneiden."
+
+#: models.py:156
+msgid "Crop image"
+msgstr "Bild zuschneiden"
+
+#: models.py:159
+msgid ""
+"Crops the image according to the thumbnail settings provided in the "
+"template."
+msgstr ""
+"Schneidet das Bild entsprechend der Grösse der Thumbnail-Einstellungen in "
+"der Vorlage zu."
+
+#: models.py:162
+msgid "Upscale image"
+msgstr "Bild skalieren"
+
+#: models.py:165
+msgid ""
+"Upscales the image to the size of the thumbnail settings in the template."
+msgstr ""
+"Skaliert das Bild entsprechend der Grösse der Thumbnail-Einstellungen in der"
+" Vorlage."
+
+#: models.py:171
+msgid "Thumbnail options"
+msgstr "Thumbnail-Optionen"
+
+#: models.py:174
+msgid ""
+"Overrides width, height, and crop; scales up to the provided preset "
+"dimensions."
+msgstr ""
+"Überschreibt Breite, Höhe, Zuschneiden und Skalierung mit den gegebenen "
+"Voreinstellungen."
+
+#: models.py:197
+msgid "<file is missing>"
+msgstr "<datei nicht vorhanden>"
+
+#: models.py:245
+msgid ""
+"You have given both external and internal links. Only one option is allowed."
+msgstr ""
+"Es wurden ein externer und interner Link definiert. Nur eine Option ist "
+"möglich."
+
+#: models.py:252
+msgid ""
+"You need to add either an image, or a URL linking to an external image."
+msgstr ""
+"Es muss entweder ein Bild oder ein externer Link zu einem Bild hinzugefügt "
+"werden."
+
+#: models.py:276
+#, python-brace-format
+msgid ""
+"Invalid cropping settings. You cannot combine \"{field_a}\" with "
+"\"{field_b}\"."
+msgstr ""
+"Die Zuschnitts Auswahl ist nicht erlaubt. \"{field_a}\" und \"{field_b}\" "
+"können nicht kombiniert werden."

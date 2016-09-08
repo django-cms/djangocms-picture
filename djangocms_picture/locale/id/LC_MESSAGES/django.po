@@ -1,84 +1,206 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-# Translators:
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: django-cms\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-06 14:10+0100\n"
-"PO-Revision-Date: 2014-02-13 13:21+0000\n"
-"Last-Translator: Chive <kim@smuzey.ch>\n"
-"Language-Team: Indonesian (http://www.transifex.com/projects/p/django-cms/language/id/)\n"
+"POT-Creation-Date: 2016-09-08 14:12+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language-Team: Indonesian (https://www.transifex.com/divio/teams/58664/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: cms_plugins.py:12
-msgid "Picture"
+#: cms_plugins.py:19 models.py:68
+msgid "Image"
 msgstr ""
 
-#: models.py:19
-msgid "left"
+#: cms_plugins.py:30
+msgid "Advanced settings"
 msgstr ""
 
-#: models.py:20
-msgid "right"
+#: cms_plugins.py:40
+msgid "Link settings"
 msgstr ""
 
-#: models.py:21
-msgid "center"
-msgstr ""
-
-#: models.py:24
-msgid "image"
-msgstr ""
-
-#: models.py:26
-msgid "link"
+#: cms_plugins.py:48
+msgid "Cropping settings"
 msgstr ""
 
 #: models.py:27
-msgid "If present, clicking on image will take user to link."
+msgid "Align left"
 msgstr ""
 
-#: models.py:30
-msgid "page"
-msgstr "halaman"
-
-#: models.py:32
-msgid "If present, clicking on image will take user to specified page."
+#: models.py:28
+msgid "Align right"
 msgstr ""
 
-#: models.py:36
-msgid "alternate text"
+#: models.py:29
+msgid "Align center"
 msgstr ""
 
 #: models.py:37
+msgid "Open in new window"
+msgstr ""
+
+#: models.py:38
+msgid "Open in same window"
+msgstr ""
+
+#: models.py:39
+msgid "Delegate to parent"
+msgstr ""
+
+#: models.py:40
+msgid "Delegate to top"
+msgstr ""
+
+#: models.py:46
+msgid "Default"
+msgstr ""
+
+#: models.py:62
+msgid "Template"
+msgstr ""
+
+#: models.py:75
+msgid "External image"
+msgstr ""
+
+#: models.py:78
 msgid ""
-"Specifies an alternate text for an image, if the imagecannot be "
-"displayed.<br />Is also used by search enginesto classify the image."
+"If provided, overrides the embedded image. Certain options such as cropping "
+"are not applicable to external images."
 msgstr ""
 
-#: models.py:42
-msgid "long description"
+#: models.py:82
+msgid "Width"
 msgstr ""
 
-#: models.py:43
-msgid "When user hovers above picture, this text will appear in a popup."
+#: models.py:85
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
 
-#: models.py:47
-msgid "side"
+#: models.py:89
+msgid "Height"
 msgstr ""
 
-#: models.py:48
-msgid "Move image left, right or center."
+#: models.py:92
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
 
-#: models.py:65
-msgid "You can enter a Link or a Page, but not both."
+#: models.py:96
+msgid "Alignment"
+msgstr ""
+
+#: models.py:100
+msgid "Aligns the image according to the selected option."
+msgstr ""
+
+#: models.py:103
+msgid "Caption text"
+msgstr ""
+
+#: models.py:105
+msgid "Provide a description, attribution, copyright or other information."
+msgstr ""
+
+#: models.py:108
+msgid "Attributes"
+msgstr ""
+
+#: models.py:114
+msgid "External URL"
+msgstr ""
+
+#: models.py:117
+msgid "Wraps the image in a link to an external URL."
+msgstr ""
+
+#: models.py:120
+msgid "Internal URL"
+msgstr ""
+
+#: models.py:124
+msgid "Wraps the image in a link to an internal (page) URL."
+msgstr ""
+
+#: models.py:127
+msgid "Link target"
+msgstr ""
+
+#: models.py:133
+msgid "Link attributes"
+msgstr ""
+
+#: models.py:140
+msgid "Automatic scaling"
+msgstr ""
+
+#: models.py:143
+msgid "Uses the placeholder dimenstions to automatically calculate the size."
+msgstr ""
+
+#: models.py:148
+msgid "Use original image"
+msgstr ""
+
+#: models.py:151
+msgid "Outputs the raw image without cropping."
+msgstr ""
+
+#: models.py:156
+msgid "Crop image"
+msgstr ""
+
+#: models.py:159
+msgid ""
+"Crops the image according to the thumbnail settings provided in the "
+"template."
+msgstr ""
+
+#: models.py:162
+msgid "Upscale image"
+msgstr ""
+
+#: models.py:165
+msgid ""
+"Upscales the image to the size of the thumbnail settings in the template."
+msgstr ""
+
+#: models.py:171
+msgid "Thumbnail options"
+msgstr ""
+
+#: models.py:174
+msgid ""
+"Overrides width, height, and crop; scales up to the provided preset "
+"dimensions."
+msgstr ""
+
+#: models.py:197
+msgid "<file is missing>"
+msgstr ""
+
+#: models.py:245
+msgid ""
+"You have given both external and internal links. Only one option is allowed."
+msgstr ""
+
+#: models.py:252
+msgid ""
+"You need to add either an image, or a URL linking to an external image."
+msgstr ""
+
+#: models.py:276
+#, python-brace-format
+msgid ""
+"Invalid cropping settings. You cannot combine \"{field_a}\" with "
+"\"{field_b}\"."
 msgstr ""

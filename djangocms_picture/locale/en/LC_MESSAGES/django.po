@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 10:27+0200\n"
+"POT-Creation-Date: 2016-09-08 14:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -180,7 +180,9 @@ msgid "Thumbnail options"
 msgstr ""
 
 #: models.py:174
-msgid "Overrides width, height, and crop; scales up to the provided preset dimensions."
+msgid ""
+"Overrides width, height, and crop; scales up to the provided preset "
+"dimensions."
 msgstr ""
 
 #: models.py:197
