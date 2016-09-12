@@ -220,7 +220,7 @@ class Picture(CMSPlugin):
             height = int(width / PICTURE_RATIO)
         elif not width and height:
             width = int(height * PICTURE_RATIO)
-        elif not width and not height:
+        elif not width and not height and self.picture:
             width = self.picture.width
             height = self.picture.height
 
