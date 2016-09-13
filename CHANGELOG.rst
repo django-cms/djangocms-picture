@@ -9,7 +9,7 @@ Changelog
 * Fixes an issue where external images throw an ``AttributeError``
 
 
-2.0.0 (2016-09-08)
+2.0.0 (2016-08-09)
 ==================
 
 * Added additional settings
