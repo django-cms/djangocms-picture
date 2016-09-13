@@ -3,10 +3,10 @@ Changelog
 =========
 
 
-2.0.1 (unreleased)
+2.0.1 (2016-13-09)
 ==================
 
-* Fixes an issue where external images throw an ``AttributeError``
+* Fixes an issue where images throw an ``AttributeError``
 
 
 2.0.0 (2016-08-09)
