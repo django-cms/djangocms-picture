@@ -87,6 +87,16 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='picture',
+            name='width',
+            field=models.PositiveIntegerField(help_text='The image width as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
+        ),
+        migrations.AlterField(
+            model_name='picture',
+            name='height',
+            field=models.PositiveIntegerField(help_text='The image height as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
+        ),
+        migrations.AlterField(
+            model_name='picture',
             name='link_page',
             field=cms.models.fields.PageField(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='cms.Page', help_text='Wraps the image in a link to an internal (page) URL.', null=True, verbose_name='Internal URL'),
         ),

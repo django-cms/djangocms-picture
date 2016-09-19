@@ -23,14 +23,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='', choices=[('left', 'Align left'), ('right', 'Align right'), ('left', 'Align center')], max_length=255, blank=True, help_text='Aligns the image according to the selected option.', verbose_name='Alignment'),
             preserve_default=False,
         ),
-        migrations.AlterField(
-            model_name='picture',
-            name='width',
-            field=models.PositiveIntegerField(help_text='The image width as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
-        ),
-        migrations.AlterField(
-            model_name='picture',
-            name='height',
-            field=models.PositiveIntegerField(help_text='The image height as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
-        ),
     ]
