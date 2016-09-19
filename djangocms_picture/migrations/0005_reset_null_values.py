@@ -9,8 +9,6 @@ def reset_null_values(apps, schema_editor):
     plugins = Picture.objects.all()
     plugins.filter(link_url__isnull=True).update(link_url='')
     plugins.filter(alignment__isnull=True).update(alignment='')
-    plugins.filter(width__isnull=True).update(width=0)
-    plugins.filter(height__isnull=True).update(height=0)
 
 
 class Migration(migrations.Migration):
