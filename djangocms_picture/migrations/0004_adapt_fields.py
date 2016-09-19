@@ -100,14 +100,4 @@ class Migration(migrations.Migration):
             name='cmsplugin_ptr',
             field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
-        migrations.AlterField(
-            model_name='picture',
-            name='width',
-            field=models.PositiveIntegerField(help_text='The image width as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Width', blank=True),
-        ),
-        migrations.AlterField(
-            model_name='picture',
-            name='height',
-            field=models.PositiveIntegerField(help_text='The image height as number in pixels. Example: "720" and not "720px".', null=True, verbose_name='Height', blank=True),
-        ),
     ]
