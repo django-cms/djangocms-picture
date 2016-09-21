@@ -24,7 +24,7 @@
     {% if instance.picture.alt %} alt="{{ instance.picture.alt }}"{% endif %}
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
     {% if instance.height %} height="{{ instance.height }}"{% endif %}
-    {{ instance.attributes_str }}
+    {{ instance.attributes_str }}
 >
 
 {# start render figure/figcaption #}
@@ -34,7 +34,7 @@
 {% endif %}
 {# end render figure/figcaption #}
 
-{% if instance.picture_link %}
+{% if picture_link %}
     </a>
 {% endif %}
 
