@@ -21,7 +21,7 @@
         {% thumbnail instance.picture picture_size.size crop=picture_size.crop upscale=picture_size.upscale subject_location=instance.picture.subject_location as thumbnail %}
         {{ thumbnail.url }}
     {% endif %}{% endspaceless %}"
-    {% if instance.picture.alt %} alt="{{ instance.picture.alt }}"{% endif %}
+    {% if instance.picture.default_alt_text and not instance.attributes.alt %} alt="{{ instance.picture.default_alt_text }}"{% endif %}
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
     {% if instance.height %} height="{{ instance.height }}"{% endif %}
     {{ instance.attributes_str }}
