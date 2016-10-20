@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+2.0.3 (unreleased)
+==================
+
+* Fixes an issue where placeholder params can be strings (#32)
+
+
 2.0.2 (2016-20-09)
 ==================
 

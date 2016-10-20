@@ -68,8 +68,8 @@ class PicturePlugin(CMSPluginBase):
         # assign link to a context variable to be performant
         context['picture_link'] = instance.get_link()
         context['picture_size'] = instance.get_size(
-            width=context.get('width'),
-            height=context.get('height'),
+            width=float(context.get('width')),
+            height=float(context.get('height')),
         )
 
         return super(PicturePlugin, self).render(context, instance, placeholder)
