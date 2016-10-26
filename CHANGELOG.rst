@@ -3,6 +3,14 @@ Changelog
 =========
 
 
+2.0.3 (unreleased)
+==================
+
+* Fixed an issue with ``picture_link`` not working as expected in the template
+* Fixed an issue where the alt text was not displayed appropriately
+* Fixed an issue where placeholder params can be strings (#32)
+
+
 2.0.2 (2016-20-09)
 ==================
 
