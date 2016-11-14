@@ -64,7 +64,7 @@ setting::
         ('background', _('Background image')),
     ]
 
-You'll need to create the `feature` folder inside ``templates/djangocms_picture/``
+You'll need to create the `background` folder inside ``templates/djangocms_picture/``
 otherwise you will get a *template does not exist* error. You can do this by
 copying the ``default`` folder inside that directory and renaming it to
 ``background``.
