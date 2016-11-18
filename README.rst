@@ -8,7 +8,7 @@ django CMS Picture
 **django CMS Picture** is a plugin for `django CMS <http://django-cms.org>`_
 that allows you to add images on your site.
 
-This addon is compatible with `Aldryn <http://aldryn.com>`_ and is also available on the
+This addon is compatible with `Divio Cloud <http://divio.com>`_ and is also available on the
 `django CMS Marketplace <https://marketplace.django-cms.org/en/addons/browse/djangocms-picture/>`_
 for easy installation.
 

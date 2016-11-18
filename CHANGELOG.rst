@@ -3,6 +3,16 @@ Changelog
 =========
 
 
+2.0.4 (unreleased)
+==================
+
+* Prevent changes to ``DJANGOCMS_PICTURE_XXX`` settings from requiring new
+  migrations
+* Changed naming of ``Aldryn`` to ``Divio Cloud``
+* Adapted testing infrastructure (tox/travis) to incorporate
+  django CMS 3.4 and dropped 3.2
+
+
 2.0.3 (2016-10-31)
 ==================
 

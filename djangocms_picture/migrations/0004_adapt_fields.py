@@ -6,6 +6,7 @@ import django.db.models.deletion
 import djangocms_attributes_field.fields
 import cms.models.fields
 import filer.fields.image
+from djangocms_picture.models import get_templates, LINK_TARGET
 
 
 class Migration(migrations.Migration):
@@ -33,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='link_target',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=[('_blank', 'Open in new window'), ('_self', 'Open in same window'), ('_parent', 'Delegate to parent'), ('_top', 'Delegate to top')]),
+            field=models.CharField(blank=True, max_length=255, verbose_name='Link target', choices=LINK_TARGET),
         ),
         migrations.AddField(
             model_name='picture',
@@ -68,7 +69,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='template',
-            field=models.CharField(default='default', max_length=255, verbose_name='Template', choices=[('default', 'Default')]),
+            field=models.CharField(default=get_templates()[0][0], max_length=255, verbose_name='Template', choices=get_templates()),
         ),
         migrations.RenameField(
             model_name='picture',
