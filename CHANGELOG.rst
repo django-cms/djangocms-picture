@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.0.4 (unreleased)
+2.0.4 (2016-11-22)
 ==================
 
 * Prevent changes to ``DJANGOCMS_PICTURE_XXX`` settings from requiring new
