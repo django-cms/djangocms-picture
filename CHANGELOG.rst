@@ -13,6 +13,7 @@ Changelog
   django CMS 3.4 and dropped 3.2
 * Fixed an issue when no image is set after deletion in django-filer
   (on_delete=SET_NULL)
+* Updated translations
 
 
 2.0.3 (2016-10-31)
