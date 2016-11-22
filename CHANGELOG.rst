@@ -11,6 +11,8 @@ Changelog
 * Changed naming of ``Aldryn`` to ``Divio Cloud``
 * Adapted testing infrastructure (tox/travis) to incorporate
   django CMS 3.4 and dropped 3.2
+* Fixed an issue when no image is set after deletion in django-filer
+  (on_delete=SET_NULL)
 
 
 2.0.3 (2016-10-31)
