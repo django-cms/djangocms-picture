@@ -26,7 +26,7 @@ PICTURE_ALIGNMENT = getattr(
     (
         ('left', _('Align left')),
         ('right', _('Align right')),
-        ('left', _('Align center')),
+        ('center', _('Align center')),
     )
 )
 
