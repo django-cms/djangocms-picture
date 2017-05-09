@@ -10,6 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-09-08 14:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Assma Buifruri <assma.buifruri@hotmail.com>, 2017\n"
 "Language-Team: French (https://www.transifex.com/divio/teams/58664/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,39 +20,39 @@ msgstr ""
 
 #: cms_plugins.py:19 models.py:68
 msgid "Image"
-msgstr ""
+msgstr "Image"
 
 #: cms_plugins.py:30
 msgid "Advanced settings"
-msgstr ""
+msgstr "Paramètres avancés"
 
 #: cms_plugins.py:40
 msgid "Link settings"
-msgstr ""
+msgstr "Pramètres lien"
 
 #: cms_plugins.py:48
 msgid "Cropping settings"
-msgstr ""
+msgstr "Paramètres de rognage"
 
 #: models.py:27
 msgid "Align left"
-msgstr ""
+msgstr "Aligner à gauche"
 
 #: models.py:28
 msgid "Align right"
-msgstr ""
+msgstr "Aligner à droite"
 
 #: models.py:29
 msgid "Align center"
-msgstr ""
+msgstr "Centrer"
 
 #: models.py:37
 msgid "Open in new window"
-msgstr ""
+msgstr "Ouvrir dans une nouvelle fenêtre"
 
 #: models.py:38
 msgid "Open in same window"
-msgstr ""
+msgstr "Ouvrir dans la fenêtre actuelle"
 
 #: models.py:39
 msgid "Delegate to parent"
@@ -63,15 +64,15 @@ msgstr ""
 
 #: models.py:46
 msgid "Default"
-msgstr ""
+msgstr "Défaut"
 
 #: models.py:62
 msgid "Template"
-msgstr ""
+msgstr "Modèle"
 
 #: models.py:75
 msgid "External image"
-msgstr ""
+msgstr "Image externe"
 
 #: models.py:78
 msgid ""
@@ -81,7 +82,7 @@ msgstr ""
 
 #: models.py:82
 msgid "Width"
-msgstr ""
+msgstr "Largeur"
 
 #: models.py:85
 msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
@@ -89,7 +90,7 @@ msgstr ""
 
 #: models.py:89
 msgid "Height"
-msgstr ""
+msgstr "Hauteur"
 
 #: models.py:92
 msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
@@ -97,27 +98,29 @@ msgstr ""
 
 #: models.py:96
 msgid "Alignment"
-msgstr ""
+msgstr "Alignement"
 
 #: models.py:100
 msgid "Aligns the image according to the selected option."
-msgstr ""
+msgstr "Aligner l'image selon l'option sélectionnée."
 
 #: models.py:103
 msgid "Caption text"
-msgstr ""
+msgstr "Légende"
 
 #: models.py:105
 msgid "Provide a description, attribution, copyright or other information."
 msgstr ""
+"Attribuez une description, une attribution, un copyright ou autre "
+"information"
 
 #: models.py:108
 msgid "Attributes"
-msgstr ""
+msgstr "Propriétés"
 
 #: models.py:114
 msgid "External URL"
-msgstr ""
+msgstr "URL externe"
 
 #: models.py:117
 msgid "Wraps the image in a link to an external URL."
@@ -125,7 +128,7 @@ msgstr ""
 
 #: models.py:120
 msgid "Internal URL"
-msgstr ""
+msgstr "URL interne"
 
 #: models.py:124
 msgid "Wraps the image in a link to an internal (page) URL."
@@ -133,15 +136,15 @@ msgstr ""
 
 #: models.py:127
 msgid "Link target"
-msgstr ""
+msgstr "Objectif du lien"
 
 #: models.py:133
 msgid "Link attributes"
-msgstr ""
+msgstr "Propriétés du lien"
 
 #: models.py:140
 msgid "Automatic scaling"
-msgstr ""
+msgstr "Mise à l'échelle automatique"
 
 #: models.py:143
 msgid "Uses the placeholder dimenstions to automatically calculate the size."
@@ -149,7 +152,7 @@ msgstr ""
 
 #: models.py:148
 msgid "Use original image"
-msgstr ""
+msgstr "Utilisez l'image originale"
 
 #: models.py:151
 msgid "Outputs the raw image without cropping."
@@ -157,17 +160,19 @@ msgstr ""
 
 #: models.py:156
 msgid "Crop image"
-msgstr ""
+msgstr "Rogner l'image"
 
 #: models.py:159
 msgid ""
 "Crops the image according to the thumbnail settings provided in the "
 "template."
 msgstr ""
+"Rogner l'image selon les paramètres de la miniature attribués dans le "
+"modèle."
 
 #: models.py:162
 msgid "Upscale image"
-msgstr ""
+msgstr "Améliorer l'image"
 
 #: models.py:165
 msgid ""
@@ -176,7 +181,7 @@ msgstr ""
 
 #: models.py:171
 msgid "Thumbnail options"
-msgstr ""
+msgstr "Paramètres de la miniature"
 
 #: models.py:174
 msgid ""
@@ -186,12 +191,14 @@ msgstr ""
 
 #: models.py:197
 msgid "<file is missing>"
-msgstr ""
+msgstr "<fichier manquant>"
 
 #: models.py:245
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
 msgstr ""
+"Vous avez introduit des liens internes et externes. Seule une option est "
+"autorisée."
 
 #: models.py:252
 msgid ""

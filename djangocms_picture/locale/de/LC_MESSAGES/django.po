@@ -96,7 +96,7 @@ msgstr "Höhe"
 
 #: models.py:92
 msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr "Die Bildhöhe als Zahl in Pixel. Beispiel: \"720\" und nicht \"720px\""
+msgstr "Die Bildhöhe als Zahl in Pixel. Beispiel: \"720\" und nicht \"720px\"."
 
 #: models.py:96
 msgid "Alignment"
