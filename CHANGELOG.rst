@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.0.5 (unreleased)
+2.0.5 (2017-05-09)
 ==================
 
 * Fixed an issue in ``DJANGOCMS_PICTURE_ALIGN`` where "Align center" pointed to
