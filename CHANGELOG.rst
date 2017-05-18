@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+2.0.6 (unreleased)
+==================
+
+* Fixed a misleading link to MDN inside code documentation
+
+
 2.0.5 (2017-05-09)
 ==================
 
