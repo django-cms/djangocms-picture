@@ -54,7 +54,7 @@ def get_templates():
 
 
 @python_2_unicode_compatible
-class Picture(CMSPlugin):
+class AbstractPicture(CMSPlugin):
     """
     Renders an image with the option of adding a link
     """
@@ -184,6 +184,9 @@ class Picture(CMSPlugin):
         parent_link=True,
     )
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         if self.picture and self.picture.label:
             return self.picture.label
@@ -280,3 +283,9 @@ class Picture(CMSPlugin):
                 field_b=self._meta.get_field(invalid_option_pair[1]).verbose_name,
             )
             raise ValidationError(message)
+
+
+class Picture(AbstractPicture):
+
+    class Meta:
+        abstract = False
