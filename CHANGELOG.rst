@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.0.6 (unreleased)
+2.0.6 (2017-10-12)
 ==================
 
 * Fixed a misleading link to MDN inside code documentation
