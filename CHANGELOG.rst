@@ -7,6 +7,7 @@ Changelog
 ==================
 
 * Fixed a misleading link to MDN inside code documentation
+* Abstract the link model so it can be extended by other addons
 
 
 2.0.5 (2017-05-09)
