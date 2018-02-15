@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='thumbnail_options',
-            field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, and crop; scales up to the provided preset dimensions.', null=True, verbose_name='Thumbnail options'),
+            field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, and crop; scales up to the provided preset dimensions.', null=True, verbose_name='Thumbnail options', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='picture',
@@ -109,6 +109,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE),
         ),
     ]

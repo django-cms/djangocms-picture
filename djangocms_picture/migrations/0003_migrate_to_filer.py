@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE),
         ),
         migrations.RunPython(migrate_to_filer),
         migrations.RemoveField(

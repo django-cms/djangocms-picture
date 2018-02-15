@@ -172,6 +172,7 @@ class AbstractPicture(CMSPlugin):
         blank=True,
         null=True,
         help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
+        on_delete=models.CASCADE,
     )
 
     # Add an app namespace to related_name to avoid field name clashes
@@ -182,6 +183,7 @@ class AbstractPicture(CMSPlugin):
         CMSPlugin,
         related_name='%(app_label)s_%(class)s',
         parent_link=True,
+        on_delete=models.CASCADE,
     )
 
     class Meta:
