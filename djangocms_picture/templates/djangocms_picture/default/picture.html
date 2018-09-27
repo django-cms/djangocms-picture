@@ -12,6 +12,11 @@
 {% endif %}
 {# end render figure/figcaption #}
 
+
+{% thumbnail instance.picture 400x400 crop=picture_size.crop upscale=picture_size.upscale subject_location=instance.picture.subject_location as thumb400 %}
+{% thumbnail instance.picture 600x600 crop=picture_size.crop upscale=picture_size.upscale subject_location=instance.picture.subject_location as thumb600 %}
+{% thumbnail instance.picture 800x800 crop=picture_size.crop upscale=picture_size.upscale subject_location=instance.picture.subject_location as thumb800 %}
+
 <img src="{% spaceless %}
     {% if instance.external_picture %}
         {{ instance.external_picture }}
@@ -25,6 +30,15 @@
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
     {% if instance.height %} height="{{ instance.height }}"{% endif %}
     {{ instance.attributes_str }}
+
+    srcset="{{ thumb400.url }} 400w,
+            {{ thumb600.url }} 600w,
+            {{ thumb800.url }} 800w
+           "
+    sizes="(max-width: 400px) 400px,
+           (max-width: 600px) 600px,
+           800px
+          "
 >
 
 {# start render figure/figcaption #}
