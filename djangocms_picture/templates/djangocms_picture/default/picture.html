@@ -53,10 +53,12 @@
     # http://easy-thumbnails.readthedocs.io/en/2.1/usage/#templates
     {{ instance.picture }}
     # Available variables:
+    {{ instance.img_src }}
     {{ instance.width }}
     {{ instance.height }}
     {{ instance.alignment }}
     {{ instance.caption_text }}
+    {{ instance.img_srcset_data }} or {{ img_srcset_data }}
     {{ instance.attributes_str }}
     # picture helper
     {{ instance.get_size }} or {{ picture_size }}

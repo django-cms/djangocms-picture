@@ -6,3 +6,4 @@
 .eggs/
 dist/
 build/
+local.sqlite

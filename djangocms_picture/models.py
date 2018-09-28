@@ -318,8 +318,9 @@ class AbstractPicture(CMSPlugin):
         picture_options = self.get_size(self.width, self.height)
         picture_width = picture_options['size'][0]
         thumbnail_options = {'crop': picture_options['crop']}
+        breakpoints = settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS
 
-        for size in filter(lambda x: x < picture_width, settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS):
+        for size in filter(lambda x: x < picture_width, breakpoints):
             thumbnail_options['size'] = (size, size)
             srcset.append((size, thumbnailer.get_thumbnail(thumbnail_options)))
 

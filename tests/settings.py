@@ -15,7 +15,17 @@ HELPER_SETTINGS = {
         }]
     },
     'LANGUAGE_CODE': 'en',
+    'THUMBNAIL_PROCESSORS': (
+        'easy_thumbnails.processors.colorspace',
+        'easy_thumbnails.processors.autocrop',
+        'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+        'easy_thumbnails.processors.filters',
+    ),
+    'THUMBNAIL_DEBUG': True,
+    'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES': True,
+    'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS': [576, 768, 992],
 }
+
 
 def run():
     from djangocms_helper import runner
