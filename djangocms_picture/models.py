@@ -14,6 +14,7 @@ from cms.models.fields import PageField
 
 from djangocms_attributes_field.fields import AttributesField
 
+from easy_thumbnails.files import get_thumbnailer
 from filer.models import ThumbnailOption
 from filer.fields.image import FilerImageField
 
@@ -58,6 +59,11 @@ class AbstractPicture(CMSPlugin):
     """
     Renders an image with the option of adding a link
     """
+    RESPONSIVE_IMAGE_CHOICES = (
+        ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
+        ('yes', _('Yes')),
+        ('no', _('No')),
+    )
     template = models.CharField(
         verbose_name=_('Template'),
         choices=get_templates(),
@@ -163,6 +169,16 @@ class AbstractPicture(CMSPlugin):
         blank=True,
         default=False,
         help_text=_('Upscales the image to the size of the thumbnail settings in the template.')
+    )
+    use_responsive_image = models.CharField(
+        verbose_name=_('Use responsive image'),
+        max_length=7,
+        choices=RESPONSIVE_IMAGE_CHOICES,
+        default=RESPONSIVE_IMAGE_CHOICES[0][0],
+        help_text=_(
+            'Uses responsive image technique to choose better image to display based upon screen viewport. '
+            'This configuration only applies to uploaded images (external pictures will not be affected). '
+        )
     )
     # overrides all other options
     # throws validation error if other cropping options are selected
@@ -283,6 +299,53 @@ class AbstractPicture(CMSPlugin):
                 field_b=self._meta.get_field(invalid_option_pair[1]).verbose_name,
             )
             raise ValidationError(message)
+
+    @property
+    def is_responsive_image(self):
+        if self.external_picture:
+            return False
+        if self.use_responsive_image == 'inherit':
+            return settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES
+        return self.use_responsive_image == 'yes'
+
+    @property
+    def img_srcset_data(self):
+        if not self.is_responsive_image:
+            return None
+
+        srcset = []
+        thumbnailer = get_thumbnailer(self.picture)
+        picture_options = self.get_size(self.width, self.height)
+        picture_width = picture_options['size'][0]
+        thumbnail_options = {'crop': picture_options['crop']}
+
+        for size in filter(lambda x: x < picture_width, settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS):
+            thumbnail_options['size'] = (size, size)
+            srcset.append((size, thumbnailer.get_thumbnail(thumbnail_options)))
+
+        return srcset
+
+    @property
+    def img_src(self):
+        if self.external_picture:
+            return self.external_picture
+        elif self.use_no_cropping:
+            return self.picture.url
+
+        picture_options = self.get_size(
+            width=float(self.width or 0),
+            height=float(self.height or 0),
+        )
+
+        thumbnail_options = {
+            'size': picture_options['size'],
+            'crop': picture_options['crop'],
+            'upscale': picture_options['upscale'],
+            'subject_location': self.picture.subject_location,
+        }
+
+        thumbnailer = get_thumbnailer(self.picture)
+        return thumbnailer.get_thumbnail(thumbnail_options).url
 
 
 class Picture(AbstractPicture):
