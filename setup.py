@@ -4,7 +4,6 @@ from setuptools import find_packages, setup
 
 from djangocms_picture import __version__
 
-
 REQUIREMENTS = [
     'django-cms>=3.2.0',
     'django-filer>=1.2.4',
@@ -25,6 +24,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     'Topic :: Software Development :: Libraries :: Application Frameworks',

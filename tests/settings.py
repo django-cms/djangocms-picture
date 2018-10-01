@@ -7,7 +7,6 @@ HELPER_SETTINGS = {
         'filer',
         'mptt',
     ],
-    'ALLOWED_HOSTS': ['localhost'],
     'CMS_LANGUAGES': {
         1: [{
             'code': 'en',
@@ -15,11 +14,19 @@ HELPER_SETTINGS = {
         }]
     },
     'LANGUAGE_CODE': 'en',
+    'THUMBNAIL_PROCESSORS': [
+        'easy_thumbnails.processors.colorspace',
+        'easy_thumbnails.processors.autocrop',
+        'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+        'easy_thumbnails.processors.filters',
+    ],
 }
+
 
 def run():
     from djangocms_helper import runner
     runner.cms('djangocms_picture')
+
 
 if __name__ == '__main__':
     run()

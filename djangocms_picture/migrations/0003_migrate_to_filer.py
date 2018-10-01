@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
 import django.db.models.deletion
 import filer.fields.image
+from django.db import migrations, models
 
 
 def migrate_to_filer(apps, schema_editor):
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, related_name='djangocms_picture_picture', auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
         migrations.RunPython(migrate_to_filer),
         migrations.RemoveField(
