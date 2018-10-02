@@ -6,3 +6,5 @@
 .eggs/
 dist/
 build/
+.coverage
+local.sqlite
