@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import cms.models.fields
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import djangocms_attributes_field.fields
-import cms.models.fields
 import filer.fields.image
-from djangocms_picture.models import get_templates, LINK_TARGET
+
+from djangocms_picture.models import LINK_TARGET, get_templates
 
 
 class Migration(migrations.Migration):
@@ -60,7 +61,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='thumbnail_options',
-            field=models.ForeignKey(blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, and crop; scales up to the provided preset dimensions.', null=True, verbose_name='Thumbnail options'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, blank=True, to='filer.ThumbnailOption', help_text='Overrides width, height, and crop; scales up to the provided preset dimensions.', null=True, verbose_name='Thumbnail options'),
         ),
         migrations.AddField(
             model_name='picture',
@@ -111,6 +112,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='cmsplugin_ptr',
-            field=models.OneToOneField(parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, related_name='djangocms_picture_picture', primary_key=True, serialize=False, to='cms.CMSPlugin'),
         ),
     ]
