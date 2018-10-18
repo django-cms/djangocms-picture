@@ -90,6 +90,11 @@ This will generate a class prefixed with ``align-``. The example above
 would produce a ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
 
+You can enable responsive images technique by setting``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
+In this case uploaded images will create thumbnails of different sizes according
+to ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS`` (which defaults to ``[576, 768, 992]``) and browser
+will be responsible for choosing the best image to display (based upon the screen viewport).
+
 You can use ``DJANGOCMS_PICTURE_RATIO`` to set the width/height ratio of images
 if these values are not set explicitly on the image::
 

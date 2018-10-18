@@ -2,210 +2,182 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 14:12+0200\n"
+"POT-Creation-Date: 2018-10-01 16:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Assma Buifruri <assma.buifruri@hotmail.com>, 2017\n"
 "Language-Team: French (https://www.transifex.com/divio/teams/58664/fr/)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: cms_plugins.py:19 models.py:68
 msgid "Image"
 msgstr "Image"
 
-#: cms_plugins.py:30
 msgid "Advanced settings"
 msgstr "Paramètres avancés"
 
-#: cms_plugins.py:40
 msgid "Link settings"
 msgstr "Pramètres lien"
 
-#: cms_plugins.py:48
 msgid "Cropping settings"
 msgstr "Paramètres de rognage"
 
-#: models.py:27
 msgid "Align left"
 msgstr "Aligner à gauche"
 
-#: models.py:28
 msgid "Align right"
 msgstr "Aligner à droite"
 
-#: models.py:29
 msgid "Align center"
 msgstr "Centrer"
 
-#: models.py:37
 msgid "Open in new window"
 msgstr "Ouvrir dans une nouvelle fenêtre"
 
-#: models.py:38
 msgid "Open in same window"
 msgstr "Ouvrir dans la fenêtre actuelle"
 
-#: models.py:39
 msgid "Delegate to parent"
 msgstr ""
 
-#: models.py:40
 msgid "Delegate to top"
 msgstr ""
 
-#: models.py:46
 msgid "Default"
 msgstr "Défaut"
 
-#: models.py:62
+msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
 msgid "Template"
 msgstr "Modèle"
 
-#: models.py:75
 msgid "External image"
 msgstr "Image externe"
 
-#: models.py:78
 msgid ""
 "If provided, overrides the embedded image. Certain options such as cropping "
 "are not applicable to external images."
 msgstr ""
 
-#: models.py:82
 msgid "Width"
 msgstr "Largeur"
 
-#: models.py:85
-msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
+msgid ""
+"The image width as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
 
-#: models.py:89
 msgid "Height"
 msgstr "Hauteur"
 
-#: models.py:92
-msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
+msgid ""
+"The image height as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
 
-#: models.py:96
 msgid "Alignment"
 msgstr "Alignement"
 
-#: models.py:100
 msgid "Aligns the image according to the selected option."
 msgstr "Aligner l'image selon l'option sélectionnée."
 
-#: models.py:103
 msgid "Caption text"
 msgstr "Légende"
 
-#: models.py:105
 msgid "Provide a description, attribution, copyright or other information."
 msgstr ""
-"Attribuez une description, une attribution, un copyright ou autre "
-"information"
+"Attribuez une description, une attribution, un copyright ou autre information"
 
-#: models.py:108
 msgid "Attributes"
 msgstr "Propriétés"
 
-#: models.py:114
 msgid "External URL"
 msgstr "URL externe"
 
-#: models.py:117
 msgid "Wraps the image in a link to an external URL."
 msgstr ""
 
-#: models.py:120
 msgid "Internal URL"
 msgstr "URL interne"
 
-#: models.py:124
 msgid "Wraps the image in a link to an internal (page) URL."
 msgstr ""
 
-#: models.py:127
 msgid "Link target"
 msgstr "Objectif du lien"
 
-#: models.py:133
 msgid "Link attributes"
 msgstr "Propriétés du lien"
 
-#: models.py:140
 msgid "Automatic scaling"
 msgstr "Mise à l'échelle automatique"
 
-#: models.py:143
 msgid "Uses the placeholder dimenstions to automatically calculate the size."
 msgstr ""
 
-#: models.py:148
 msgid "Use original image"
 msgstr "Utilisez l'image originale"
 
-#: models.py:151
 msgid "Outputs the raw image without cropping."
 msgstr ""
 
-#: models.py:156
 msgid "Crop image"
 msgstr "Rogner l'image"
 
-#: models.py:159
 msgid ""
-"Crops the image according to the thumbnail settings provided in the "
-"template."
+"Crops the image according to the thumbnail settings provided in the template."
 msgstr ""
-"Rogner l'image selon les paramètres de la miniature attribués dans le "
-"modèle."
+"Rogner l'image selon les paramètres de la miniature attribués dans le modèle."
 
-#: models.py:162
 msgid "Upscale image"
 msgstr "Améliorer l'image"
 
-#: models.py:165
 msgid ""
 "Upscales the image to the size of the thumbnail settings in the template."
 msgstr ""
 
-#: models.py:171
+msgid "Use responsive image"
+msgstr ""
+
+msgid ""
+"Uses responsive image technique to choose better image to display based upon "
+"screen viewport. This configuration only applies to uploaded images "
+"(external pictures will not be affected). "
+msgstr ""
+
 msgid "Thumbnail options"
 msgstr "Paramètres de la miniature"
 
-#: models.py:174
 msgid ""
 "Overrides width, height, and crop; scales up to the provided preset "
 "dimensions."
 msgstr ""
 
-#: models.py:197
 msgid "<file is missing>"
 msgstr "<fichier manquant>"
 
-#: models.py:245
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
 msgstr ""
 "Vous avez introduit des liens internes et externes. Seule une option est "
 "autorisée."
 
-#: models.py:252
-msgid ""
-"You need to add either an image, or a URL linking to an external image."
+msgid "You need to add either an image, or a URL linking to an external image."
 msgstr ""
 
-#: models.py:276
 #, python-brace-format
 msgid ""
 "Invalid cropping settings. You cannot combine \"{field_a}\" with "

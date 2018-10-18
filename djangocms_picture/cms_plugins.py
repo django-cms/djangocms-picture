@@ -31,6 +31,7 @@ class PicturePlugin(CMSPluginBase):
             'classes': ('collapse',),
             'fields': (
                 'template',
+                'use_responsive_image',
                 ('width', 'height'),
                 'alignment',
                 'caption_text',
@@ -71,6 +72,7 @@ class PicturePlugin(CMSPluginBase):
             width=float(context.get('width') or 0),
             height=float(context.get('height') or 0),
         )
+        context['img_srcset_data'] = instance.img_srcset_data
 
         return super(PicturePlugin, self).render(context, instance, placeholder)
 
