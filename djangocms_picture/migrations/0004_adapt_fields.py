@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import djangocms_attributes_field.fields
@@ -104,7 +105,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='picture',
-            field=filer.fields.image.FilerImageField(related_name='+', on_delete=django.db.models.deletion.SET_NULL, verbose_name='Image', blank=True, to='filer.Image', null=True),
+            field=filer.fields.image.FilerImageField(related_name='+', on_delete=django.db.models.deletion.SET_NULL,
+                                                     verbose_name='Image', blank=True, to=settings.FILER_IMAGE_MODEL, null=True),
         ),
         migrations.AlterField(
             model_name='picture',
