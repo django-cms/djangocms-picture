@@ -3,21 +3,18 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
-from django.db import models
-from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext, ugettext_lazy as _
-
 from cms.models import CMSPlugin
 from cms.models.fields import PageField
-
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext
+from django.utils.translation import ugettext_lazy as _
 from djangocms_attributes_field.fields import AttributesField
-
 from easy_thumbnails.files import get_thumbnailer
 from filer.models import ThumbnailOption
 from filer.fields.image import FilerImageField
-
 
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
@@ -188,6 +185,7 @@ class AbstractPicture(CMSPlugin):
         blank=True,
         null=True,
         help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
+        on_delete=models.CASCADE,
     )
 
     # Add an app namespace to related_name to avoid field name clashes
@@ -198,6 +196,7 @@ class AbstractPicture(CMSPlugin):
         CMSPlugin,
         related_name='%(app_label)s_%(class)s',
         parent_link=True,
+        on_delete=models.CASCADE,
     )
 
     class Meta:

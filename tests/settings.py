@@ -7,7 +7,6 @@ HELPER_SETTINGS = {
         'filer',
         'mptt',
     ],
-    'ALLOWED_HOSTS': ['localhost'],
     'CMS_LANGUAGES': {
         1: [{
             'code': 'en',
@@ -30,6 +29,7 @@ HELPER_SETTINGS = {
 def run():
     from djangocms_helper import runner
     runner.cms('djangocms_picture')
+
 
 if __name__ == '__main__':
     run()

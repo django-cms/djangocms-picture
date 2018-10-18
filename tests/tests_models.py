@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from djangocms_picture.models import Picture
 
-
 EXAMPLE_IMAGE = 'https://www.google.com/images/logo.png'
 
 
