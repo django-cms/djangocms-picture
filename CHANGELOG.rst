@@ -3,10 +3,12 @@ Changelog
 =========
 
 
-2.0.7 (unreleased)
+2.0.7 (2018-10-19)
 ==================
 
 * Add responsive image support
+* Add support for Django 2.0 and 2.1
+* Fix swappable filer image model support
 
 
 2.0.6 (2017-10-12)
