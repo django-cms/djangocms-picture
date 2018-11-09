@@ -304,7 +304,7 @@ class AbstractPicture(CMSPlugin):
         if self.external_picture:
             return False
         if self.use_responsive_image == 'inherit':
-            return settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES
+            return getattr(settings, 'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES', False)
         return self.use_responsive_image == 'yes'
 
     @property
@@ -317,7 +317,11 @@ class AbstractPicture(CMSPlugin):
         picture_options = self.get_size(self.width, self.height)
         picture_width = picture_options['size'][0]
         thumbnail_options = {'crop': picture_options['crop']}
-        breakpoints = settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS
+        breakpoints = getattr(
+            settings,
+            'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS',
+            [576, 768, 992],
+        )
 
         for size in filter(lambda x: x < picture_width, breakpoints):
             thumbnail_options['size'] = (size, size)
