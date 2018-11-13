@@ -2,6 +2,11 @@
 Changelog
 =========
 
+2.0.8 (2018-11-13)
+==================
+
+* Fixed an issue where default DJANGOCMS_PICTURE_RESPONSIVE_IMAGES was not in settings
+
 
 2.0.7 (2018-10-19)
 ==================
