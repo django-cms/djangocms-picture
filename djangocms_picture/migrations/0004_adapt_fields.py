@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='picture',
             name='use_automatic_scaling',
-            field=models.BooleanField(default=True, help_text='Uses the placeholder dimenstions to automatically calculate the size.', verbose_name='Automatic scaling'),
+            field=models.BooleanField(default=True, help_text='Uses the placeholder dimensions to automatically calculate the size.', verbose_name='Automatic scaling'),
         ),
         migrations.AddField(
             model_name='picture',

@@ -38,6 +38,12 @@ LINK_TARGET = (
     ('_top', _('Delegate to top')),
 )
 
+RESPONSIVE_IMAGE_CHOICES = (
+    ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
+    ('yes', _('Yes')),
+    ('no', _('No')),
+)
+
 # Add additional choices through the ``settings.py``.
 def get_templates():
     choices = [
@@ -56,11 +62,6 @@ class AbstractPicture(CMSPlugin):
     """
     Renders an image with the option of adding a link
     """
-    RESPONSIVE_IMAGE_CHOICES = (
-        ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
-        ('yes', _('Yes')),
-        ('no', _('No')),
-    )
     template = models.CharField(
         verbose_name=_('Template'),
         choices=get_templates(),
@@ -143,7 +144,7 @@ class AbstractPicture(CMSPlugin):
         verbose_name=_('Automatic scaling'),
         blank=True,
         default=True,
-        help_text=_('Uses the placeholder dimenstions to automatically calculate the size.'),
+        help_text=_('Uses the placeholder dimensions to automatically calculate the size.'),
     )
     # ignores all other cropping options
     # throws validation error if other cropping options are selected

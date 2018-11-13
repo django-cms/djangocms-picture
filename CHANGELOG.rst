@@ -2,6 +2,14 @@
 Changelog
 =========
 
+
+2.1.1 (unreleased)
+==================
+
+* Added reference variables to migrations
+* Fixed a text typo in models
+
+
 2.1.0 (2018-11-13)
 ==================
 
