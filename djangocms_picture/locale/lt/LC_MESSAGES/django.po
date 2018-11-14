@@ -2,74 +2,94 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Matas Dailyda <matas@dailyda.com>, 2017
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-01 16:12+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2018-11-13 18:18+0100\n"
+"PO-Revision-Date: 2016-09-07 09:44+0000\n"
 "Last-Translator: Matas Dailyda <matas@dailyda.com>, 2017\n"
 "Language-Team: Lithuanian (https://www.transifex.com/divio/teams/58664/lt/)\n"
-"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: lt\n"
+"Plural-Forms: nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);\n"
 
+#: cms_plugins.py:17 models.py:72
 msgid "Image"
 msgstr "Paveiksliukas"
 
+#: cms_plugins.py:28
 msgid "Advanced settings"
 msgstr "Išplėstiniai nustatymai"
 
+#: cms_plugins.py:39
 msgid "Link settings"
 msgstr "Nuorodos nustatymai"
 
+#: cms_plugins.py:47
 msgid "Cropping settings"
 msgstr "Apkirpimo nustatymai"
 
+#: models.py:25
 msgid "Align left"
 msgstr "Lygiuoti į kairę"
 
+#: models.py:26
 msgid "Align right"
 msgstr "Lygiuoti į dešinę"
 
+#: models.py:27
 msgid "Align center"
 msgstr "Lygiuoti į centrą"
 
+#: models.py:35
 msgid "Open in new window"
 msgstr "Atidaryti naujame lange"
 
+#: models.py:36
 msgid "Open in same window"
 msgstr "Atidaryti tame pačiame lange"
 
+#: models.py:37
 msgid "Delegate to parent"
 msgstr "Nukreipti į tėvinį elementą"
 
+#: models.py:38
 msgid "Delegate to top"
 msgstr "Nukreipti į viršų"
 
-msgid "Default"
-msgstr "Numatytasis"
-
+#: models.py:42
 msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
 msgstr ""
 
+#: models.py:43
 msgid "Yes"
 msgstr ""
 
+#: models.py:44
 msgid "No"
 msgstr ""
 
+#: models.py:50
+msgid "Default"
+msgstr "Numatytasis"
+
+#: models.py:66
 msgid "Template"
 msgstr "Šablonas"
 
+#: models.py:79
 msgid "External image"
 msgstr "Išorinis paveikslėlis"
 
+#: models.py:82
 msgid ""
 "If provided, overrides the embedded image. Certain options such as cropping "
 "are not applicable to external images."
@@ -77,115 +97,146 @@ msgstr ""
 "Jei suvesta, pakeičia prisegtą paveikslėlį. Kai kurie nustatymai kaip "
 "apkirpimas neveikia su išoriniais paveikslėliais."
 
+#: models.py:86
 msgid "Width"
 msgstr "Plotis"
 
-msgid ""
-"The image width as number in pixels. Example: \"720\" and not \"720px\"."
+#: models.py:89
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
-"Paveikslėlio plotis pikseliais kaip numeris. Pavyzdžiui: \"720\" o ne \"720px"
-"\"."
+"Paveikslėlio plotis pikseliais kaip numeris. Pavyzdžiui: \"720\" o ne "
+"\"720px\"."
 
+#: models.py:93
 msgid "Height"
 msgstr "Aukštis"
 
-msgid ""
-"The image height as number in pixels. Example: \"720\" and not \"720px\"."
+#: models.py:96
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
 "Paveikslėlio aukštis pikseliais kaip numeris. Pavyzdžiui: \"720\" o ne "
 "\"720px\"."
 
+#: models.py:100
 msgid "Alignment"
 msgstr "Lygiavimas"
 
+#: models.py:104
 msgid "Aligns the image according to the selected option."
 msgstr "Lygiuoją paveikslėlį pagal pasirinktą nustatymą."
 
+#: models.py:107
 msgid "Caption text"
 msgstr "Antraštės tekstas"
 
+#: models.py:109
 msgid "Provide a description, attribution, copyright or other information."
 msgstr "Įrašykite apibūdinimą, teisės turėtojo ar kitą informaciją."
 
+#: models.py:112
 msgid "Attributes"
 msgstr "Atributai"
 
+#: models.py:118
 msgid "External URL"
 msgstr "Išorinis URL"
 
+#: models.py:121
 msgid "Wraps the image in a link to an external URL."
 msgstr "Apgaubia paveikslėlį nuoroda į išorinį URL."
 
+#: models.py:124
 msgid "Internal URL"
 msgstr "Vidinis URL"
 
+#: models.py:128
 msgid "Wraps the image in a link to an internal (page) URL."
 msgstr "Apgaubia paveikslėlį nuoroda į vidinį (puslapį) URL."
 
+#: models.py:131
 msgid "Link target"
 msgstr "Nuorodos langas"
 
+#: models.py:137
 msgid "Link attributes"
 msgstr "Nuorodos atributai"
 
+#: models.py:144
 msgid "Automatic scaling"
 msgstr "Automatinis mastelis"
 
-msgid "Uses the placeholder dimenstions to automatically calculate the size."
+#: models.py:147
+msgid "Uses the placeholder dimensions to automatically calculate the size."
 msgstr ""
-"Naudoja rezervuotos vietos išmatavimus kad automatiškai apskaičiuoti dydį."
 
+#: models.py:152
 msgid "Use original image"
 msgstr "Naudoti originalų paveikslėlį"
 
+#: models.py:155
 msgid "Outputs the raw image without cropping."
 msgstr "Atvaizduoją gryną paveikslėlį, be apkirpimo."
 
+#: models.py:160
 msgid "Crop image"
 msgstr "Apkirpti paveikslėlį"
 
+#: models.py:163
 msgid ""
-"Crops the image according to the thumbnail settings provided in the template."
+"Crops the image according to the thumbnail settings provided in the "
+"template."
 msgstr "Apkerpa paveikslėli pagal miniatiūros nustatymus suvestus šablone."
 
+#: models.py:166
 msgid "Upscale image"
 msgstr "Išdidinti paveikslėlį"
 
+#: models.py:169
 msgid ""
 "Upscales the image to the size of the thumbnail settings in the template."
 msgstr ""
 "Išdidina paveikslėli tokiu dydžiu koks nurodytas miniatiūros nustatymuose "
 "suvestuose šablone."
 
+#: models.py:172
 msgid "Use responsive image"
 msgstr ""
 
+#: models.py:177
 msgid ""
-"Uses responsive image technique to choose better image to display based upon "
-"screen viewport. This configuration only applies to uploaded images "
+"Uses responsive image technique to choose better image to display based upon"
+" screen viewport. This configuration only applies to uploaded images "
 "(external pictures will not be affected). "
 msgstr ""
 
+#: models.py:185
 msgid "Thumbnail options"
 msgstr "Miniatiūros nustatymai"
 
+#: models.py:188
 msgid ""
 "Overrides width, height, and crop; scales up to the provided preset "
 "dimensions."
 msgstr ""
 "Perrašo plotį, aukštį ir apkerpa, išdidina pagal pateiktus išmatavimus."
 
+#: models.py:216
 msgid "<file is missing>"
 msgstr "<byla nerasta>"
 
+#: models.py:264
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
 msgstr ""
-"Jūs pateikėte ir išorinę ir vidinę nuorodas. Galimas tik vienas pasirinkimas."
+"Jūs pateikėte ir išorinę ir vidinę nuorodas. Galimas tik vienas "
+"pasirinkimas."
 
-msgid "You need to add either an image, or a URL linking to an external image."
+#: models.py:271
+msgid ""
+"You need to add either an image, or a URL linking to an external image."
 msgstr "Turite pridėti arba paveikslėli, arba nuorodą į išorinį paveikslėlį."
 
+#: models.py:295
 #, python-brace-format
 msgid ""
 "Invalid cropping settings. You cannot combine \"{field_a}\" with "

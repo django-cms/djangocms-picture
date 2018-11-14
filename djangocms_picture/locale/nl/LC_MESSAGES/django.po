@@ -2,73 +2,94 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Jasper Bok <jasper@fluxility.com>, 2016
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-01 16:12+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2018-11-13 18:18+0100\n"
+"PO-Revision-Date: 2016-09-07 09:44+0000\n"
 "Last-Translator: Jasper Bok <jasper@fluxility.com>, 2016\n"
 "Language-Team: Dutch (https://www.transifex.com/divio/teams/58664/nl/)\n"
-"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: cms_plugins.py:17 models.py:72
 msgid "Image"
 msgstr "Afbeelding"
 
+#: cms_plugins.py:28
 msgid "Advanced settings"
 msgstr "Geavanceerde instellingen"
 
+#: cms_plugins.py:39
 msgid "Link settings"
 msgstr "Linkinstellingen"
 
+#: cms_plugins.py:47
 msgid "Cropping settings"
 msgstr "Instellingen voor bijsnijden"
 
+#: models.py:25
 msgid "Align left"
 msgstr "Links uitlijnen"
 
+#: models.py:26
 msgid "Align right"
 msgstr "Rechts uitlijnen"
 
+#: models.py:27
 msgid "Align center"
 msgstr "Centreren"
 
+#: models.py:35
 msgid "Open in new window"
 msgstr "Open in nieuw venster"
 
+#: models.py:36
 msgid "Open in same window"
 msgstr "Open in huidig venster"
 
+#: models.py:37
 msgid "Delegate to parent"
 msgstr "Delegeren aan bovenliggend venster"
 
+#: models.py:38
 msgid "Delegate to top"
 msgstr "Delegeren aan hoogste venster"
 
-msgid "Default"
-msgstr "Standaard"
-
+#: models.py:42
 msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
 msgstr ""
 
+#: models.py:43
 msgid "Yes"
 msgstr ""
 
+#: models.py:44
 msgid "No"
 msgstr ""
 
+#: models.py:50
+msgid "Default"
+msgstr "Standaard"
+
+#: models.py:66
 msgid "Template"
 msgstr "Sjabloon"
 
+#: models.py:79
 msgid "External image"
 msgstr "Externe afbeelding"
 
+#: models.py:82
 msgid ""
 "If provided, overrides the embedded image. Certain options such as cropping "
 "are not applicable to external images."
@@ -77,103 +98,127 @@ msgstr ""
 "ingevoegde afbeelding. Bepaalde opties, zoals bijsnijden, zijn niet van "
 "toepassing op externe afbeeldingen."
 
+#: models.py:86
 msgid "Width"
 msgstr "Breedte"
 
-msgid ""
-"The image width as number in pixels. Example: \"720\" and not \"720px\"."
+#: models.py:89
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
-"De breedte van de afbeelding in pixels. Bijvoorbeeld: \"720\" en niet \"720px"
-"\"."
+"De breedte van de afbeelding in pixels. Bijvoorbeeld: \"720\" en niet "
+"\"720px\"."
 
+#: models.py:93
 msgid "Height"
 msgstr "Hoogte"
 
-msgid ""
-"The image height as number in pixels. Example: \"720\" and not \"720px\"."
+#: models.py:96
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
 msgstr ""
-"De hoogte van de afbeelding in pixels. Bijvoorbeeld: \"720\" en niet \"720px"
-"\"."
+"De hoogte van de afbeelding in pixels. Bijvoorbeeld: \"720\" en niet "
+"\"720px\"."
 
+#: models.py:100
 msgid "Alignment"
 msgstr "Uitlijning"
 
+#: models.py:104
 msgid "Aligns the image according to the selected option."
 msgstr "Lijnt de afbeelding uit afhankelijk van de geselecteerde optie."
 
+#: models.py:107
 msgid "Caption text"
 msgstr "Onderschrift"
 
+#: models.py:109
 msgid "Provide a description, attribution, copyright or other information."
 msgstr ""
 "Voeg een beschrijving, auteursrechtinformatie, bronvermelding of andere "
 "informatie toe."
 
+#: models.py:112
 msgid "Attributes"
 msgstr "Attributen"
 
+#: models.py:118
 msgid "External URL"
 msgstr "Externe URL"
 
+#: models.py:121
 msgid "Wraps the image in a link to an external URL."
 msgstr "Laat de afbeelding linken naar een externe URL."
 
+#: models.py:124
 msgid "Internal URL"
 msgstr "Interne URL"
 
+#: models.py:128
 msgid "Wraps the image in a link to an internal (page) URL."
 msgstr "Laat de afbeelding linken naar een interne URL."
 
+#: models.py:131
 msgid "Link target"
 msgstr "Venster"
 
+#: models.py:137
 msgid "Link attributes"
 msgstr "Linkattributen"
 
+#: models.py:144
 msgid "Automatic scaling"
 msgstr "Automatisch schalen"
 
-msgid "Uses the placeholder dimenstions to automatically calculate the size."
+#: models.py:147
+msgid "Uses the placeholder dimensions to automatically calculate the size."
 msgstr ""
-"Maak gebruik van de placeholder-afmetingen om automatisch de grootte te "
-"bepalen."
 
+#: models.py:152
 msgid "Use original image"
 msgstr "Gebruik originele afbeelding"
 
+#: models.py:155
 msgid "Outputs the raw image without cropping."
 msgstr "Gebruik de originele afbeelding zonder deze bij te snijden."
 
+#: models.py:160
 msgid "Crop image"
 msgstr "Snij afbeelding bij"
 
+#: models.py:163
 msgid ""
-"Crops the image according to the thumbnail settings provided in the template."
+"Crops the image according to the thumbnail settings provided in the "
+"template."
 msgstr ""
 "Snij de afbeelding bij aan de hand van de thumbnail-instellingen in het "
 "sjabloon."
 
+#: models.py:166
 msgid "Upscale image"
 msgstr "Schaal afbeelding op"
 
+#: models.py:169
 msgid ""
 "Upscales the image to the size of the thumbnail settings in the template."
 msgstr ""
 "Schaal de afdbeelding op aan de hand van thumbnail-instellingen in het "
 "sjabloon."
 
+#: models.py:172
 msgid "Use responsive image"
 msgstr ""
 
+#: models.py:177
 msgid ""
-"Uses responsive image technique to choose better image to display based upon "
-"screen viewport. This configuration only applies to uploaded images "
+"Uses responsive image technique to choose better image to display based upon"
+" screen viewport. This configuration only applies to uploaded images "
 "(external pictures will not be affected). "
 msgstr ""
 
+#: models.py:185
 msgid "Thumbnail options"
 msgstr "Thumbnail-opties"
 
+#: models.py:188
 msgid ""
 "Overrides width, height, and crop; scales up to the provided preset "
 "dimensions."
@@ -181,19 +226,24 @@ msgstr ""
 "Overschrijf breedte, hoogte en bijsnijden; Schaalt op tot de vooraf-"
 "opgegeven afmetingen."
 
+#: models.py:216
 msgid "<file is missing>"
 msgstr "<bestand ontbreekt>"
 
+#: models.py:264
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
 msgstr ""
 "U heeft zowel een interne als een externe link opgegeven. U kunt echter "
 "slechts één van beide gebruiken."
 
-msgid "You need to add either an image, or a URL linking to an external image."
+#: models.py:271
+msgid ""
+"You need to add either an image, or a URL linking to an external image."
 msgstr ""
 "U moet een afbeelding óf een URL naar een externe afbeelding toevoegen."
 
+#: models.py:295
 #, python-brace-format
 msgid ""
 "Invalid cropping settings. You cannot combine \"{field_a}\" with "
