@@ -3,6 +3,13 @@ Changelog
 =========
 
 
+2.1.2 (unreleased)
+==================
+
+* Fixed an issue creating a validation error on the alt attribute
+* Fixed an issue in the template adding a `}` after the `srcset`
+
+
 2.1.1 (2018-11-14)
 ==================
 
