@@ -7,7 +7,10 @@ Changelog
 ==================
 
 * Fixed an issue creating a validation error on the alt attribute
-* Fixed an issue in the template adding a `}` after the `srcset`
+* Fixed an issue in the template adding a ``}`` after the ``srcset``
+* Adapted test matrix for django CMS 3.4, 3.5, 3.6 as well as
+  Django 1.11, 2.0 and 2.1
+* Exclude ``tests`` folder from release build
 
 
 2.1.1 (2018-11-14)
