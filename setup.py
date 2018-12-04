@@ -43,6 +43,7 @@ setup(
     license='BSD',
     long_description=open('README.rst').read(),
     packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     include_package_data=True,
     zip_safe=False,
     install_requires=REQUIREMENTS,
