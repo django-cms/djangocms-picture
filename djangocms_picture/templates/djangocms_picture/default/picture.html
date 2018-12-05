@@ -14,7 +14,7 @@
 
 
 <img src="{{ instance.img_src }}"
-    {% if instance.picture.default_alt_text and not instance.attributes.alt %} alt="{{ instance.picture.default_alt_text }}"{% endif %}
+    alt="{% if instance.picture.default_alt_text and not instance.attributes.alt %}{{ instance.picture.default_alt_text }}{% endif %}"
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
     {% if instance.height %} height="{{ instance.height }}"{% endif %}
     {% if img_srcset_data %}
@@ -24,7 +24,6 @@
             {% endfor %}
             {{ instance.img_src }} {{ picture_size.size.0 }}w
         "
-                }
         sizes="
             {% for size, thumb in img_srcset_data %}
                 (max-width: {{ size }}px) {{ size }}px,
