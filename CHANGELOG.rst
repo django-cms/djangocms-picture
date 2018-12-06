@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.1.2 (2018-12-05)
+2.1.2 (2018-12-06)
 ==================
 
 * Fixed an issue creating a validation error on the alt attribute
