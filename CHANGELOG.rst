@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+2.1.3 (2018-12-12)
+==================
+
+* Added missing migration for Picture model
+
+
 2.1.2 (2018-12-06)
 ==================
 
