@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import cms.models.pluginmodel
 import django.db.models.deletion
 from django.db import migrations, models
+
+import cms.models.pluginmodel
 
 
 class Migration(migrations.Migration):

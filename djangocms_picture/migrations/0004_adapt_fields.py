@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import cms.models.fields
+import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
+
+import cms.models.fields
+
 import djangocms_attributes_field.fields
 import filer.fields.image
 

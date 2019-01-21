@@ -3,18 +3,23 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
-from cms.models import CMSPlugin
-from cms.models.fields import PageField
+from __future__ import unicode_literals
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+
+from cms.models import CMSPlugin
+from cms.models.fields import PageField
+
 from djangocms_attributes_field.fields import AttributesField
 from easy_thumbnails.files import get_thumbnailer
-from filer.models import ThumbnailOption
 from filer.fields.image import FilerImageField
+from filer.models import ThumbnailOption
+
 
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
@@ -43,6 +48,7 @@ RESPONSIVE_IMAGE_CHOICES = (
     ('yes', _('Yes')),
     ('no', _('No')),
 )
+
 
 # Add additional choices through the ``settings.py``.
 def get_templates():
@@ -79,22 +85,28 @@ class AbstractPicture(CMSPlugin):
         verbose_name=_('External image'),
         blank=True,
         max_length=255,
-        help_text=_('If provided, overrides the embedded image. '
-            'Certain options such as cropping are not applicable to external images.')
+        help_text=_(
+            'If provided, overrides the embedded image. '
+            'Certain options such as cropping are not applicable to external images.'
+        )
     )
     width = models.PositiveIntegerField(
         verbose_name=_('Width'),
         blank=True,
         null=True,
-        help_text=_('The image width as number in pixels. '
-            'Example: "720" and not "720px".'),
+        help_text=_(
+            'The image width as number in pixels. '
+            'Example: "720" and not "720px".'
+        ),
     )
     height = models.PositiveIntegerField(
         verbose_name=_('Height'),
         blank=True,
         null=True,
-        help_text=_('The image height as number in pixels. '
-            'Example: "720" and not "720px".'),
+        help_text=_(
+            'The image height as number in pixels. '
+            'Example: "720" and not "720px".'
+        ),
     )
     alignment = models.CharField(
         verbose_name=_('Alignment'),
@@ -261,15 +273,19 @@ class AbstractPicture(CMSPlugin):
         # there can be only one link type
         if self.link_url and self.link_page_id:
             raise ValidationError(
-                ugettext('You have given both external and internal links. '
-                         'Only one option is allowed.')
+                ugettext(
+                    'You have given both external and internal links. '
+                    'Only one option is allowed.'
+                )
             )
 
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
             raise ValidationError(
-                ugettext('You need to add either an image, '
-                         'or a URL linking to an external image.')
+                ugettext(
+                    'You need to add either an image, '
+                    'or a URL linking to an external image.'
+                )
             )
 
         # certain cropping options do not work together, the following
@@ -292,8 +308,10 @@ class AbstractPicture(CMSPlugin):
                 break
 
         if invalid_option_pair:
-            message = ugettext('Invalid cropping settings. '
-                'You cannot combine "{field_a}" with "{field_b}".')
+            message = ugettext(
+                'Invalid cropping settings. '
+                'You cannot combine "{field_a}" with "{field_b}".'
+            )
             message = message.format(
                 field_a=self._meta.get_field(invalid_option_pair[0]).verbose_name,
                 field_b=self._meta.get_field(invalid_option_pair[1]).verbose_name,
