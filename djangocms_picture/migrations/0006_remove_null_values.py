@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+
 from djangocms_picture.models import PICTURE_ALIGNMENT
 
 

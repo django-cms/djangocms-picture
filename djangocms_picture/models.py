@@ -3,18 +3,21 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
-from cms.models import CMSPlugin
-from cms.models.fields import PageField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+
+from cms.models import CMSPlugin
+from cms.models.fields import PageField
+
 from djangocms_attributes_field.fields import AttributesField
 from easy_thumbnails.files import get_thumbnailer
-from filer.models import ThumbnailOption
 from filer.fields.image import FilerImageField
+from filer.models import ThumbnailOption
+
 
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
