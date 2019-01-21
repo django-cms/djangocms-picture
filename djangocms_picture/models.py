@@ -306,8 +306,10 @@ class AbstractPicture(CMSPlugin):
                 break
 
         if invalid_option_pair:
-            message = ugettext('Invalid cropping settings. '
-                'You cannot combine "{field_a}" with "{field_b}".')
+            message = ugettext(
+                'Invalid cropping settings. '
+                'You cannot combine "{field_a}" with "{field_b}".'
+            )
             message = message.format(
                 field_a=self._meta.get_field(invalid_option_pair[0]).verbose_name,
                 field_b=self._meta.get_field(invalid_option_pair[1]).verbose_name,
