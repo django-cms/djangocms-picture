@@ -47,6 +47,7 @@ RESPONSIVE_IMAGE_CHOICES = (
     ('no', _('No')),
 )
 
+
 # Add additional choices through the ``settings.py``.
 def get_templates():
     choices = [
@@ -82,22 +83,28 @@ class AbstractPicture(CMSPlugin):
         verbose_name=_('External image'),
         blank=True,
         max_length=255,
-        help_text=_('If provided, overrides the embedded image. '
-            'Certain options such as cropping are not applicable to external images.')
+        help_text=_(
+            'If provided, overrides the embedded image. '
+            'Certain options such as cropping are not applicable to external images.'
+        )
     )
     width = models.PositiveIntegerField(
         verbose_name=_('Width'),
         blank=True,
         null=True,
-        help_text=_('The image width as number in pixels. '
-            'Example: "720" and not "720px".'),
+        help_text=_(
+            'The image width as number in pixels. '
+            'Example: "720" and not "720px".'
+        ),
     )
     height = models.PositiveIntegerField(
         verbose_name=_('Height'),
         blank=True,
         null=True,
-        help_text=_('The image height as number in pixels. '
-            'Example: "720" and not "720px".'),
+        help_text=_(
+            'The image height as number in pixels. '
+            'Example: "720" and not "720px".'
+        ),
     )
     alignment = models.CharField(
         verbose_name=_('Alignment'),
@@ -264,15 +271,19 @@ class AbstractPicture(CMSPlugin):
         # there can be only one link type
         if self.link_url and self.link_page_id:
             raise ValidationError(
-                ugettext('You have given both external and internal links. '
-                         'Only one option is allowed.')
+                ugettext(
+                    'You have given both external and internal links. '
+                    'Only one option is allowed.'
+                )
             )
 
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
             raise ValidationError(
-                ugettext('You need to add either an image, '
-                         'or a URL linking to an external image.')
+                ugettext(
+                    'You need to add either an image, '
+                    'or a URL linking to an external image.'
+                )
             )
 
         # certain cropping options do not work together, the following
