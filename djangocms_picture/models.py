@@ -3,6 +3,8 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
+from __future__ import unicode_literals
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
