@@ -352,8 +352,7 @@ class AbstractPicture(CMSPlugin):
     def img_src(self):
         if not self.picture:
             return ''
-
-        if self.external_picture:
+        elif self.external_picture:
             return self.external_picture
         elif self.use_no_cropping:
             return self.picture.url
