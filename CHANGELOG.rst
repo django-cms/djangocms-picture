@@ -6,7 +6,7 @@ Changelog
 2.1.4 (unreleased)
 ==================
 
-* Fixes an issue when the image reference is lost
+* Fixed an issue when the image reference is lost
 * Extended test matrix
 * Added isort and adapted imports
 * Adapted code base to align with other supported addons
