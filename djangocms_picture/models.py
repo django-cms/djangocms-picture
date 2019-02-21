@@ -344,7 +344,7 @@ class AbstractPicture(CMSPlugin):
 
         for size in filter(lambda x: x < picture_width, breakpoints):
             thumbnail_options['size'] = (size, size)
-            srcset.append((size, thumbnailer.get_thumbnail(thumbnail_options)))
+            srcset.append((int(size), thumbnailer.get_thumbnail(thumbnail_options)))
 
         return srcset
 
