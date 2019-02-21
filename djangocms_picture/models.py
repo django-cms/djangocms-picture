@@ -358,8 +358,8 @@ class AbstractPicture(CMSPlugin):
             return self.picture.url
 
         picture_options = self.get_size(
-            width=float(self.width or 0),
-            height=float(self.height or 0),
+            width=self.width or 0,
+            height=self.height or 0,
         )
 
         thumbnail_options = {
