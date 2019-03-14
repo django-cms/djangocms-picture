@@ -3,9 +3,11 @@ Changelog
 =========
 
 
-2.1.4 (unreleased)
+2.1.4 (2019-03-14)
 ==================
 
+* Fixed an issue where null=True was missing on models
+* Fixed an issue where breakpoints didn't allow integers
 * Fixed an issue when the image reference is lost
 * Extended test matrix
 * Added isort and adapted imports
