@@ -84,6 +84,7 @@ class AbstractPicture(CMSPlugin):
     external_picture = models.URLField(
         verbose_name=_('External image'),
         blank=True,
+        null=True,
         max_length=255,
         help_text=_(
             'If provided, overrides the embedded image. '
