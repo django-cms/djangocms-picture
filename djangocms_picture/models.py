@@ -84,6 +84,7 @@ class AbstractPicture(CMSPlugin):
     external_picture = models.URLField(
         verbose_name=_('External image'),
         blank=True,
+        null=True,
         max_length=255,
         help_text=_(
             'If provided, overrides the embedded image. '
@@ -112,12 +113,14 @@ class AbstractPicture(CMSPlugin):
         verbose_name=_('Alignment'),
         choices=PICTURE_ALIGNMENT,
         blank=True,
+        null=True,
         max_length=255,
         help_text=_('Aligns the image according to the selected option.'),
     )
     caption_text = models.TextField(
         verbose_name=_('Caption text'),
         blank=True,
+        null=True,
         help_text=_('Provide a description, attribution, copyright or other information.')
     )
     attributes = AttributesField(
@@ -129,6 +132,7 @@ class AbstractPicture(CMSPlugin):
     link_url = models.URLField(
         verbose_name=_('External URL'),
         blank=True,
+        null=True,
         max_length=2040,
         help_text=_('Wraps the image in a link to an external URL.'),
     )
