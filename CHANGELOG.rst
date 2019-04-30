@@ -3,9 +3,11 @@ Changelog
 =========
 
 
-2.1.4 (unreleased)
+2.2.0 (unreleased)
 ==================
 
+* Added support for Django 2.2 and django CMS 3.7
+* Removed support for Django 2.0
 * Fixed an issue when the image reference is lost
 * Extended test matrix
 * Added isort and adapted imports
