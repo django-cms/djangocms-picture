@@ -350,7 +350,7 @@ class AbstractPicture(CMSPlugin):
 
     @property
     def img_src(self):
-        if not self.picture:
+        if not self.picture and not self.external_picture:
             return ''
         elif self.external_picture:
             return self.external_picture
