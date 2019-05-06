@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+2.2.1 (unreleased)
+==================
+
+* Fixed a regression where external images are not shown anymore
+
+
 2.2.0 (2019-04-30)
 ==================
 
