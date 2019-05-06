@@ -350,10 +350,15 @@ class AbstractPicture(CMSPlugin):
 
     @property
     def img_src(self):
-        if not self.picture and not self.external_picture:
-            return ''
-        elif self.external_picture:
+        # we want the external picture to take priority by design
+        # please open a ticket if you disagree for an open discussion
+        if self.external_picture:
             return self.external_picture
+        # picture can be empty, for example when the image is removed from filer
+        # in this case we want to return an empty string to avoid #69
+        elif not self.picture:
+            return ''
+        # return the original, unmodified picture
         elif self.use_no_cropping:
             return self.picture.url
 
