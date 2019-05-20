@@ -328,7 +328,10 @@ class AbstractPicture(CMSPlugin):
 
     @property
     def img_srcset_data(self):
-        if not self.is_responsive_image:
+        # external picture takes priority by design
+        if self.external_picture:
+            return None
+        elif not (self.is_responsive_image and self.picture):
             return None
 
         srcset = []
