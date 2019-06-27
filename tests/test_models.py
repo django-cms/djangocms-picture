@@ -100,7 +100,7 @@ class PictureTestCase(BaseTestCase):
             'crop': False,
             'upscale': False,
         })
-        self.assertEqual(plugin.get_link(), "/en/help/")
+        self.assertIn("/en/", plugin.get_link())
         self.assertEqual(plugin.clean(), None)
         self.assertEqual(plugin.is_responsive_image, True)
         self.assertIsInstance(plugin.img_srcset_data[0][1], ThumbnailFile)
