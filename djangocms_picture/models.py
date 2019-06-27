@@ -263,9 +263,11 @@ class AbstractPicture(CMSPlugin):
         return options
 
     def get_link(self):
-        if self.link_url:
+        if self.external_picture:
+            return self.external_picture
+        elif self.link_url:
             return self.link_url
-        if self.link_page_id:
+        elif self.link_page_id:
             return self.link_page.get_absolute_url(language=self.language)
         return False
 
@@ -328,7 +330,7 @@ class AbstractPicture(CMSPlugin):
 
     @property
     def img_srcset_data(self):
-        if not self.is_responsive_image:
+        if not (self.picture and self.is_responsive_image):
             return None
 
         srcset = []
