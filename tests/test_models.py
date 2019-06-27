@@ -4,14 +4,11 @@ import os
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File as DjangoFile
-from django.test import TestCase
 
 from cms.api import add_plugin, create_page
 
 from djangocms_helper.base_test import BaseTestCase
-
 from easy_thumbnails.files import ThumbnailFile
-
 from filer.models.imagemodels import Image as FilerImage
 from filer.utils.compatibility import PILImage, PILImageDraw
 
@@ -121,7 +118,7 @@ class PictureTestCase(BaseTestCase):
         self.assertEqual(plugin.is_responsive_image, False)
         self.assertEqual(plugin.img_srcset_data, None)
 
-        # tests when internal and external pictures are supplied
+        # tests when internal and external pictures are supplied
         # external picture shall thake priority
         sample_file = self.create_filer_file()
         plugin = add_plugin(
