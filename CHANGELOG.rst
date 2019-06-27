@@ -3,6 +3,14 @@ Changelog
 =========
 
 
+2.2.2 (unreleased)
+==================
+
+* Fixes an issue where ``get_link`` doesn't return external picture
+* Fixes ``img_srcset_data`` being processed on an external picture
+* Added tests for the plugin itself
+
+
 2.2.1 (2019-05-06)
 ==================
 
