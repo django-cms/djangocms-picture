@@ -113,7 +113,6 @@ class AbstractPicture(CMSPlugin):
         verbose_name=_('Alignment'),
         choices=PICTURE_ALIGNMENT,
         blank=True,
-        null=True,
         max_length=255,
         help_text=_('Aligns the image according to the selected option.'),
     )

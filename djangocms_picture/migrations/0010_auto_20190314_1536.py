@@ -14,11 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='picture',
-            name='alignment',
-            field=models.CharField(blank=True, choices=[('left', 'Align left'), ('right', 'Align right'), ('center', 'Align center')], help_text='Aligns the image according to the selected option.', max_length=255, null=True, verbose_name='Alignment'),
-        ),
-        migrations.AlterField(
-            model_name='picture',
             name='caption_text',
             field=models.TextField(blank=True, help_text='Provide a description, attribution, copyright or other information.', null=True, verbose_name='Caption text'),
         ),
