@@ -1,4 +1,4 @@
-include LICENSE.txt
+include LICENSE
 include README.rst
 recursive-include djangocms_picture/templates *
 recursive-include djangocms_picture/locale *
