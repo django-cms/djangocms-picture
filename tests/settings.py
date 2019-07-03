@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from tempfile import mkdtemp
+
+
 HELPER_SETTINGS = {
     'INSTALLED_APPS': [
         'easy_thumbnails',
@@ -22,6 +25,7 @@ HELPER_SETTINGS = {
     'THUMBNAIL_DEBUG': True,
     'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES': True,
     'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS': [576, 768, 992],
+    'FILE_UPLOAD_TEMP_DIR': mkdtemp(),
 }
 
 

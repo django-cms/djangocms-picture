@@ -69,8 +69,8 @@ class PicturePlugin(CMSPluginBase):
         # assign link to a context variable to be performant
         context['picture_link'] = instance.get_link()
         context['picture_size'] = instance.get_size(
-            width=float(context.get('width') or 0),
-            height=float(context.get('height') or 0),
+            width=context.get('width') or 0,
+            height=context.get('height') or 0,
         )
         context['img_srcset_data'] = instance.img_srcset_data
 

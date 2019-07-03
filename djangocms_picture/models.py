@@ -266,9 +266,11 @@ class AbstractPicture(CMSPlugin):
         return options
 
     def get_link(self):
-        if self.link_url:
+        if self.external_picture:
+            return self.external_picture
+        elif self.link_url:
             return self.link_url
-        if self.link_page_id:
+        elif self.link_page_id:
             return self.link_page.get_absolute_url(language=self.language)
         return False
 
@@ -331,7 +333,7 @@ class AbstractPicture(CMSPlugin):
 
     @property
     def img_srcset_data(self):
-        if not self.is_responsive_image:
+        if not (self.picture and self.is_responsive_image):
             return None
 
         srcset = []
@@ -347,22 +349,27 @@ class AbstractPicture(CMSPlugin):
 
         for size in filter(lambda x: x < picture_width, breakpoints):
             thumbnail_options['size'] = (size, size)
-            srcset.append((size, thumbnailer.get_thumbnail(thumbnail_options)))
+            srcset.append((int(size), thumbnailer.get_thumbnail(thumbnail_options)))
 
         return srcset
 
     @property
     def img_src(self):
-        if not self.picture:
-            return ''
-        elif self.external_picture:
+        # we want the external picture to take priority by design
+        # please open a ticket if you disagree for an open discussion
+        if self.external_picture:
             return self.external_picture
+        # picture can be empty, for example when the image is removed from filer
+        # in this case we want to return an empty string to avoid #69
+        elif not self.picture:
+            return ''
+        # return the original, unmodified picture
         elif self.use_no_cropping:
             return self.picture.url
 
         picture_options = self.get_size(
-            width=float(self.width or 0),
-            height=float(self.height or 0),
+            width=self.width or 0,
+            height=self.height or 0,
         )
 
         thumbnail_options = {

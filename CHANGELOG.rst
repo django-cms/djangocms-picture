@@ -3,9 +3,25 @@ Changelog
 =========
 
 
-2.1.4 (unreleased)
+2.2.2 (unreleased)
 ==================
 
+* Fixes an issue where ``get_link`` doesn't return external picture
+* Fixes ``img_srcset_data`` being processed on an external picture
+* Added tests for the plugin itself
+
+
+2.2.1 (2019-05-06)
+==================
+
+* Fixed a regression where external images are not shown anymore
+
+
+2.2.0 (2019-04-30)
+==================
+
+* Added support for Django 2.2 and django CMS 3.7
+* Removed support for Django 2.0
 * Fixed an issue when the image reference is lost
 * Extended test matrix
 * Added isort and adapted imports
