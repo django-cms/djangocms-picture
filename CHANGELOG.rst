@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-2.3.0 (unreleased)
+2.3.0 (2019-07-09)
 ==================
 
 * Fixes an issue where ``get_link`` doesn't return external picture
