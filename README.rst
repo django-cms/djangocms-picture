@@ -75,8 +75,7 @@ copying the ``default`` folder inside that directory and renaming it to
 
 Another setting is ``DJANGOCMS_PICTURE_NESTING``, which allows you to render an image
 as the background image of a container that also contains other content (text, icons
-and so on).
-::
+and so on). ::
 
     DJANGOCMS_PICTURE_NESTING = True
 
@@ -120,8 +119,8 @@ when the plugin uses *Autoscale* it can discover them::
         {% placeholder content %}
     {% endwith %}
 
-Further configuration can be achieved through
-`django Filer <https://django-filer.readthedocs.io/en/latest/settings.html>`_.
+Further configuration can be achieved through the
+`django Filer settings <https://django-filer.readthedocs.io/en/latest/settings.html>`_.
 
 
 Running Tests
