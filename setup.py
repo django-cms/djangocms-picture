@@ -6,8 +6,8 @@ from djangocms_picture import __version__
 
 
 REQUIREMENTS = [
-    'django-cms>=3.4.5',
-    'django-filer>=1.3.0',
+    # 'django-cms>=3.4.5',
+    'django-filer>=1.5.0',
     'djangocms-attributes-field>=0.4.0',
     'easy_thumbnails',
 ]
