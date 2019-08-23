@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from cms.api import add_plugin, create_page
+from cms.api import create_page
 
 from filer.models import ThumbnailOption
 from easy_thumbnails.files import ThumbnailFile
@@ -122,7 +122,7 @@ class PictureModelTestCase(TestCase):
         instance.external_picture = None
         self.assertEqual(instance.get_link(), "http://www.divio.com")
         instance.link_url = None
-        self.assertEqual(instance.get_link(), "/en/help/")
+        self.assertEqual(instance.get_link(), self.page.get_absolute_url())
         instance.link_page = None
         self.assertFalse(instance.get_link())
 
@@ -138,7 +138,18 @@ class PictureModelTestCase(TestCase):
         # img_srcset_data
         self.assertIsNone(instance.img_srcset_data)
         instance.external_picture = None
-        # self.assertEqual(
-        #     instance.img_srcset_data,
-        #     "",
-        # )
+        self.assertIsInstance(
+            instance.img_srcset_data[0][1],
+            ThumbnailFile,
+        )
+
+        # img_src
+        instance.external_picture = self.external_picture
+        self.assertEqual(instance.img_src, self.external_picture)
+        instance.external_picture = None
+        self.assertIn(
+            "/media/filer_public_thumbnails/filer_public/",
+            instance.img_src,
+        )
+        instance.picture = None
+        self.assertEqual(instance.img_src, "")
