@@ -58,8 +58,5 @@ class PicturePluginsTestCase(CMSTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(request_url)
 
-        from html5print import HTMLBeautifier
-        print(HTMLBeautifier.beautify(response.content, 2))
-
         # self.assertContains(response, 'img alt=""')
         self.assertContains(response, 'src="/media/filer_public_thumbnails/filer_public')
