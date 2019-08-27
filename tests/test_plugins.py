@@ -59,7 +59,6 @@ class PicturePluginsTestCase(CMSTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(request_url)
 
-        # self.assertContains(response, 'img alt=""')
         self.assertContains(response, 'src="/media/filer_public_thumbnails/filer_public')
 
         # test that alignment is added
@@ -77,5 +76,4 @@ class PicturePluginsTestCase(CMSTestCase):
         with self.login_user_context(self.superuser):
             response = self.client.get(request_url)
 
-        # self.assertContains(response, 'img alt=""')
         self.assertContains(response, 'align-right')

@@ -93,7 +93,7 @@ class PictureModelTestCase(TestCase):
             instance.clean()  # You need to add an image
         instance.external_picture = self.external_picture
         instance.clean()
-        # test invalid option pairs
+        # test invalid option pairs
         instance.use_automatic_scaling = True
         instance.use_no_cropping = True
         with self.assertRaises(ValidationError):
@@ -162,7 +162,7 @@ class PictureModelTestCase(TestCase):
     def test_is_responsive_image(self):
         instance = self.picture
         self.assertTrue(instance.is_responsive_image)
-        instance.use_responsive_image = RESPONSIVE_IMAGE_CHOICES[2][0]  # no
+        instance.use_responsive_image = RESPONSIVE_IMAGE_CHOICES[2][0]
         self.assertFalse(instance.is_responsive_image)
         instance.external_picture = self.external_picture
         self.assertFalse(instance.is_responsive_image)
@@ -178,7 +178,7 @@ class PictureModelTestCase(TestCase):
 
     def test_img_src(self):
         instance = self.picture
-        # thumbnail is generated
+        # thumbnail is generated
         self.assertIn(
             "/media/filer_public_thumbnails/filer_public/",
             instance.img_src,
