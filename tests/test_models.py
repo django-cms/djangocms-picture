@@ -78,11 +78,27 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(str(instance), "1")
         self.assertEqual(instance.get_short_description(), "<file is missing>")
         self.assertIsNone(instance.copy_relations(instance))
-        # clean
+
+    def test_clean(self):
+        # test when internal and external links are given
+        instance = self.picture
         with self.assertRaises(ValidationError):
             instance.clean()  # either external or internal link is allowed
         instance.link_url = None
-        instance.picture = get_filer_image()  # also an image needs to be defined
+        instance.clean()
+        # test when image is missing
+        instance.picture = None
+        instance.external_picture = None
+        with self.assertRaises(ValidationError):
+            instance.clean()  # You need to add an image
+        instance.external_picture = self.external_picture
+        instance.clean()
+        # test invalid option pairs
+        instance.use_automatic_scaling = True
+        instance.use_no_cropping = True
+        with self.assertRaises(ValidationError):
+            instance.clean()  # invalid option pair given
+        instance.use_no_cropping = False
         instance.clean()
 
     def test_get_size(self):
@@ -101,15 +117,32 @@ class PictureModelTestCase(TestCase):
             instance.get_size(),
             {"size": (800, 600), "crop": True, "upscale": True},
         )
+        # test different size outputs
+        self.assertEqual(
+            instance.get_size(width=1000),
+            {'size': (1000, 618), 'crop': True, 'upscale': True},
+        )
+        self.assertEqual(
+            instance.get_size(height=1000),
+            {'size': (1618, 1000), 'crop': True, 'upscale': True},
+        )
+        self.assertEqual(
+            instance.get_size(width=1000, height=1000),
+            {'size': (1000, 1000), 'crop': True, 'upscale': True},
+        )
+        instance.use_automatic_scaling = False
+        self.assertEqual(
+            instance.get_size(),
+            {'size': (720, 480), 'crop': True, 'upscale': True},
+        )
         # setup thumbnail options
-        thumbnail = ThumbnailOption.objects.create(
+        instance.thumbnail_options = ThumbnailOption.objects.create(
             name="example",
             width=200,
             height=200,
             crop=False,
             upscale=False,
         )
-        instance.thumbnail_options = thumbnail
         self.assertEqual(
             instance.get_size(),
             {'size': (200, 200), 'crop': False, 'upscale': False},
@@ -126,30 +159,37 @@ class PictureModelTestCase(TestCase):
         instance.link_page = None
         self.assertFalse(instance.get_link())
 
-    def test_model_properties(self):
-        # is_responsive_image
+    def test_is_responsive_image(self):
         instance = self.picture
         self.assertTrue(instance.is_responsive_image)
-        instance.use_responsive_image = RESPONSIVE_IMAGE_CHOICES[0][0]
-        self.assertTrue(instance.is_responsive_image)
+        instance.use_responsive_image = RESPONSIVE_IMAGE_CHOICES[2][0]  # no
+        self.assertFalse(instance.is_responsive_image)
         instance.external_picture = self.external_picture
         self.assertFalse(instance.is_responsive_image)
 
-        # img_srcset_data
-        self.assertIsNone(instance.img_srcset_data)
-        instance.external_picture = None
+    def test_img_srcset_data(self):
+        instance = self.picture
         self.assertIsInstance(
             instance.img_srcset_data[0][1],
             ThumbnailFile,
         )
-
-        # img_src
         instance.external_picture = self.external_picture
-        self.assertEqual(instance.img_src, self.external_picture)
-        instance.external_picture = None
+        self.assertIsNone(instance.img_srcset_data)
+
+    def test_img_src(self):
+        instance = self.picture
+        # thumbnail is generated
         self.assertIn(
             "/media/filer_public_thumbnails/filer_public/",
             instance.img_src,
         )
+        # no thumbnail is generated
+        instance.use_no_cropping = True
+        self.assertIn(
+            "/media/filer_public/",
+            instance.img_src,
+        )
         instance.picture = None
         self.assertEqual(instance.img_src, "")
+        instance.external_picture = self.external_picture
+        self.assertEqual(instance.img_src, self.external_picture)

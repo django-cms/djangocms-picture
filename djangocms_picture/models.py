@@ -21,23 +21,6 @@ from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
 
 
-# use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
-PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
-
-LINK_TARGET = (
-    ('_blank', _('Open in new window')),
-    ('_self', _('Open in same window')),
-    ('_parent', _('Delegate to parent')),
-    ('_top', _('Delegate to top')),
-)
-
-RESPONSIVE_IMAGE_CHOICES = (
-    ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
-    ('yes', _('Yes')),
-    ('no', _('No')),
-)
-
-
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
 def get_alignment():
@@ -64,6 +47,26 @@ def get_templates():
         [],
     )
     return choices
+
+
+# use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
+PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
+
+# required for backwards compability
+PICTURE_ALIGNMENT = get_alignment()
+
+LINK_TARGET = (
+    ('_blank', _('Open in new window')),
+    ('_self', _('Open in same window')),
+    ('_parent', _('Delegate to parent')),
+    ('_top', _('Delegate to top')),
+)
+
+RESPONSIVE_IMAGE_CHOICES = (
+    ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
+    ('yes', _('Yes')),
+    ('no', _('No')),
+)
 
 
 @python_2_unicode_compatible
