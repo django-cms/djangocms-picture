@@ -23,31 +23,17 @@ from filer.models import ThumbnailOption
 
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
-PICTURE_ALIGNMENT = getattr(
-    settings,
-    'DJANGOCMS_PICTURE_ALIGN',
-    (
-        ('left', _('Align left')),
-        ('right', _('Align right')),
-        ('center', _('Align center')),
+def get_alignment():
+    alignment = getattr(
+        settings,
+        'DJANGOCMS_PICTURE_ALIGN',
+        (
+            ('left', _('Align left')),
+            ('right', _('Align right')),
+            ('center', _('Align center')),
+        )
     )
-)
-
-# use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
-PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
-
-LINK_TARGET = (
-    ('_blank', _('Open in new window')),
-    ('_self', _('Open in same window')),
-    ('_parent', _('Delegate to parent')),
-    ('_top', _('Delegate to top')),
-)
-
-RESPONSIVE_IMAGE_CHOICES = (
-    ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
-    ('yes', _('Yes')),
-    ('no', _('No')),
-)
+    return alignment
 
 
 # Add additional choices through the ``settings.py``.
@@ -61,6 +47,26 @@ def get_templates():
         [],
     )
     return choices
+
+
+# use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
+PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
+
+# required for backwards compability
+PICTURE_ALIGNMENT = get_alignment()
+
+LINK_TARGET = (
+    ('_blank', _('Open in new window')),
+    ('_self', _('Open in same window')),
+    ('_parent', _('Delegate to parent')),
+    ('_top', _('Delegate to top')),
+)
+
+RESPONSIVE_IMAGE_CHOICES = (
+    ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
+    ('yes', _('Yes')),
+    ('no', _('No')),
+)
 
 
 @python_2_unicode_compatible
@@ -111,7 +117,7 @@ class AbstractPicture(CMSPlugin):
     )
     alignment = models.CharField(
         verbose_name=_('Alignment'),
-        choices=PICTURE_ALIGNMENT,
+        choices=get_alignment(),
         blank=True,
         max_length=255,
         help_text=_('Aligns the image according to the selected option.'),

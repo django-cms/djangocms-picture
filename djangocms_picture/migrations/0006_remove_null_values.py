@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
-from djangocms_picture.models import PICTURE_ALIGNMENT
+from djangocms_picture.models import get_alignment
 
 
 class Migration(migrations.Migration):
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='picture',
             name='alignment',
-            field=models.CharField(default='', choices=PICTURE_ALIGNMENT, max_length=255, blank=True, help_text='Aligns the image according to the selected option.', verbose_name='Alignment'),
+            field=models.CharField(default='', choices=get_alignment(), max_length=255, blank=True, help_text='Aligns the image according to the selected option.', verbose_name='Alignment'),
             preserve_default=False,
         ),
     ]
