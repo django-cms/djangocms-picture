@@ -5,11 +5,11 @@ from django.test import TestCase
 
 from cms.api import create_page
 
-from filer.models import ThumbnailOption
 from easy_thumbnails.files import ThumbnailFile
+from filer.models import ThumbnailOption
 
 from djangocms_picture.models import (
-    Picture, PICTURE_RATIO, LINK_TARGET, RESPONSIVE_IMAGE_CHOICES,
+    LINK_TARGET, PICTURE_RATIO, RESPONSIVE_IMAGE_CHOICES, Picture,
     get_alignment, get_templates,
 )
 

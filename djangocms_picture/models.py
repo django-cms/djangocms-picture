@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 
@@ -19,6 +18,7 @@ from djangocms_attributes_field.fields import AttributesField
 from easy_thumbnails.files import get_thumbnailer
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
+from six import python_2_unicode_compatible
 
 
 # add setting for picture alignment, renders a class or inline styles
