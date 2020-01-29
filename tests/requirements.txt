@@ -1,9 +1,7 @@
 django-filer>=1.5.0
 djangocms-attributes-field>=0.4.0
-djangocms-helper
+django-app-helper
 tox
 coverage
 isort
 flake8
-# override "pyflakes<2.1" from djangocms-helper
-pyflakes>=2.1.0
