@@ -254,15 +254,24 @@ class AbstractPicture(CMSPlugin):
             width = self.width
             height = self.height
 
-        # calculate height when not given according to the
-        # golden ratio or fallback to the picture size
-        if not height and width:
-            height = int(width / PICTURE_RATIO)
-        elif not width and height:
-            width = int(height * PICTURE_RATIO)
-        elif not width and not height and self.picture:
-            width = self.picture.width
-            height = self.picture.height
+        if self.picture:
+            # calculate height when not given according to the
+            # golden ratio or fallback to the picture size
+            if crop:
+                if not height and width:
+                    if self.picture.width > self.picture.height:
+                        height = int(width / PICTURE_RATIO)
+                    else:
+                        height = int(width * PICTURE_RATIO)
+
+                elif not width and height:
+                    if self.picture.width > self.picture.height:
+                        width = int(height * PICTURE_RATIO)
+                    else:
+                        width = int(height / PICTURE_RATIO)
+
+            width = width or self.picture.width
+            height = height or self.picture.height
 
         options = {
             'size': (width, height),
