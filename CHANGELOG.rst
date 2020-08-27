@@ -9,6 +9,8 @@ Changelog
 * Added support for Django 3.1
 * Dropped support for Python 2.7 and Python 3.4
 * Dropped support for Django < 2.2
+* Fixed an issue with external images where internal or external links
+  were not taken into account
 
 
 2.4.0 (2020-01-29)

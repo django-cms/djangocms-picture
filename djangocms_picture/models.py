@@ -267,12 +267,12 @@ class AbstractPicture(CMSPlugin):
         return options
 
     def get_link(self):
-        if self.external_picture:
-            return self.external_picture
-        elif self.link_url:
+        if self.link_url:
             return self.link_url
         elif self.link_page_id:
             return self.link_page.get_absolute_url(language=self.language)
+        elif self.external_picture:
+            return self.external_picture
         return False
 
     def clean(self):
