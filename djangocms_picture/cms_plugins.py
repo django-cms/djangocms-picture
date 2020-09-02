@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
@@ -74,7 +73,7 @@ class PicturePlugin(CMSPluginBase):
         )
         context['img_srcset_data'] = instance.img_srcset_data
 
-        return super(PicturePlugin, self).render(context, instance, placeholder)
+        return super().render(context, instance, placeholder)
 
 
 plugin_pool.register_plugin(PicturePlugin)

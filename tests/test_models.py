@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -151,12 +150,12 @@ class PictureModelTestCase(TestCase):
     def test_get_link(self):
         instance = self.picture
         instance.external_picture = self.external_picture
-        self.assertEqual(instance.get_link(), self.external_picture)
-        instance.external_picture = None
         self.assertEqual(instance.get_link(), "http://www.divio.com")
         instance.link_url = None
         self.assertEqual(instance.get_link(), self.page.get_absolute_url())
         instance.link_page = None
+        self.assertEqual(instance.get_link(), self.external_picture)
+        instance.external_picture = None
         self.assertFalse(instance.get_link())
 
     def test_is_responsive_image(self):

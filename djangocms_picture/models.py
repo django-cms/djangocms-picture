@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
 """
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from cms.models import CMSPlugin
 from cms.models.fields import PageField
@@ -18,7 +15,6 @@ from djangocms_attributes_field.fields import AttributesField
 from easy_thumbnails.files import get_thumbnailer
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
-from six import python_2_unicode_compatible
 
 
 # add setting for picture alignment, renders a class or inline styles
@@ -69,7 +65,6 @@ RESPONSIVE_IMAGE_CHOICES = (
 )
 
 
-@python_2_unicode_compatible
 class AbstractPicture(CMSPlugin):
     """
     Renders an image with the option of adding a link
@@ -234,7 +229,7 @@ class AbstractPicture(CMSPlugin):
             return self.external_picture
         if self.picture and self.picture.label:
             return self.picture.label
-        return ugettext('<file is missing>')
+        return gettext('<file is missing>')
 
     def copy_relations(self, oldinstance):
         # Because we have a ForeignKey, it's required to copy over
@@ -272,19 +267,19 @@ class AbstractPicture(CMSPlugin):
         return options
 
     def get_link(self):
-        if self.external_picture:
-            return self.external_picture
-        elif self.link_url:
+        if self.link_url:
             return self.link_url
         elif self.link_page_id:
             return self.link_page.get_absolute_url(language=self.language)
+        elif self.external_picture:
+            return self.external_picture
         return False
 
     def clean(self):
         # there can be only one link type
         if self.link_url and self.link_page_id:
             raise ValidationError(
-                ugettext(
+                gettext(
                     'You have given both external and internal links. '
                     'Only one option is allowed.'
                 )
@@ -293,7 +288,7 @@ class AbstractPicture(CMSPlugin):
         # you shall only set one image kind
         if not self.picture and not self.external_picture:
             raise ValidationError(
-                ugettext(
+                gettext(
                     'You need to add either an image, '
                     'or a URL linking to an external image.'
                 )
@@ -319,7 +314,7 @@ class AbstractPicture(CMSPlugin):
                 break
 
         if invalid_option_pair:
-            message = ugettext(
+            message = gettext(
                 'Invalid cropping settings. '
                 'You cannot combine "{field_a}" with "{field_b}".'
             )
