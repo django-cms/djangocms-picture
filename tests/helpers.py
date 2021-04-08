@@ -24,14 +24,14 @@ def create_image(mode="RGB", size=(800, 600)):
     return image
 
 
-def get_image(image_name="test_file.jpg"):
+def get_image(image_name="test_file.jpg", size=(800, 600)):
     """
     Creates and stores an image to the file system using PILImage
 
     :param image_name: the name for the file (default "test_file.jpg")
     :returns: dict {name, image, path}
     """
-    image = create_image()
+    image = create_image(size=size)
     image_path = os.path.join(
         mkdtemp(),
         image_name,
@@ -65,14 +65,14 @@ def get_file(file_name="test_file.pdf"):
     }
 
 
-def get_filer_image(image_name="test_file.jpg"):
+def get_filer_image(image_name="test_file.jpg", size=(800, 600)):
     """
     Creates and stores an image to filer and returns it
 
     :param image_name: the name for the file (default "test_file.jpg")
     :returns: filer image instance
     """
-    image = get_image(image_name)
+    image = get_image(image_name, size)
     filer_file = File(
         open(image.get("path"), "rb"),
         name=image.get("name"),
