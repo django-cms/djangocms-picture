@@ -36,6 +36,10 @@ class PictureModelTestCase(TestCase):
             link_target=LINK_TARGET[0][0],
             link_attributes="{'data-type', 'picture'}",
         )
+
+        # Ensure picture.picture is the one loaded from DB and not the one given for object creation
+        self.picture.refresh_from_db()
+        
         self.external_picture = 'https://www.google.com/images/logo.png'
 
     def tearDown(self):
@@ -106,6 +110,9 @@ class PictureModelTestCase(TestCase):
             instance.get_size(),
             {"size": (800, 600), "crop": False, "upscale": False},
         )
+        self.assertIsInstance(instance.get_size()["size"][0], int)
+        self.assertIsInstance(instance.get_size()["size"][1], int)
+        
         instance.use_crop = True
         self.assertEqual(
             instance.get_size(),
