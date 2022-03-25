@@ -12,7 +12,7 @@ jobs:
         requirements-file: [
           dj22_cms38.txt,
           dj32_cms39.txt,
-          dj40_cms310.txt,
+#          dj40_cms310.txt,
         ]
         os: [
           ubuntu-20.04,
