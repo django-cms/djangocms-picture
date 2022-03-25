@@ -1,4 +1,4 @@
-{% load thumbnail %}
+{% load thumbnail l10n %}
 
 {% if picture_link %}
     <a href="{{ picture_link }}"
@@ -13,6 +13,7 @@
 {# end render figure/figcaption #}
 
 
+{% localize off %}
 <img src="{{ instance.img_src }}"
     alt="{% if instance.attributes.alt %}{{ instance.attributes.alt }}{% elif instance.picture.default_alt_text %}{{ instance.picture.default_alt_text }}{% endif %}"
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
@@ -33,6 +34,7 @@
     {% endif %}
     {{ instance.attributes_str }}
 >
+{% endlocalize %}
 
 {# start render figure/figcaption #}
 {% if instance.caption_text %}
