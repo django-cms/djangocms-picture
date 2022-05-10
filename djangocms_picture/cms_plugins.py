@@ -8,7 +8,6 @@ from .models import Picture
 from .settings import PICTURE_NESTING
 
 
-
 class PicturePlugin(CMSPluginBase):
     model = Picture
     form = PictureForm

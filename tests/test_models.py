@@ -17,7 +17,7 @@ from djangocms_picture.settings import (
     RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID, RESPONSIVE_IMAGES_BREAKPOINTS,
     RESPONSIVE_IMAGES_ENABLED,
 )
-from djangocms_picture.types import AlternativePictureData, SizeVersionsData, SourceData
+from djangocms_picture.types import AlternativePictureData, SizeVersionsData
 
 from .helpers import get_filer_image
 
@@ -46,7 +46,7 @@ class PictureModelTestCase(TestCase):
 
         # Ensure picture.picture is the one loaded from DB and not the one given for object creation
         self.picture.refresh_from_db()
-        
+
         self.external_picture = 'https://www.google.com/images/logo.png'
 
     def tearDown(self):
@@ -122,7 +122,7 @@ class PictureModelTestCase(TestCase):
         )
         self.assertIsInstance(instance.get_size()["size"][0], int)
         self.assertIsInstance(instance.get_size()["size"][1], int)
-        
+
         instance.use_crop = True
         self.assertEqual(
             instance.get_size(),
@@ -209,7 +209,7 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(instance.img_src, "")
         instance.external_picture = self.external_picture
         self.assertEqual(instance.img_src, self.external_picture)
-    
+
     def test_get_picture(self):
         instance = self.picture
         instance.medium_screen_picture = get_filer_image()
@@ -219,7 +219,6 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(instance.medium_screen_picture, instance.get_picture(RESPONSIVE_IMAGES_BREAKPOINT_MEDIUM_ID))
         self.assertEqual(instance.large_screen_picture, instance.get_picture(RESPONSIVE_IMAGES_BREAKPOINT_LARGE_ID))
 
-    
     def test_get_picture_viewport_width(self):
         instance = self.picture
         instance.small_screen_viewport_width = 12
@@ -284,7 +283,7 @@ class PictureModelTestCase(TestCase):
                     SizeVersionsData(0, 12, []),
                 ],
             ),
-        ], instance.alternative_pictures_data) 
+        ], instance.alternative_pictures_data)
 
     def test_sources_formats(self):
         instance = self.picture
@@ -305,8 +304,8 @@ class PictureModelTestCase(TestCase):
             picture=instance.picture,
             viewport_width=12,
             sizes_data=[
-                SizeVersionsData(1042, 14, []), 
-                SizeVersionsData(642, 13, []), 
+                SizeVersionsData(1042, 14, []),
+                SizeVersionsData(642, 13, []),
                 SizeVersionsData(0, 12, [])
             ],
         )
@@ -319,7 +318,7 @@ class PictureModelTestCase(TestCase):
         self.assertEqual("", source_data.media)
         srcset_parts = source_data.srcset.split(", ")
         self.assertEqual(3, len(srcset_parts))
-    
+
     def test_sources_data(self):
         instance = self.picture
         # instance.medium_screen_picture = get_filer_image()
@@ -327,18 +326,18 @@ class PictureModelTestCase(TestCase):
         instance.small_screen_viewport_width = 12
         instance.medium_screen_viewport_width = 13
         instance.large_screen_viewport_width = 14
-    
+
         sources_data = instance.sources_data
-        self.assertEqual(3, len(sources_data)) # webp large, webp small, png large
+        self.assertEqual(3, len(sources_data))  # webp large, webp small, png large
         self.assertEqual(
             [
                 ("image/webp", instance.large_screen_picture, '14vw',  '(min-width: 1042px)'),
                 ("image/webp", instance.picture, '(min-width: 642px) 13vw, 12vw', ''),
                 ("", instance.large_screen_picture, '14vw', '(min-width: 1042px)'),
-            ], 
+            ],
             [(s.mime_type, s.picture, s.sizes, s.media) for s in sources_data]
         )
-    
+
     def test_img_srcset(self):
         instance = self.picture
         self.assertEqual(3, len(instance.img_srcset.split(", ")))
@@ -348,7 +347,7 @@ class PictureModelTestCase(TestCase):
     def test_img_sizes(self):
         instance = self.picture
         self.assertEqual("(min-width: 642px and max-width: 768px) 768px, (min-width: 642px) 800px, (max-width: 542px) 542px, (max-width: 768px) 768px, 800px", instance.img_sizes)
-        
+
         instance.small_screen_viewport_width = 12
         instance.medium_screen_viewport_width = 13
         instance.large_screen_viewport_width = 14
@@ -356,4 +355,3 @@ class PictureModelTestCase(TestCase):
 
         instance.use_responsive_image = USE_RESPONSIVE_IMAGE_CHOICES[2][0]
         self.assertIsNone(instance.img_sizes)
-
