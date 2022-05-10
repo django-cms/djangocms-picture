@@ -2,6 +2,17 @@
 Changelog
 =========
 
+Incoming
+==================
+
+* Deprecation warning ! Two settings are renammed: (old name still work)
+  ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` become ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_ENABLED`` 
+  ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS`` become ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_SIZES``
+* Rewrote of responsive images mode which now make use of ``<picture>`` HTML tag
+  to support different pictures for small, medium and large screens and to 
+  allow to generate WebP alternative version.
+
+
 4.0.0 (2022-03-25)
 ==================
 

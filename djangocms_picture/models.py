@@ -2,7 +2,9 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
-from django.conf import settings
+
+from copy import deepcopy
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext
@@ -16,40 +18,32 @@ from easy_thumbnails.files import get_thumbnailer
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
 
+from .helpers import (
+    get_media_attr, get_sizes_attr, get_sizes_attr_data, get_srcset_attr,
+)
+from .settings import (
+    PICTURE_ALIGN, PICTURE_RATIO, RESPONSIVE_IMAGES_ALTERNATIVE_FORMAT_WEBP,
+    RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID, RESPONSIVE_IMAGES_BREAKPOINTS,
+    RESPONSIVE_IMAGES_ENABLED, TEMPLATES,
+)
+from .types import AlternativePictureData, SourceData
+
 
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
 def get_alignment():
-    alignment = getattr(
-        settings,
-        'DJANGOCMS_PICTURE_ALIGN',
-        (
-            ('left', _('Align left')),
-            ('right', _('Align right')),
-            ('center', _('Align center')),
-        )
-    )
-    return alignment
+    return deepcopy(PICTURE_ALIGN)
 
-
-# Add additional choices through the ``settings.py``.
-def get_templates():
-    choices = [
-        ('default', _('Default')),
-    ]
-    choices += getattr(
-        settings,
-        'DJANGOCMS_PICTURE_TEMPLATES',
-        [],
-    )
-    return choices
-
-
-# use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
-PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
 
 # required for backwards compability
 PICTURE_ALIGNMENT = get_alignment()
+
+# Add additional choices through the ``settings.py``.
+
+
+def get_templates():
+    return [('default', _('Default'))] + deepcopy(TEMPLATES)
+
 
 LINK_TARGET = (
     ('_blank', _('Open in new window')),
@@ -57,9 +51,13 @@ LINK_TARGET = (
     ('_parent', _('Delegate to parent')),
     ('_top', _('Delegate to top')),
 )
-
-RESPONSIVE_IMAGE_CHOICES = (
-    ('inherit', _('Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide')),
+USE_RESPONSIVE_IMAGE_CHOICES = (
+    ('inherit', _('Default')),
+    ('yes', _('Yes')),
+    ('no', _('No')),
+)
+ALTERNATIVE_FORMAT_WEBP_CHOICES = (
+    ('inherit', _('Default')),
     ('yes', _('Yes')),
     ('no', _('No')),
 )
@@ -184,16 +182,72 @@ class AbstractPicture(CMSPlugin):
         default=False,
         help_text=_('Upscales the image to the size of the thumbnail settings in the template.')
     )
+    # responsive models
     use_responsive_image = models.CharField(
         verbose_name=_('Use responsive image'),
         max_length=7,
-        choices=RESPONSIVE_IMAGE_CHOICES,
-        default=RESPONSIVE_IMAGE_CHOICES[0][0],
+        choices=USE_RESPONSIVE_IMAGE_CHOICES,
+        default=USE_RESPONSIVE_IMAGE_CHOICES[0][0],
         help_text=_(
             'Uses responsive image technique to choose better image to display based upon screen viewport. '
             'This configuration only applies to uploaded images (external pictures will not be affected). '
         )
     )
+    small_screen_viewport_width = models.PositiveSmallIntegerField(
+        verbose_name=_(
+            "Approximate image display width in percent of a small screen width (%)"
+        ),
+        help_text=_(
+            'This help even more the browser to choose the best image to display '
+            'based on the expected image width on screen'
+        ),
+        blank=True,
+        null=True,
+    )
+    medium_screen_picture = FilerImageField(
+        verbose_name=_("Image (medium screen)"),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    medium_screen_viewport_width = models.PositiveSmallIntegerField(
+        verbose_name=_(
+            "Approximate image display width in percent of a medium screen width (%)"
+        ),
+        help_text=_(
+            'This help even more the browser to choose the best image to display '
+            'based on the expected image width on screen'
+        ),
+        blank=True,
+        null=True,
+    )
+    large_screen_picture = FilerImageField(
+        verbose_name=_("Image (large screen)"),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    large_screen_viewport_width = models.PositiveSmallIntegerField(
+        verbose_name=_(
+            "Approximate image display width in percent of a large screen width (%)"
+        ),
+        help_text=_(
+            'This help even more the browser to choose the best image to display '
+            'based on the expected image width on screen'
+        ),
+        blank=True,
+        null=True,
+    )
+    alternative_format_webp = models.CharField(
+        verbose_name=_("Generate WebP version"),
+        max_length=7,
+        choices=ALTERNATIVE_FORMAT_WEBP_CHOICES,
+        default=ALTERNATIVE_FORMAT_WEBP_CHOICES[0][0],
+        help_text=_('Generate an alternative version of picture in .webp format. The browser will use it if supported.'),
+    )
+
     # overrides all other options
     # throws validation error if other cropping options are selected
     thumbnail_options = models.ForeignKey(
@@ -223,6 +277,20 @@ class AbstractPicture(CMSPlugin):
         if self.picture and self.picture.label:
             return self.picture.label
         return str(self.pk)
+
+    def get_picture(self, size_id):
+        """
+        Return picture for given size
+        """
+        if size_id == RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID:
+            return self.picture
+        return getattr(self, f"{size_id}_screen_picture")
+
+    def get_picture_viewport_width(self, size_id):
+        """
+        Return viewport width for given size
+        """
+        return getattr(self, f"{size_id}_screen_viewport_width")
 
     def get_short_description(self):
         if self.external_picture:
@@ -333,30 +401,81 @@ class AbstractPicture(CMSPlugin):
         if self.external_picture:
             return False
         if self.use_responsive_image == 'inherit':
-            return getattr(settings, 'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES', False)
+            return RESPONSIVE_IMAGES_ENABLED
         return self.use_responsive_image == 'yes'
 
     @property
-    def img_srcset_data(self):
-        if not (self.picture and self.is_responsive_image):
-            return None
+    def generate_alternative_format_webp(self):
+        if self.alternative_format_webp == 'inherit':
+            return RESPONSIVE_IMAGES_ALTERNATIVE_FORMAT_WEBP
+        return self.alternative_format_webp == 'yes'
 
-        srcset = []
-        thumbnailer = get_thumbnailer(self.picture)
-        picture_options = self.get_size(self.width, self.height)
-        picture_width = picture_options['size'][0]
-        thumbnail_options = {'crop': picture_options['crop']}
-        breakpoints = getattr(
-            settings,
-            'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS',
-            [576, 768, 992],
+    def get_sizes_attr_data(self, size_id):
+        return get_sizes_attr_data(self, initial_size_id=size_id)
+
+    def get_alternative_picture_data(self, size_id):
+        """
+        Return AlternativePictureData for given size
+        """
+        return AlternativePictureData(
+            size_id=size_id,
+            picture=self.get_picture(size_id),
+            viewport_width=self.get_picture_viewport_width(size_id),
+            sizes_data=self.get_sizes_attr_data(size_id),
         )
 
-        for size in filter(lambda x: x < picture_width, breakpoints):
-            thumbnail_options['size'] = (size, size)
-            srcset.append((int(size), thumbnailer.get_thumbnail(thumbnail_options)))
+    @property
+    def alternative_pictures_data(self):
+        """
+        List of AlternativePictureData for sizes from large to small based on existing pictures
+        """
+        alt_pictures_data = []
+        for size_id in reversed(RESPONSIVE_IMAGES_BREAKPOINTS.keys()):
+            # No picture = not an alternative
+            if not self.get_picture(size_id):
+                continue
+            alt_pictures_data.append(self.get_alternative_picture_data(size_id))
+        return alt_pictures_data
 
-        return srcset
+    @property
+    def sources_formats(self):
+        """
+        List of expected alternative formats for sources
+        """
+        sources_formats = []
+        if self.generate_alternative_format_webp:
+            sources_formats.append(("image/webp", "webp"))
+        sources_formats.append((None, None))
+        return sources_formats
+
+    def get_source_data(self, alt_picture_data, mime_type=None, format=None):
+        """
+        Return SourceData for given AlternativePictureData
+        format/mime_type can be overrided and will be used to generate images
+        """
+        return SourceData(
+            mime_type=mime_type or "",
+            picture=alt_picture_data.picture,
+            srcset=get_srcset_attr(self, alt_picture_data, format),
+            sizes=get_sizes_attr(alt_picture_data),
+            media=get_media_attr(alt_picture_data),
+        )
+
+    @property
+    def sources_data(self):
+        """
+        List of SourceData for all versions and formats in order to generate source HTML tags
+        """
+        sources_data = []
+        for mime_type, format in self.sources_formats:
+            for alt_picture_data in self.alternative_pictures_data:
+                # Do not setup a source for the default image since it is should be the same as default img tag
+                if not format and alt_picture_data.size_id == RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID:
+                    continue
+                sources_data.append(
+                    self.get_source_data(alt_picture_data, mime_type, format)
+                )
+        return sources_data
 
     @property
     def img_src(self):
@@ -386,6 +505,25 @@ class AbstractPicture(CMSPlugin):
 
         thumbnailer = get_thumbnailer(self.picture)
         return thumbnailer.get_thumbnail(thumbnail_options).url
+
+    @property
+    def small_alternative_picture_data(self):
+        """
+        Return the small version data (which is the default)
+        """
+        return self.get_alternative_picture_data(RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID)
+
+    @property
+    def img_srcset(self):
+        if not (self.picture and self.is_responsive_image):
+            return None
+        return get_srcset_attr(self, self.small_alternative_picture_data)
+
+    @property
+    def img_sizes(self):
+        if not (self.picture and self.is_responsive_image):
+            return None
+        return get_sizes_attr(self.small_alternative_picture_data)
 
 
 class Picture(AbstractPicture):

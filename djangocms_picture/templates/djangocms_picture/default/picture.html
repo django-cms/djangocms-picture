@@ -11,30 +11,30 @@
     <figure>
 {% endif %}
 {# end render figure/figcaption #}
+{% if sources_data and instance.is_responsive_image %}
+    <picture>
+    {% for source in sources_data %}
+        <source 
+                {% if source.mime_type %}type="{{ source.mime_type }}" {% endif %}
+                {% if source.media %}media="{{ source.media }}" {% endif %}
+                srcset="{{ source.srcset }}"
+                sizes="{{ source.sizes }}"
+            >
+    {% endfor %}
+{% endif %}
 
+        <img src="{{ instance.img_src }}"
+            alt="{% if instance.attributes.alt %}{{ instance.attributes.alt }}{% elif instance.picture.default_alt_text %}{{ instance.picture.default_alt_text }}{% endif %}"
+            {% if instance.width %} width="{{ instance.width }}"{% endif %}
+            {% if instance.height %} height="{{ instance.height }}"{% endif %}
+            {% if instance.img_srcset %} srcset="{{ instance.img_srcset }}"{% endif %}
+            {% if instance.img_sizes %} sizes="{{ instance.img_sizes }}"{% endif %}
+            {{ instance.attributes_str }}
+        >
 
-{% localize off %}
-<img src="{{ instance.img_src }}"
-    alt="{% if instance.attributes.alt %}{{ instance.attributes.alt }}{% elif instance.picture.default_alt_text %}{{ instance.picture.default_alt_text }}{% endif %}"
-    {% if instance.width %} width="{{ instance.width }}"{% endif %}
-    {% if instance.height %} height="{{ instance.height }}"{% endif %}
-    {% if img_srcset_data %}
-        srcset="
-            {% for size, thumb in img_srcset_data %}
-                {{ thumb.url }} {{ size }}w,
-            {% endfor %}
-            {{ instance.img_src }} {{ picture_size.size.0 }}w
-        "
-        sizes="
-            {% for size, thumb in img_srcset_data %}
-                (max-width: {{ size }}px) {{ size }}px,
-            {% endfor %}
-            {{ picture_size.size.0 }}px
-        "
-    {% endif %}
-    {{ instance.attributes_str }}
->
-{% endlocalize %}
+{% if sources_data and instance.is_responsive_image %}
+    </picture>
+{% endif %}
 
 {# start render figure/figcaption #}
 {% if instance.caption_text %}
@@ -50,16 +50,21 @@
 {% comment %}
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figure
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
+    # https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
     # https://github.com/divio/django-filer/blob/master/filer/models/imagemodels.py
     # http://easy-thumbnails.readthedocs.io/en/2.1/usage/#templates
     {{ instance.picture }}
     # Available variables:
     {{ instance.img_src }}
+    {{ instance.img_srcset }}
+    {{ instance.img_sizes }}
     {{ instance.width }}
     {{ instance.height }}
     {{ instance.alignment }}
     {{ instance.caption_text }}
-    {{ instance.img_srcset_data }} or {{ img_srcset_data }}
+    {{ instance.sources_data }} or {{ sources_data }}
     {{ instance.attributes_str }}
     # picture helper
     {{ instance.get_size }} or {{ picture_size }}

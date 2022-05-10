@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
@@ -6,10 +5,8 @@ from cms.plugin_pool import plugin_pool
 
 from .forms import PictureForm
 from .models import Picture
+from .settings import PICTURE_NESTING
 
-
-# enable nesting of plugins inside the picture plugin
-PICTURE_NESTING = getattr(settings, 'DJANGOCMS_PICTURE_NESTING', False)
 
 
 class PicturePlugin(CMSPluginBase):
@@ -30,7 +27,6 @@ class PicturePlugin(CMSPluginBase):
             'classes': ('collapse',),
             'fields': (
                 'template',
-                'use_responsive_image',
                 ('width', 'height'),
                 'alignment',
                 'caption_text',
@@ -52,6 +48,18 @@ class PicturePlugin(CMSPluginBase):
                 ('use_crop', 'use_upscale'),
                 'thumbnail_options',
             )
+        }),
+        (_('Responsive image settings'), {
+            'classes': ('collapse',),
+            'fields': (
+                'use_responsive_image',
+                'small_screen_viewport_width',
+                'medium_screen_picture',
+                'medium_screen_viewport_width',
+                'large_screen_picture',
+                'large_screen_viewport_width',
+                'alternative_format_webp',
+            )
         })
     ]
 
@@ -71,7 +79,7 @@ class PicturePlugin(CMSPluginBase):
             width=context.get('width') or 0,
             height=context.get('height') or 0,
         )
-        context['img_srcset_data'] = instance.img_srcset_data
+        context['sources_data'] = instance.sources_data
 
         return super().render(context, instance, placeholder)
 

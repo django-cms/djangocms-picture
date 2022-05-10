@@ -97,10 +97,24 @@ This will generate a class prefixed with ``align-``. The example above
 would produce a ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
 
-You can enable responsive images technique by setting``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
+You can enable responsive images technique by setting``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_ENABLED`` to ``True``.
 In this case uploaded images will create thumbnails of different sizes according
-to ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS`` (which defaults to ``[576, 768, 992]``) and browser
+to ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_SIZES`` (which defaults to ``[576, 768, 992]``) and browser
 will be responsible for choosing the best image to display (based upon the screen viewport).
+
+Therefore, the plugin accept 2 alternatives pictures for medium and large screen (small being the default picture). 
+If you do, the plugin will generate a ``<picture>`` HTML tag including the different sources with display conditions
+based on viewport ``min-width`` breakpoints. The settings ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_BREAKPOINT_MEDIUM`` and ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_BREAKPOINT_LARGE``
+(in px, which defaults to 768 and 992) can be used to specify the size of the medium and large viewport breakpoints. 
+You can also specify in the plugin the expected viewport width percent part (vw) the image will cover.
+This will increase browser ability to choose the right image (choosing a smaller version instead of full width one).
+
+Using responsive mode also allow to automatically generate a WebP version of the images. 
+There is a checkbox to specify independently for each image, but the default value  
+can be set using the ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_ALTERNATIVE_FORMAT_WEBP`` setting.
+(which default to ``False``)
+
+`See MDN documentation for more informations on responsive images <https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images>`_
 
 You can use ``DJANGOCMS_PICTURE_RATIO`` to set the width/height ratio of images
 if these values are not set explicitly on the image::

@@ -1,16 +1,23 @@
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from cms.api import create_page
 
-from easy_thumbnails.files import ThumbnailFile
 from filer.models import ThumbnailOption
 
 from djangocms_picture.models import (
-    LINK_TARGET, PICTURE_RATIO, RESPONSIVE_IMAGE_CHOICES, Picture,
-    get_alignment, get_templates,
+    ALTERNATIVE_FORMAT_WEBP_CHOICES, LINK_TARGET, USE_RESPONSIVE_IMAGE_CHOICES,
+    Picture, get_alignment, get_templates,
 )
+from djangocms_picture.settings import (
+    PICTURE_RATIO, RESPONSIVE_IMAGE_SIZES,
+    RESPONSIVE_IMAGES_ALTERNATIVE_FORMAT_WEBP,
+    RESPONSIVE_IMAGES_BREAKPOINT_LARGE_ID,
+    RESPONSIVE_IMAGES_BREAKPOINT_MEDIUM_ID,
+    RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID, RESPONSIVE_IMAGES_BREAKPOINTS,
+    RESPONSIVE_IMAGES_ENABLED,
+)
+from djangocms_picture.types import AlternativePictureData, SizeVersionsData, SourceData
 
 from .helpers import get_filer_image
 
@@ -46,8 +53,6 @@ class PictureModelTestCase(TestCase):
         self.page.delete()
 
     def test_settings(self):
-        self.assertEqual(get_templates(), [('default', 'Default')])
-        settings.DJANGOCMS_PICTURE_TEMPLATES = [('feature', 'Feature')]
         self.assertEqual(get_templates(), [('default', 'Default'), ('feature', 'Feature')])
 
         self.assertEqual(PICTURE_RATIO, 1.6180)
@@ -55,6 +60,11 @@ class PictureModelTestCase(TestCase):
             get_alignment(),
             (('left', 'Align left'), ('right', 'Align right'), ('center', 'Align center')),
         )
+        self.assertTrue(RESPONSIVE_IMAGES_ENABLED)
+        self.assertEqual([542, 768, 992], RESPONSIVE_IMAGE_SIZES)
+        self.assertEqual(642, RESPONSIVE_IMAGES_BREAKPOINTS[RESPONSIVE_IMAGES_BREAKPOINT_MEDIUM_ID])
+        self.assertEqual(1042, RESPONSIVE_IMAGES_BREAKPOINTS[RESPONSIVE_IMAGES_BREAKPOINT_LARGE_ID])
+        self.assertTrue(RESPONSIVE_IMAGES_ALTERNATIVE_FORMAT_WEBP)
 
     def test_picture_instance(self):
         instance = Picture.objects.all()
@@ -168,19 +178,19 @@ class PictureModelTestCase(TestCase):
     def test_is_responsive_image(self):
         instance = self.picture
         self.assertTrue(instance.is_responsive_image)
-        instance.use_responsive_image = RESPONSIVE_IMAGE_CHOICES[2][0]
+        instance.use_responsive_image = USE_RESPONSIVE_IMAGE_CHOICES[2][0]
         self.assertFalse(instance.is_responsive_image)
         instance.external_picture = self.external_picture
         self.assertFalse(instance.is_responsive_image)
 
-    def test_img_srcset_data(self):
-        instance = self.picture
-        self.assertIsInstance(
-            instance.img_srcset_data[0][1],
-            ThumbnailFile,
-        )
-        instance.external_picture = self.external_picture
-        self.assertIsNone(instance.img_srcset_data)
+    # def test_img_srcset_data(self):
+    #     instance = self.picture
+    #     self.assertIsInstance(
+    #         instance.img_srcset_data[0][1],
+    #         ThumbnailFile,
+    #     )
+    #     instance.external_picture = self.external_picture
+    #     self.assertIsNone(instance.img_srcset_data)
 
     def test_img_src(self):
         instance = self.picture
@@ -199,3 +209,151 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(instance.img_src, "")
         instance.external_picture = self.external_picture
         self.assertEqual(instance.img_src, self.external_picture)
+    
+    def test_get_picture(self):
+        instance = self.picture
+        instance.medium_screen_picture = get_filer_image()
+        instance.large_screen_picture = get_filer_image()
+
+        self.assertEqual(instance.picture, instance.get_picture(RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID))
+        self.assertEqual(instance.medium_screen_picture, instance.get_picture(RESPONSIVE_IMAGES_BREAKPOINT_MEDIUM_ID))
+        self.assertEqual(instance.large_screen_picture, instance.get_picture(RESPONSIVE_IMAGES_BREAKPOINT_LARGE_ID))
+
+    
+    def test_get_picture_viewport_width(self):
+        instance = self.picture
+        instance.small_screen_viewport_width = 12
+        instance.medium_screen_viewport_width = 13
+        instance.large_screen_viewport_width = 14
+
+        self.assertEqual(12, instance.get_picture_viewport_width(RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID))
+        self.assertEqual(13, instance.get_picture_viewport_width(RESPONSIVE_IMAGES_BREAKPOINT_MEDIUM_ID))
+        self.assertEqual(14, instance.get_picture_viewport_width(RESPONSIVE_IMAGES_BREAKPOINT_LARGE_ID))
+
+    def test_generate_alternative_format_webp(self):
+        instance = self.picture
+        self.assertTrue(instance.generate_alternative_format_webp)
+        instance.alternative_format_webp = ALTERNATIVE_FORMAT_WEBP_CHOICES[2][0]
+        self.assertFalse(instance.generate_alternative_format_webp)
+
+    def test_get_alternative_picture_data(self):
+        instance = self.picture
+        # instance.medium_screen_picture = get_filer_image()
+        # instance.large_screen_picture = get_filer_image()
+        instance.small_screen_viewport_width = 12
+        instance.medium_screen_viewport_width = 13
+        instance.large_screen_viewport_width = 14
+
+        self.assertEqual(
+            AlternativePictureData(
+                size_id=RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID,
+                picture=instance.picture,
+                viewport_width=12,
+                sizes_data=[
+                    SizeVersionsData(1042, 14, []),
+                    SizeVersionsData(642, 13, []),
+                    SizeVersionsData(0, 12, []),
+                ],
+            ),
+            instance.get_alternative_picture_data(RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID)
+        )
+
+    def test_alternative_pictures_data(self):
+        instance = self.picture
+        # instance.medium_screen_picture = get_filer_image()
+        instance.large_screen_picture = get_filer_image()
+        instance.small_screen_viewport_width = 12
+        instance.medium_screen_viewport_width = 13
+        instance.large_screen_viewport_width = 14
+
+        self.assertEqual([
+            AlternativePictureData(
+                size_id=RESPONSIVE_IMAGES_BREAKPOINT_LARGE_ID,
+                picture=instance.large_screen_picture,
+                viewport_width=14,
+                sizes_data=[
+                    SizeVersionsData(1042, 14, []),
+                ],
+            ),
+            AlternativePictureData(
+                size_id=RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID,
+                picture=instance.picture,
+                viewport_width=12,
+                sizes_data=[
+                    SizeVersionsData(642, 13, []),
+                    SizeVersionsData(0, 12, []),
+                ],
+            ),
+        ], instance.alternative_pictures_data) 
+
+    def test_sources_formats(self):
+        instance = self.picture
+        self.assertEqual([("image/webp", "webp"), (None, None)], instance.sources_formats)
+        instance.alternative_format_webp = ALTERNATIVE_FORMAT_WEBP_CHOICES[2][0]
+        self.assertEqual([(None, None)], instance.sources_formats)
+
+    def test_get_source_data(self):
+        instance = self.picture
+        # instance.medium_screen_picture = get_filer_image()
+        # instance.large_screen_picture = get_filer_image()
+        instance.small_screen_viewport_width = 12
+        instance.medium_screen_viewport_width = 13
+        instance.large_screen_viewport_width = 14
+
+        version_data = AlternativePictureData(
+            size_id=RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID,
+            picture=instance.picture,
+            viewport_width=12,
+            sizes_data=[
+                SizeVersionsData(1042, 14, []), 
+                SizeVersionsData(642, 13, []), 
+                SizeVersionsData(0, 12, [])
+            ],
+        )
+
+        source_data = instance.get_source_data(version_data)
+
+        self.assertEqual("", source_data.mime_type)
+        self.assertEqual(version_data.picture, source_data.picture)
+        self.assertEqual("(min-width: 1042px) 14vw, (min-width: 642px) 13vw, 12vw", source_data.sizes)
+        self.assertEqual("", source_data.media)
+        srcset_parts = source_data.srcset.split(", ")
+        self.assertEqual(3, len(srcset_parts))
+    
+    def test_sources_data(self):
+        instance = self.picture
+        # instance.medium_screen_picture = get_filer_image()
+        instance.large_screen_picture = get_filer_image()
+        instance.small_screen_viewport_width = 12
+        instance.medium_screen_viewport_width = 13
+        instance.large_screen_viewport_width = 14
+    
+        sources_data = instance.sources_data
+        self.assertEqual(3, len(sources_data)) # webp large, webp small, png large
+        self.assertEqual(
+            [
+                ("image/webp", instance.large_screen_picture, '14vw',  '(min-width: 1042px)'),
+                ("image/webp", instance.picture, '(min-width: 642px) 13vw, 12vw', ''),
+                ("", instance.large_screen_picture, '14vw', '(min-width: 1042px)'),
+            ], 
+            [(s.mime_type, s.picture, s.sizes, s.media) for s in sources_data]
+        )
+    
+    def test_img_srcset(self):
+        instance = self.picture
+        self.assertEqual(3, len(instance.img_srcset.split(", ")))
+        instance.use_responsive_image = USE_RESPONSIVE_IMAGE_CHOICES[2][0]
+        self.assertIsNone(instance.img_srcset)
+
+    def test_img_sizes(self):
+        instance = self.picture
+        self.assertEqual("(min-width: 642px and max-width: 768px) 768px, (min-width: 642px) 800px, (max-width: 542px) 542px, (max-width: 768px) 768px, 800px", instance.img_sizes)
+        
+        instance.small_screen_viewport_width = 12
+        instance.medium_screen_viewport_width = 13
+        instance.large_screen_viewport_width = 14
+        self.assertEqual("(min-width: 1042px) 14vw, (min-width: 642px) 13vw, 12vw", instance.img_sizes)
+
+        instance.use_responsive_image = USE_RESPONSIVE_IMAGE_CHOICES[2][0]
+        self.assertIsNone(instance.img_sizes)
+
