@@ -17,7 +17,7 @@ from djangocms_picture.settings import (
     RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID, RESPONSIVE_IMAGES_BREAKPOINTS,
     RESPONSIVE_IMAGES_ENABLED,
 )
-from djangocms_picture.types import AlternativePictureData, SizeVersionsData
+from djangocms_picture.types import AlternativePictureData, SizesAttributeData
 
 from .helpers import get_filer_image
 
@@ -183,15 +183,6 @@ class PictureModelTestCase(TestCase):
         instance.external_picture = self.external_picture
         self.assertFalse(instance.is_responsive_image)
 
-    # def test_img_srcset_data(self):
-    #     instance = self.picture
-    #     self.assertIsInstance(
-    #         instance.img_srcset_data[0][1],
-    #         ThumbnailFile,
-    #     )
-    #     instance.external_picture = self.external_picture
-    #     self.assertIsNone(instance.img_srcset_data)
-
     def test_img_src(self):
         instance = self.picture
         # thumbnail is generated
@@ -249,9 +240,9 @@ class PictureModelTestCase(TestCase):
                 picture=instance.picture,
                 viewport_width=12,
                 sizes_data=[
-                    SizeVersionsData(1042, 14, []),
-                    SizeVersionsData(642, 13, []),
-                    SizeVersionsData(0, 12, []),
+                    SizesAttributeData(1042, 14, []),
+                    SizesAttributeData(642, 13, []),
+                    SizesAttributeData(0, 12, []),
                 ],
             ),
             instance.get_alternative_picture_data(RESPONSIVE_IMAGES_BREAKPOINT_SMALL_ID)
@@ -271,7 +262,7 @@ class PictureModelTestCase(TestCase):
                 picture=instance.large_screen_picture,
                 viewport_width=14,
                 sizes_data=[
-                    SizeVersionsData(1042, 14, []),
+                    SizesAttributeData(1042, 14, []),
                 ],
             ),
             AlternativePictureData(
@@ -279,8 +270,8 @@ class PictureModelTestCase(TestCase):
                 picture=instance.picture,
                 viewport_width=12,
                 sizes_data=[
-                    SizeVersionsData(642, 13, []),
-                    SizeVersionsData(0, 12, []),
+                    SizesAttributeData(642, 13, []),
+                    SizesAttributeData(0, 12, []),
                 ],
             ),
         ], instance.alternative_pictures_data)
@@ -304,9 +295,9 @@ class PictureModelTestCase(TestCase):
             picture=instance.picture,
             viewport_width=12,
             sizes_data=[
-                SizeVersionsData(1042, 14, []),
-                SizeVersionsData(642, 13, []),
-                SizeVersionsData(0, 12, [])
+                SizesAttributeData(1042, 14, []),
+                SizesAttributeData(642, 13, []),
+                SizesAttributeData(0, 12, [])
             ],
         )
 

@@ -6,6 +6,6 @@ AlternativePictureData = namedtuple(
 SourceData = namedtuple(
     "SourceData", ["mime_type", "picture", "srcset", "sizes", "media"]
 )
-SizeVersionsData = namedtuple(
+SizesAttributeData = namedtuple(
     "SizeVersionsData", ["breakpoint", "viewport_width", "srcset_sizes"]
 )

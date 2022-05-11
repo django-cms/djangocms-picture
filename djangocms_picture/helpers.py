@@ -1,7 +1,7 @@
 from typing import Any, Dict, Iterable, List, Tuple
 from easy_thumbnails.files import get_thumbnailer
 
-from djangocms_picture.types import AlternativePictureData, SizeVersionsData
+from djangocms_picture.types import AlternativePictureData, SizesAttributeData
 
 from .settings import RESPONSIVE_IMAGE_SIZES, RESPONSIVE_IMAGES_BREAKPOINTS
 
@@ -16,10 +16,10 @@ def get_srcset_sizes(picture_width: int) -> Iterable[int]:
     ))
 
 
-def get_srcset_data(base_picture, alt_picture_data: AlternativePictureData, image_format: str = None) -> List[Tuple[int, Dict[str, Any]]]:
+def generate_size_versions(base_picture, alt_picture_data: AlternativePictureData, image_format: str = None) -> List[Tuple[int, Dict[str, Any]]]:
     """
-    Return list of tuples of (size, thumbnail) for each size version of the given PictureVersionData
-    Will generate thumbnails for each (using specified image_format)
+    Run easy thumbnail to generate resized versions for each `RESPONSIVE_IMAGE_SIZES` width of the given AlternativePictureData.
+    Return list of tuples of (size, thumbnail)
     """
     thumbnailer = get_thumbnailer(alt_picture_data.picture)
 
@@ -51,17 +51,18 @@ def get_srcset_attr(base_picture, alt_picture_data: AlternativePictureData, imag
     """
     return ", ".join(
         f"{thumbnail.url} {size}w"
-        for size, thumbnail in get_srcset_data(base_picture, alt_picture_data, image_format=image_format)
+        for size, thumbnail in generate_size_versions(base_picture, alt_picture_data, image_format=image_format)
     )
 
 
-def get_sizes_attr_data(base_picture, initial_size_id: str) -> List[SizeVersionsData]:
+def get_sizes_attr_data(base_picture, initial_size_id: str) -> List[SizesAttributeData]:
     """
-    Return list of SizeVersionsData representing, for the given size, all sizes parameters required to generate `sizes` HTML attribute
-    for small return large, medium, small. For medium return large, medium. For large return large.
+    Return list of SizesAttributeData representing, for the given size, all parameters required to generate 
+    `sizes` and `media` HTML attributes.
+    For "small" return for large, medium, small. For "medium" return large, medium. For "large" return large.
     """
-    version_picture = base_picture.get_picture(initial_size_id)
-    picture_options = base_picture.get_size(version_picture.width, version_picture.height)
+    alt_picture = base_picture.get_picture(initial_size_id)
+    picture_options = base_picture.get_size(alt_picture.width, alt_picture.height)
     srcset_sizes = get_srcset_sizes(picture_width=picture_options['size'][0])
 
     sizes = []
@@ -75,7 +76,7 @@ def get_sizes_attr_data(base_picture, initial_size_id: str) -> List[SizeVersions
 
         bp = RESPONSIVE_IMAGES_BREAKPOINTS[size_id]
         viewport_width = base_picture.get_picture_viewport_width(size_id)
-        size_data = SizeVersionsData(
+        size_data = SizesAttributeData(
             breakpoint=bp,
             viewport_width=viewport_width,
             srcset_sizes=[size for size in srcset_sizes if size >= bp] if not viewport_width else [],
