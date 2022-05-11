@@ -113,6 +113,7 @@ Using responsive mode also allow to automatically generate a WebP version of the
 There is a checkbox to specify independently for each image, but the default value  
 can be set using the ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_ALTERNATIVE_FORMAT_WEBP`` setting.
 (which default to ``False``)
+`Pillow require <https://pillow.readthedocs.io/en/stable/installation.html#external-libraries>` the libwebp library to be installed on the host system.
 
 `See MDN documentation for more informations on responsive images <https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images>`_
 
