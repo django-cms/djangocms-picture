@@ -98,12 +98,13 @@ def get_sizes_attr(alt_picture_data: AlternativePictureData) -> str:
     """
 
     has_many_versions = len(alt_picture_data.sizes_data) > 1
+    min_bp = min(size_data.breakpoint for size_data in alt_picture_data.sizes_data)
     sizes = []
     for bp, vw, srcset_sizes in alt_picture_data.sizes_data:
 
         # we need min width condition on medium and large screen
         # but it's not necessary if there is only one alternative version
-        need_min_width_condition = bp and has_many_versions
+        need_min_width_condition = bp > min_bp and has_many_versions
 
         # If there is a used specified viewport width percent, simply use it
         if vw:
@@ -117,16 +118,16 @@ def get_sizes_attr(alt_picture_data: AlternativePictureData) -> str:
 
                 media_queries = ""
                 if need_min_width_condition:
-                    media_queries = f"min-width: {bp}px"
+                    media_queries = f"(min-width: {bp}px)"
 
                 # no max-width condition for last image size (original size)
                 last_size = index == len(srcset_sizes) - 1
                 if not last_size:
                     if media_queries:
                         media_queries += " and "
-                    media_queries += f"max-width: {size}px"
+                    media_queries += f"(max-width: {size}px)"
                 if media_queries:
-                    media_queries = f"({media_queries}) "
+                    media_queries = f"{media_queries} "
                 sizes.append(f"{media_queries}{size}px")
 
     return ", ".join(sizes)
