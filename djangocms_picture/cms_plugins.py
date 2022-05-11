@@ -52,11 +52,13 @@ class PicturePlugin(CMSPluginBase):
             'classes': ('collapse',),
             'fields': (
                 'use_responsive_image',
-                'small_screen_viewport_width',
                 'medium_screen_picture',
-                'medium_screen_viewport_width',
                 'large_screen_picture',
-                'large_screen_viewport_width',
+                (
+                    'small_screen_viewport_width',
+                    'medium_screen_viewport_width',
+                    'large_screen_viewport_width',
+                ),
                 'alternative_format_webp',
             )
         })
