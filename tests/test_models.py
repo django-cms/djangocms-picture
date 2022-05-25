@@ -365,7 +365,7 @@ class PictureModelTestCase(TestCase):
 
     def test_img_sizes(self):
         instance = self.picture
-        self.assertEqual("(max-width: 542px) 542px, (max-width: 768px) 768px, 800px", instance.img_sizes)
+        self.assertEqual("(min-width: 642px) and (max-width: 768px) 768px, (min-width: 642px) 800px, (max-width: 542px) 542px, (max-width: 768px) 768px, 800px", instance.img_sizes)
 
         instance.small_screen_viewport_width = 12
         instance.medium_screen_viewport_width = 13
