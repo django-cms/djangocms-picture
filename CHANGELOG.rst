@@ -23,6 +23,12 @@ Incoming
 * Added support for python 3.9 and 3.10
 
 
+3.0.1 (unreleased)
+=================
+
+* Fixed issue which caused wrong size calculations
+
+
 3.0.0 (2020-09-02)
 ==================
 

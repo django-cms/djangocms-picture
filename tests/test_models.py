@@ -32,7 +32,7 @@ class PictureModelTestCase(TestCase):
         )
         self.picture = Picture.objects.create(
             template="default",
-            picture=get_filer_image(),
+            picture=get_filer_image(size=(800, 600)),
             width=720,
             height=480,
             alignment=get_alignment()[0][0],
@@ -47,6 +47,19 @@ class PictureModelTestCase(TestCase):
         # Ensure picture.picture is the one loaded from DB and not the one given for object creation
         self.picture.refresh_from_db()
 
+        self.picture_portrait = Picture.objects.create(
+            template="default",
+            picture=get_filer_image(size=(600, 800)),
+            width=480,
+            height=720,
+            alignment=get_alignment()[0][0],
+            caption_text="some caption",
+            attributes="{'data-type', 'picture'}",
+            link_url="http://www.divio.com",
+            link_page=self.page,
+            link_target=LINK_TARGET[0][0],
+            link_attributes="{'data-type', 'picture'}",
+        )
         self.external_picture = 'https://www.google.com/images/logo.png'
 
     def tearDown(self):
@@ -68,7 +81,7 @@ class PictureModelTestCase(TestCase):
 
     def test_picture_instance(self):
         instance = Picture.objects.all()
-        self.assertEqual(instance.count(), 1)
+        self.assertEqual(instance.count(), 2)
         instance = Picture.objects.first()
         self.assertEqual(instance.template, "default")
         self.assertEqual(instance.picture.label, "test_file.jpg")
@@ -116,6 +129,7 @@ class PictureModelTestCase(TestCase):
 
     def test_get_size(self):
         instance = self.picture
+        instance_portrait = self.picture_portrait
         self.assertEqual(
             instance.get_size(),
             {"size": (800, 600), "crop": False, "upscale": False},
@@ -124,9 +138,18 @@ class PictureModelTestCase(TestCase):
         self.assertIsInstance(instance.get_size()["size"][1], int)
 
         instance.use_crop = True
+        instance_portrait.use_crop = True
         self.assertEqual(
             instance.get_size(),
             {"size": (800, 600), "crop": True, "upscale": False},
+        )
+        self.assertEqual(
+            instance_portrait.get_size(width=1000),
+            {'size': (1000, 1618), 'crop': True, 'upscale': False},
+        )
+        self.assertEqual(
+            instance_portrait.get_size(height=1000),
+            {'size': (618, 1000), 'crop': True, 'upscale': False},
         )
         instance.use_upscale = True
         self.assertEqual(
@@ -159,6 +182,11 @@ class PictureModelTestCase(TestCase):
             crop=False,
             upscale=False,
         )
+        self.assertEqual(
+            instance.get_size(),
+            {'size': (200, 200), 'crop': False, 'upscale': False},
+        )
+        instance.picture = None
         self.assertEqual(
             instance.get_size(),
             {'size': (200, 200), 'crop': False, 'upscale': False},
