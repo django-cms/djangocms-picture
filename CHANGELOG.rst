@@ -2,6 +2,21 @@
 Changelog
 =========
 
+4.0.0 (2022-03-25)
+==================
+
+* Apply ``{% localize off %}`` on ``<img>`` element
+* Dropped support for django 3.0
+* Dropped support for python 3.5 and 3.6
+* Added support for django 3.2
+* Added support for python 3.9 and 3.10
+
+
+3.0.1 (unreleased)
+=================
+
+* Fixed issue which caused wrong size calculations
+
 
 3.0.0 (2020-09-02)
 ==================

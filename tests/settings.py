@@ -3,6 +3,7 @@ from tempfile import mkdtemp
 
 
 HELPER_SETTINGS = {
+    'SECRET_KEY': 'test_key',
     'INSTALLED_APPS': [
         'easy_thumbnails',
         'filer',
@@ -25,6 +26,7 @@ HELPER_SETTINGS = {
     'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES': True,
     'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS': [576, 768, 992],
     'FILE_UPLOAD_TEMP_DIR': mkdtemp(),
+    'DEFAULT_AUTO_FIELD': 'django.db.models.AutoField',
 }
 
 

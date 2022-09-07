@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from pathlib import Path
+
 from setuptools import find_packages, setup
 
 from djangocms_picture import __version__
@@ -20,23 +22,28 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
     'Framework :: Django',
     'Framework :: Django :: 2.2',
-    'Framework :: Django :: 3.0',
     'Framework :: Django :: 3.1',
+    'Framework :: Django :: 3.2',
     'Framework :: Django CMS',
     'Framework :: Django CMS :: 3.7',
     'Framework :: Django CMS :: 3.8',
+    'Framework :: Django CMS :: 3.9',
+    'Framework :: Django CMS :: 3.10',
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     'Topic :: Software Development',
     'Topic :: Software Development :: Libraries',
 ]
 
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.rst").read_text()
 
 setup(
     name='djangocms-picture',
@@ -48,7 +55,8 @@ setup(
     url='https://github.com/django-cms/djangocms-picture',
     license='BSD-3-Clause',
     description='Adds an image plugin to django CMS',
-    long_description=open('README.rst').read(),
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
