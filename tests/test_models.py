@@ -36,7 +36,7 @@ class PictureModelTestCase(TestCase):
             link_target=LINK_TARGET[0][0],
             link_attributes="{'data-type', 'picture'}",
         )
-        
+
         self.picture_portrait = Picture.objects.create(
             template="default",
             picture=get_filer_image(size=(600, 800)),
@@ -130,7 +130,7 @@ class PictureModelTestCase(TestCase):
         self.assertIsInstance(instance.get_size()["size"][1], int)
         self.assertIsInstance(instance_portrait.get_size()["size"][0], int)
         self.assertIsInstance(instance_portrait.get_size()["size"][1], int)
-        
+
         instance.use_crop = True
         instance_portrait.use_crop = True
         self.assertEqual(
