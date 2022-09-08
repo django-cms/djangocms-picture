@@ -269,8 +269,8 @@ class AbstractPicture(CMSPlugin):
             height = height or self.picture.height
 
         # ensure width and height are int
-        width = int(width)
-        height = int(height)
+        width = int(width) if width is not None else width
+        height = int(height) if height is not None else height
 
         options = {
             'size': (width, height),
