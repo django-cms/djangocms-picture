@@ -255,18 +255,22 @@ class AbstractPicture(CMSPlugin):
             if crop:
                 if not height and width:
                     if self.picture.width > self.picture.height:
-                        height = int(width / PICTURE_RATIO)
+                        height = width / PICTURE_RATIO
                     else:
-                        height = int(width * PICTURE_RATIO)
+                        height = width * PICTURE_RATIO
 
                 elif not width and height:
                     if self.picture.width > self.picture.height:
-                        width = int(height * PICTURE_RATIO)
+                        width = height * PICTURE_RATIO
                     else:
-                        width = int(height / PICTURE_RATIO)
+                        width = height / PICTURE_RATIO
 
             width = width or self.picture.width
             height = height or self.picture.height
+
+        # ensure width and height are int
+        width = int(width) if width is not None else width
+        height = int(height) if height is not None else height
 
         options = {
             'size': (width, height),
