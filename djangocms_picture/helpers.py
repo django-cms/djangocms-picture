@@ -29,7 +29,9 @@ def generate_size_versions(base_picture, alt_picture_data: AlternativePictureDat
         thumbnailer.thumbnail_transparency_extension = image_format
 
     picture_options = base_picture.get_size(alt_picture_data.picture.width, alt_picture_data.picture.height)
-    picture_width = picture_options['size'][0]
+    picture_width = picture_options["size"][0]
+    picture_height = picture_options["size"][1]
+    picture_size_ratio = picture_width / picture_height
 
     generate_sizes = get_srcset_sizes(picture_width)
     srcset_data = []
@@ -38,8 +40,12 @@ def generate_size_versions(base_picture, alt_picture_data: AlternativePictureDat
             (
                 int(size),
                 thumbnailer.get_thumbnail(
-                    {'crop': picture_options['crop'], 'size': (size, size)}
-                )
+                    {
+                        'crop': picture_options['crop'],
+                        "size": (size, size / picture_size_ratio),
+                        "subject_location": alt_picture_data.picture.subject_location,
+                    }
+                ),
             )
         )
     return srcset_data
