@@ -47,7 +47,7 @@ def generate_size_versions(base_picture, alt_picture_data: AlternativePictureDat
 
 def get_srcset_attr(base_picture, alt_picture_data: AlternativePictureData, image_format: str = None) -> str:
     """
-    Return "srcset" HTML attribute for the given PictureVersionData
+    Return "srcset" HTML attribute for the given AlternativePictureData
     """
     return ", ".join(
         f"{thumbnail.url} {size}w"
@@ -94,7 +94,7 @@ def get_sizes_attr_data(base_picture, initial_size_id: str) -> List[SizesAttribu
 
 def get_sizes_attr(alt_picture_data: AlternativePictureData) -> str:
     """
-    Return "sizes" HTML attribute for the given PictureVersionData
+    Return "sizes" HTML attribute for the given AlternativePictureData
     """
 
     has_many_versions = len(alt_picture_data.sizes_data) > 1
@@ -135,7 +135,7 @@ def get_sizes_attr(alt_picture_data: AlternativePictureData) -> str:
 
 def get_media_attr(alt_picture_data: AlternativePictureData) -> str:
     """
-    Return "media" HTML attribute for the given PictureVersionData
+    Return "media" HTML attribute for the given AlternativePictureData
     The condition is the smallest breakpoint of breakpoints concerned by the version
     """
     min_bp = min(size_data.breakpoint for size_data in alt_picture_data.sizes_data)
