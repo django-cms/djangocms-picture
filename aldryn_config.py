@@ -65,9 +65,9 @@ class Form(forms.BaseForm):
         if data['nesting']:
             settings['DJANGOCMS_PICTURE_NESTING'] = data['nesting']
 
-        settings['DJANGOCMS_PICTURE_RESPONSIVE_IMAGES'] = data.get('responsive_images', False)
+        settings['DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_ENABLED'] = data.get('responsive_images', False)
         breakpoints = data.get('responsive_images_viewport_breakpoints')
         if breakpoints:
             breakpoints = [float(x) for x in split_and_strip(breakpoints)]
-            settings['DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS'] = breakpoints
+            settings['DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_SIZES'] = breakpoints
         return settings
