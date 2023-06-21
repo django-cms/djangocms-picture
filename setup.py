@@ -46,13 +46,13 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.rst").read_text()
 
 setup(
-    name='djangocms-picture',
+    name='djangocms-picture-responsive',
     version=__version__,
     author='Divio AG',
     author_email='info@divio.ch',
-    maintainer='Django CMS Association and contributors',
-    maintainer_email='info@django-cms.org',
-    url='https://github.com/django-cms/djangocms-picture',
+    maintainer='Fabien MICHEL & HESPUL',
+    maintainer_email='t2@hespul.org',
+    url='https://github.com/HESPUL/djangocms-picture-responsive/tree/better_responsive_images',
     license='BSD-3-Clause',
     description='Adds an image plugin to django CMS',
     long_description=long_description,
