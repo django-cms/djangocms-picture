@@ -139,8 +139,8 @@ You can run tests by executing::
     python setup.py test
 
 
-.. |pypi| image:: https://badge.fury.io/py/djangocms-picture.svg
-    :target: http://badge.fury.io/py/djangocms-picture
+.. |pypi| image:: https://badge.fury.io/py/djangocms-picture-responsive.svg
+    :target: http://badge.fury.io/py/djangocms-picture-responsive
 .. |build| image:: https://travis-ci.org/divio/djangocms-picture.svg?branch=master
     :target: https://travis-ci.org/divio/djangocms-picture
 .. |coverage| image:: https://codecov.io/gh/divio/djangocms-picture/branch/master/graph/badge.svg
