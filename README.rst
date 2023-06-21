@@ -1,39 +1,24 @@
-==================
-django CMS Picture
-==================
+=============================
+django CMS Picture Responsive
+=============================
 
 |pypi| |build| |coverage|
 
-**django CMS Picture** is a plugin for `django CMS <http://django-cms.org>`_
+**django CMS Picture Responsive** is a fork of then **django CMS Picture** plugin for `django CMS <http://django-cms.org>`_
 that allows you to add images on your site.
+
+This fork adds options to allow CMS users to define 3 different images according to the browser screen size.
 
 .. note::
 
-        This project is endorsed by the `django CMS Association <https://www.django-cms.org/en/about-us/>`_.
-        That means that it is officially accepted by the dCA as being in line with our roadmap vision and development/plugin policy.
-        Join us on `Slack <https://www.django-cms.org/slack/>`_.
+        The original plugin is endorsed by the `django CMS Association <https://www.django-cms.org/en/about-us/>`_.
+
+.. note::
+        
+        I will try to maitain this package and follow upstream evolutions
 
 .. image:: preview.gif
 
-
-
-*******************************************
-Contribute to this project and win rewards
-*******************************************
-
-Because this is a an open-source project, we welcome everyone to
-`get involved in the project <https://www.django-cms.org/en/contribute/>`_ and
-`receive a reward <https://www.django-cms.org/en/bounty-program/>`_ for their contribution.
-Become part of a fantastic community and help us make django CMS the best CMS in the world.
-
-We'll be delighted to receive your
-feedback in the form of issues and pull requests. Before submitting your
-pull request, please review our `contribution guidelines
-<http://docs.django-cms.org/en/latest/contributing/index.html>`_.
-
-We're grateful to all contributors who have helped create and maintain this package.
-Contributors are listed at the `contributors <https://github.com/django-cms/djangocms-picture/graphs/contributors>`_
-section.
 
 Documentation
 =============
