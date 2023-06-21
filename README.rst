@@ -157,10 +157,14 @@ You can run tests by executing::
 Updating from `cmsplugin-filer <https://github.com/django-cms/cmsplugin-filer>`_
 --------------------------------------------------------------------------------
 
-`cmsplugin-filer` was used a few times ago to create file, folder, image, link, teaser & video plugins on your DjangoCMS projects. Now the project is archived, and you might be wondering how to migrate your old instances without having to copy them manually to the new `djangocms-<file|picture|link|...>` plugins.
+Historically, `cmsplugin-filer` was used to create file, folder, image, link, teaser & video plugins on your django CMS projects. Now `cmsplugin-filer` has been archived, you can still migrate your old instances without having to copy them manually to the new `djangocms-<file|picture|link|...>` plugins.
 
-Don't be afraid, we have you covered! Here's a management command that you can use to get started with this tasks:
+There's a third-party management command that supports your migration:
 
 `migrate_cmsplugin_filer.py <https://gist.github.com/corentinbettiol/84a6ea7e4d047fc01861b0af15fd60f0>`_
 
-This management command is only a starting point. It *may* work out of the box for some people, but we encourage you to read the code, understand what it does, and try it on a development environment before running it on your production server. The management command is only configured to transfer your `cmsplugin_link`, `cmsplugin_file`, `cmsplugin_folder` and `cmsplugin_image` plugins to modern `djangocms_*` plugins. If you need to transfer other `cmsplugin_*` plugins, you'll have to write your own code.
+This management command is only a starting point. It *has* worked out of the box for some people, but we encourage you to read the code, understand what it does, and test it on a development environment before running it on your production server.
+
+The management command is only configured to transfer your `cmsplugin_link`, `cmsplugin_file`, `cmsplugin_folder` and `cmsplugin_image` plugins to modern `djangocms_*` plugins. If you need to transfer other `cmsplugin_*` plugins, you'll have to write your own code.
+
+Alternatively you can use the `deprecate_cmsplugin_filer <https://github.com/ImaginaryLandscape/deprecate_cmsplugin_filer>`_ app, which only adds a small migration that transfer the old `cmsplugin-filer` plugins instances to the new `djangocms-<file|picture|link|...>` plugins.
