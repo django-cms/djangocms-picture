@@ -1,8 +1,0 @@
-django-filer>=1.5.0
-django-treebeard<4.5
-djangocms-attributes-field>=0.4.0
-django-app-helper
-tox
-coverage
-isort
-flake8
