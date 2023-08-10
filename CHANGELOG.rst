@@ -2,6 +2,15 @@
 Changelog
 =========
 
+4.1.0
+=====
+
+* Added support for Django 3.2, 4.0, 4.1, and 4.2
+* Added support for Django CMS 3.11
+* Added support for Python 3.11
+* Dropped support for Django <= 3.1
+* Dropped support for Python 3.7
+
 4.0.0 (2022-03-25)
 ==================
 
