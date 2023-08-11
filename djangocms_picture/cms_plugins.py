@@ -1,12 +1,10 @@
+from cms.plugin_base import CMSPluginBase
+from cms.plugin_pool import plugin_pool
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from cms.plugin_base import CMSPluginBase
-from cms.plugin_pool import plugin_pool
-
 from .forms import PictureForm
 from .models import Picture
-
 
 # enable nesting of plugins inside the picture plugin
 PICTURE_NESTING = getattr(settings, 'DJANGOCMS_PICTURE_NESTING', False)
