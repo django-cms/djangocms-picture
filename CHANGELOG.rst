@@ -2,6 +2,11 @@
 Changelog
 =========
 
+4.1.1 (2023-10-19)
+==================
+
+* Updated release workflows
+
 4.1.0
 =====
 
