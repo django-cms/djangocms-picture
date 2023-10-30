@@ -25,6 +25,10 @@ def get_alignment():
             ('left', _('Align left')),
             ('right', _('Align right')),
             ('center', _('Align center')),
+            ('ltr', _('Left-to-Right')),
+            ('rtl', _('Right-to-Left')),
+            ('top', _('Top Aligned')),
+            ('bottom', _('Bottom Aligned')),
         )
     )
     return alignment
