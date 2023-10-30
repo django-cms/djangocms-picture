@@ -68,7 +68,7 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(PICTURE_RATIO, 1.6180)
         self.assertEqual(
             get_alignment(),
-            (('left', 'Align left'), ('right', 'Align right'), ('center', 'Align center')),
+            (('left', 'Align left'), ('right', 'Align right'), ('center', 'Align center'),('ltr', ('Left-to-Right')),('rtl', ('Right-to-Left')),('top', ('Top Aligned')),('bottom', ('Bottom Aligned'))),
         )
 
     def test_picture_instance(self):
