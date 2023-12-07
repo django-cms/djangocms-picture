@@ -54,10 +54,16 @@ class PicturePlugin(CMSPluginBase):
     ]
 
     def get_render_template(self, context, instance, placeholder):
-        return 'djangocms_picture/{}/picture.html'.format(instance.template)
+        return 'djangocms_picture/{}/picture.html'.format(instance.template)    
 
     def render(self, context, instance, placeholder):
         if instance.alignment:
+            # See https://getbootstrap.com/docs/5.2/content/images/#aligning-images
+            if instance.alignment != "center":
+                instance.add_classes(f"float-{instance.alignment}")
+            else:
+                instance.add_classes("mx-auto d-block")
+         
             classes = 'align-{} '.format(instance.alignment)
             classes += instance.attributes.get('class', '')
             # Set the class attribute to include the alignment html class

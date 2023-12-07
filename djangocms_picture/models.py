@@ -25,10 +25,14 @@ def get_alignment():
             ('left', _('Align left')),
             ('right', _('Align right')),
             ('center', _('Align center')),
-            ('ltr', _('Left-to-Right')),
-            ('rtl', _('Right-to-Left')),
-            ('top', _('Top Aligned')),
-            ('bottom', _('Bottom Aligned')),
+            #image-float align
+            ("start", _("Float left")),            
+            ("end", _("Float right")),
+            #verticle-align
+            ('top', _('Align top')),
+            ('middle', _('Align middle')),
+            ('bottom', _('Align Bottom')),
+            ('baseline', _('Align baseline')),           
         )
     )
     return alignment
@@ -50,7 +54,7 @@ def get_templates():
 # use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
 PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
 
-# required for backwards compability
+# required for backwards compatiblity
 PICTURE_ALIGNMENT = get_alignment()
 
 LINK_TARGET = (
@@ -66,6 +70,10 @@ RESPONSIVE_IMAGE_CHOICES = (
     ('no', _('No')),
 )
 
+def add_classes(self, *args):
+        for arg in args:
+            if arg:
+                self._additional_classes += arg.split() if isinstance(arg, str) else arg
 
 class AbstractPicture(CMSPlugin):
     """
@@ -180,6 +188,7 @@ class AbstractPicture(CMSPlugin):
         default=False,
         help_text=_('Crops the image according to the thumbnail settings provided in the template.'),
     )
+
     use_upscale = models.BooleanField(
         verbose_name=_('Upscale image'),
         blank=True,
