@@ -14,7 +14,6 @@ from easy_thumbnails.files import get_thumbnailer
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
 
-
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
 def get_alignment():
@@ -49,7 +48,6 @@ def get_templates():
         [],
     )
     return choices
-
 
 # use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
 PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
@@ -188,7 +186,6 @@ class AbstractPicture(CMSPlugin):
         default=False,
         help_text=_('Crops the image according to the thumbnail settings provided in the template.'),
     )
-
     use_upscale = models.BooleanField(
         verbose_name=_('Upscale image'),
         blank=True,
@@ -215,7 +212,6 @@ class AbstractPicture(CMSPlugin):
         help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
         on_delete=models.CASCADE,
     )
-
     # Add an app namespace to related_name to avoid field name clashes
     # with any other plugins that have a field with the same name as the
     # lowercase of the class name of this model.
