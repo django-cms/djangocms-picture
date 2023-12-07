@@ -58,6 +58,11 @@ class PicturePlugin(CMSPluginBase):
 
     def render(self, context, instance, placeholder):
         if instance.alignment:
+            # See https://getbootstrap.com/docs/5.2/content/images/#aligning-images
+            if instance.alignment != "center":
+                instance.add_classes(f"float-{instance.alignment}")
+            else:
+                instance.add_classes("mx-auto d-block")         
             classes = 'align-{} '.format(instance.alignment)
             classes += instance.attributes.get('class', '')
             # Set the class attribute to include the alignment html class
@@ -70,8 +75,6 @@ class PicturePlugin(CMSPluginBase):
             height=context.get('height') or 0,
         )
         context['img_srcset_data'] = instance.img_srcset_data
-
         return super().render(context, instance, placeholder)
-
-
+    
 plugin_pool.register_plugin(PicturePlugin)

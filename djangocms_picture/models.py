@@ -14,7 +14,6 @@ from easy_thumbnails.files import get_thumbnailer
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
 
-
 # add setting for picture alignment, renders a class or inline styles
 # depending on your template setup
 def get_alignment():
@@ -25,6 +24,14 @@ def get_alignment():
             ('left', _('Align left')),
             ('right', _('Align right')),
             ('center', _('Align center')),
+            #image-float align
+            ("start", _("Float left")),            
+            ("end", _("Float right")),
+            #verticle-align
+            ('top', _('Align top')),
+            ('middle', _('Align middle')),
+            ('bottom', _('Align Bottom')),
+            ('baseline', _('Align baseline')),           
         )
     )
     return alignment
@@ -42,11 +49,10 @@ def get_templates():
     )
     return choices
 
-
 # use golden ration as default (https://en.wikipedia.org/wiki/Golden_ratio)
 PICTURE_RATIO = getattr(settings, 'DJANGOCMS_PICTURE_RATIO', 1.6180)
 
-# required for backwards compability
+# required for backwards compatiblity
 PICTURE_ALIGNMENT = get_alignment()
 
 LINK_TARGET = (
@@ -62,6 +68,10 @@ RESPONSIVE_IMAGE_CHOICES = (
     ('no', _('No')),
 )
 
+def add_classes(self, *args):
+        for arg in args:
+            if arg:
+                self._additional_classes += arg.split() if isinstance(arg, str) else arg
 
 class AbstractPicture(CMSPlugin):
     """
@@ -202,7 +212,6 @@ class AbstractPicture(CMSPlugin):
         help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
         on_delete=models.CASCADE,
     )
-
     # Add an app namespace to related_name to avoid field name clashes
     # with any other plugins that have a field with the same name as the
     # lowercase of the class name of this model.
