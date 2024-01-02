@@ -97,6 +97,27 @@ This will generate a class prefixed with ``align-``. The example above
 would produce a ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
 
+As per the choice use multiple alignment style options with ``DJANGOCMS_PICTURE_ALIGN``, for example::
+must have to align image with multiple styles such as left, right or center as well as float image and verticle align image.
+
+    DJANGOCMS_PICTURE_ALIGN = [        
+        ('left', _('Align left')),
+        ('right', _('Align right')),
+        ('center', _('Align center')),
+        #image-float align option
+        ("start", _("Float left")),            
+        ("end", _("Float right")),
+        #verticle-align option
+        ('top', _('Align top')),
+        ('middle', _('Align middle')),
+        ('bottom', _('Align Bottom')),
+        ('baseline', _('Align baseline')),           
+    ]
+
+This will generate a class prefixed with ``align-``. For left align option the above example would produce a ``class="align-left"``. Adding a ``class`` key to the image attributes automatically merges the alignment with the attribute class.
+It works same for others align options.
+For this refer https://getbootstrap.com/docs/5.2/content/images/#aligning-images for css styles.
+
 You can enable responsive images technique by setting``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
 In this case uploaded images will create thumbnails of different sizes according
 to ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS`` (which defaults to ``[576, 768, 992]``) and browser
