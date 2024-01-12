@@ -97,7 +97,7 @@ This will generate a class prefixed with ``align-``. The example above
 would produce a ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
 
-When using the `DJANGOCMS_PICTURE_ALIGN` setting, you have the flexibility to align images in various styles, such as left, right, or center, as well as to float images and vertically align them. You can customize these alignment options as follows::
+When using the ``DJANGOCMS_PICTURE_ALIGN`` setting, you have the flexibility to align images in various styles, such as left, right, or center, as well as to float images and vertically align them. You can customize these alignment options as follows::
 
     DJANGOCMS_PICTURE_ALIGN = [        
         ('left', _('Align left')),
