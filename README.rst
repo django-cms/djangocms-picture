@@ -97,7 +97,27 @@ This will generate a class prefixed with ``align-``. The example above
 would produce a ``class="align-top"``. Adding a ``class`` key to the image
 attributes automatically merges the alignment with the attribute class.
 
-You can enable responsive images technique by setting``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
+When using the ``DJANGOCMS_PICTURE_ALIGN`` setting, you have the flexibility to align images in various styles, such as left, right, or center, as well as to float images and vertically align them. You can customize these alignment options as follows::
+
+    DJANGOCMS_PICTURE_ALIGN = [        
+        ('left', _('Align left')),
+        ('right', _('Align right')),
+        ('center', _('Align center')),
+        # Image float alignment options
+        ("start", _("Float left")),            
+        ("end", _("Float right")),
+        # Vertical alignment options
+        ('top', _('Align top')),
+        ('middle', _('Align middle')),
+        ('bottom', _('Align Bottom')),
+        ('baseline', _('Align baseline')),           
+    ]
+
+This configuration will generate a CSS class prefixed with ``align-``. For example, when selecting the left align option, it will produce a class attribute like ``class="align-left"`` for the image. You can apply these classes to your image attributes, and they will automatically handle the alignment.
+
+These alignment options are consistent with `Bootstrap's image alignment styles <https://getbootstrap.com/docs/5.3/content/images/#aligning-images>`_, however, **you have to provide your own CSS styles for the alignment options**, be it through Bootstrap or otherwise.
+
+You can enable responsive images technique by setting ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
 In this case uploaded images will create thumbnails of different sizes according
 to ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS`` (which defaults to ``[576, 768, 992]``) and browser
 will be responsible for choosing the best image to display (based upon the screen viewport).
