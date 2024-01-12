@@ -117,7 +117,7 @@ This configuration will generate a CSS class prefixed with ``align-``. For examp
 
 These alignment options are consistent with `Bootstrap's image alignment styles <https://getbootstrap.com/docs/5.3/content/images/#aligning-images>`_, however, **you have to provide your own CSS styles for the alignment options**, be it through Bootstrap or otherwise.
 
-You can enable responsive images technique by setting``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
+You can enable responsive images technique by setting ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES`` to ``True``.
 In this case uploaded images will create thumbnails of different sizes according
 to ``DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS`` (which defaults to ``[576, 768, 992]``) and browser
 will be responsible for choosing the best image to display (based upon the screen viewport).
