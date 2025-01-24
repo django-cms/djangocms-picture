@@ -94,9 +94,9 @@ dj-database-url==2.0.0 \
     --hash=sha256:9c9e5f7224f62635a787e9cc3c6762c9be2b19541a21e3c08fa573bd01609b4b \
     --hash=sha256:a35a9f0f43775ca6f90d819dc456233ef7bcc76b47377d5d908b75c7eb320624
     # via django-app-helper
-django==3.2.23 \
-    --hash=sha256:82968f3640e29ef4a773af2c28448f5f7a08d001c6ac05b32d02aeee6509508b \
-    --hash=sha256:d48608d5f62f2c1e260986835db089fa3b79d6f58510881d316b8d88345ae6e1
+django==3.2.25 \
+    --hash=sha256:7ca38a78654aee72378594d63e51636c04b8e28574f5505dff630895b5472777 \
+    --hash=sha256:a52ea7fcf280b16f7b739cec38fa6d3f8953a5456986944c3ca97e79882b4e38
     # via
     #   -r requirements.in
     #   dj-database-url
@@ -104,7 +104,6 @@ django==3.2.23 \
     #   django-cms
     #   django-filer
     #   django-formtools
-    #   django-js-asset
     #   django-polymorphic
     #   django-sekizai
     #   django-treebeard
@@ -130,14 +129,6 @@ django-formtools==2.4.1 \
     --hash=sha256:21f8d5dac737f1e636fa8a0a10969c1c32f525a6dfa27c29592827ba70d9643a \
     --hash=sha256:49ea8a64ddef4728a558bf5f8f622c0f4053b979edcf193bf00dd80432ab2f12
     # via django-cms
-django-js-asset==2.1.0 \
-    --hash=sha256:36a3a4dd6e9efc895fb127d13126020f6ec1ec9469ad42878d42143f22495d90 \
-    --hash=sha256:be6f69ae5c4865617aa7726c48eddb64089a1e7d4ea7d22a35a3beb8282020f6
-    # via django-mptt
-django-mptt==0.14.0 \
-    --hash=sha256:2c92a2b1614c53086278795ccf50580cf1f9b8564f3ff03055dd62bab5987711 \
-    --hash=sha256:d9a87433ab0e4f35247c6f6d5a93ace6990860a4ba8796f815d185f773b9acfc
-    # via -r requirements.in
 django-polymorphic==3.1.0 \
     --hash=sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e \
     --hash=sha256:d6955b5308bf6e41dcb22ba7c96f00b51dfa497a8a5ab1e9c06c7951bf417bf8
