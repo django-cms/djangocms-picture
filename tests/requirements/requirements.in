@@ -2,7 +2,6 @@ coverage
 django
 django-app-helper
 django-filer
-django-mptt
 django-treebeard
 djangocms-attributes-field
 tox
