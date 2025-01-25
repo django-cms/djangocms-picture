@@ -94,9 +94,9 @@ dj-database-url==2.0.0 \
     --hash=sha256:9c9e5f7224f62635a787e9cc3c6762c9be2b19541a21e3c08fa573bd01609b4b \
     --hash=sha256:a35a9f0f43775ca6f90d819dc456233ef7bcc76b47377d5d908b75c7eb320624
     # via django-app-helper
-django==3.2.23 \
-    --hash=sha256:82968f3640e29ef4a773af2c28448f5f7a08d001c6ac05b32d02aeee6509508b \
-    --hash=sha256:d48608d5f62f2c1e260986835db089fa3b79d6f58510881d316b8d88345ae6e1
+django==4.2.18 \
+    --hash=sha256:52ae8eacf635617c0f13b44f749e5ea13dc34262819b2cc8c8636abb08d82c4b \
+    --hash=sha256:ba52eff7e228f1c775d5b0db2ba53d8c49d2f8bfe6ca0234df6b7dd12fb25b19
     # via
     #   -r requirements.in
     #   dj-database-url
@@ -104,7 +104,6 @@ django==3.2.23 \
     #   django-cms
     #   django-filer
     #   django-formtools
-    #   django-js-asset
     #   django-polymorphic
     #   django-sekizai
     #   django-treebeard
@@ -119,9 +118,9 @@ django-classy-tags==4.0.0 \
     # via
     #   django-cms
     #   django-sekizai
-django-cms==3.11.3 \
-    --hash=sha256:1d97b5b07f8cd0a48a3d4a20a2495347b886568779aff954cb9aede3252c10f8 \
-    --hash=sha256:fcbe668e5363a085683bd213f3bdf5a32ec53536ce5e1cf4b84df454696d5074
+django-cms==3.11.9 \
+    --hash=sha256:52908f55c401aacbdb033586b8b88a09862ded3e714650a0b8f89ee9ad6d8218 \
+    --hash=sha256:a383fb90159476da79d9e15f0b6701fbf85ec14eb1e7fe57ac8a1a60b55905c5
     # via djangocms-attributes-field
 django-filer==3.0.2 \
     --hash=sha256:40a5e97ea771a5b09c5d31ccc4ad7e92e536b1c11cf81e73f731eb47c1f6e1a1 \
@@ -131,14 +130,6 @@ django-formtools==2.4.1 \
     --hash=sha256:21f8d5dac737f1e636fa8a0a10969c1c32f525a6dfa27c29592827ba70d9643a \
     --hash=sha256:49ea8a64ddef4728a558bf5f8f622c0f4053b979edcf193bf00dd80432ab2f12
     # via django-cms
-django-js-asset==2.1.0 \
-    --hash=sha256:36a3a4dd6e9efc895fb127d13126020f6ec1ec9469ad42878d42143f22495d90 \
-    --hash=sha256:be6f69ae5c4865617aa7726c48eddb64089a1e7d4ea7d22a35a3beb8282020f6
-    # via django-mptt
-django-mptt==0.14.0 \
-    --hash=sha256:2c92a2b1614c53086278795ccf50580cf1f9b8564f3ff03055dd62bab5987711 \
-    --hash=sha256:d9a87433ab0e4f35247c6f6d5a93ace6990860a4ba8796f815d185f773b9acfc
-    # via -r requirements.in
 django-polymorphic==3.1.0 \
     --hash=sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e \
     --hash=sha256:d6955b5308bf6e41dcb22ba7c96f00b51dfa497a8a5ab1e9c06c7951bf417bf8
