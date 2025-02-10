@@ -1,6 +1,5 @@
 coverage
 django
-django-app-helper
 django-filer
 django-treebeard
 djangocms-attributes-field
