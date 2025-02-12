@@ -90,16 +90,11 @@ distlib==0.3.7 \
     --hash=sha256:2e24928bc811348f0feb63014e97aaae3037f2cf48712d51ae61df7fd6075057 \
     --hash=sha256:9dafe54b34a028eafd95039d5e5d4851a13734540f1331060d31c9916e7147a8
     # via virtualenv
-dj-database-url==2.0.0 \
-    --hash=sha256:9c9e5f7224f62635a787e9cc3c6762c9be2b19541a21e3c08fa573bd01609b4b \
-    --hash=sha256:a35a9f0f43775ca6f90d819dc456233ef7bcc76b47377d5d908b75c7eb320624
-    # via django-app-helper
 django==3.2.25 \
     --hash=sha256:7ca38a78654aee72378594d63e51636c04b8e28574f5505dff630895b5472777 \
     --hash=sha256:a52ea7fcf280b16f7b739cec38fa6d3f8953a5456986944c3ca97e79882b4e38
     # via
     #   -r requirements.in
-    #   dj-database-url
     #   django-classy-tags
     #   django-cms
     #   django-filer
@@ -108,10 +103,6 @@ django==3.2.25 \
     #   django-sekizai
     #   django-treebeard
     #   easy-thumbnails
-django-app-helper==3.3.1 \
-    --hash=sha256:6d5fdd0d247817aff4412d9854c434c577ae6aaa28198e3568e3e13bd749b3d1 \
-    --hash=sha256:a2573fcdfe272b5978c52675fe75c40a9e518c4ff93efbd3940280093b25d378
-    # via -r requirements.in
 django-classy-tags==4.0.0 \
     --hash=sha256:199fa4e0fff0b79c3e0c029c6d78a5e345691043332cba678a302705303bfd06 \
     --hash=sha256:db9fc7c5ed08dc2619cc4c19b19514cdac13ddb618278ab07094c626d28eef0d
@@ -152,9 +143,6 @@ djangocms-attributes-field==3.0.0 \
     --hash=sha256:21a0e1642ffc3d9fbc9284b07024c4ca29f7fe9ffbd2c0aecd22585ff5275a86 \
     --hash=sha256:70cbcb8e826b5a6bceba348119ddc01fa5910af4cb4002eb9895d311950b0d9a
     # via -r requirements.in
-docopt==0.6.2 \
-    --hash=sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491
-    # via django-app-helper
 easy-thumbnails[svg]==2.8.5 \
     --hash=sha256:7e4e912609fc9b60b3a1fef6557ec15ddf9c4f946267a92e6920dfd4dd765e35 \
     --hash=sha256:97f5a5278d8b6c1f5b1b7473f3737d29b18f5c1159cbdf0ab28674fdac2f8c87
@@ -361,10 +349,6 @@ reportlab==4.0.4 \
     # via
     #   easy-thumbnails
     #   svglib
-six==1.16.0 \
-    --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
-    --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
-    # via django-app-helper
 sqlparse==0.4.4 \
     --hash=sha256:5430a4fe2ac7d0f93e66f1efc6e1338a41884b7ddf2a350cedd20ccc4d9d28f3 \
     --hash=sha256:d446183e84b8349fa3061f0fe7f06ca94ba65b426946ffebe6e3e8295332420c
@@ -391,9 +375,7 @@ tox==4.6.4 \
 typing-extensions==4.7.1 \
     --hash=sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36 \
     --hash=sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2
-    # via
-    #   asgiref
-    #   dj-database-url
+    # via asgiref
 virtualenv==20.24.1 \
     --hash=sha256:01aacf8decd346cf9a865ae85c0cdc7f64c8caa07ff0d8b1dfc1733d10677442 \
     --hash=sha256:2ef6a237c31629da6442b0bcaa3999748108c7166318d1f55cc9f8d7294e97bd
