@@ -1,4 +1,6 @@
 coverage
+pytest
+pytest-django
 django
 django-filer
 django-treebeard
