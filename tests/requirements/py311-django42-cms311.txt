@@ -153,6 +153,10 @@ filelock==3.12.2 \
     # via
     #   tox
     #   virtualenv
+iniconfig==2.0.0 \
+    --hash=sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3 \
+    --hash=sha256:b6a85871a79d2e3b22d2d1b94ac2824226a63c6b741c88f7ae975f18b6778374
+    # via pytest
 lxml==4.9.3 \
     --hash=sha256:05186a0f1346ae12553d66df1cfce6f251589fea3ad3da4f3ef4e34b2d58c6a3 \
     --hash=sha256:075b731ddd9e7f68ad24c635374211376aa05a281673ede86cbe1d1b3455279d \
@@ -253,6 +257,7 @@ packaging==23.1 \
     # via
     #   django-cms
     #   pyproject-api
+    #   pytest
     #   tox
 pillow==10.2.0 \
     --hash=sha256:0304004f8067386b477d20a518b50f3fa658a28d44e4116970abfcd94fac34a8 \
@@ -335,11 +340,23 @@ platformdirs==3.9.1 \
 pluggy==1.2.0 \
     --hash=sha256:c2fd55a7d7a3863cba1a013e4e2414658b1d07b6bc57b3919e0c63c9abb99849 \
     --hash=sha256:d12f0c4b579b15f5e054301bb226ee85eeeba08ffec228092f8defbaa3a4c4b3
-    # via tox
+    # via
+    #   pytest
+    #   tox
 pyproject-api==1.5.3 \
     --hash=sha256:14cf09828670c7b08842249c1f28c8ee6581b872e893f81b62d5465bec41502f \
     --hash=sha256:ffb5b2d7cad43f5b2688ab490de7c4d3f6f15e0b819cb588c4b771567c9729eb
     # via tox
+pytest==7.4.4 \
+    --hash=sha256:2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280 \
+    --hash=sha256:b090cdf5ed60bf4c45261be03239c2c1c22df034fbffe691abe93cd80cea01d8
+    # via
+    #   -r requirements.in
+    #   pytest-django
+pytest-django==4.10.0 \
+    --hash=sha256:1091b20ea1491fd04a310fc9aaff4c01b4e8450e3b157687625e16a6b5f3a366 \
+    --hash=sha256:57c74ef3aa9d89cae5a5d73fbb69a720a62673ade7ff13b9491872409a3f5918
+    # via -r requirements.in
 reportlab==4.0.4 \
     --hash=sha256:3dcda79ce04baf70721e2ec54854722644262cac2feec3d5c4c5e77015504cb0 \
     --hash=sha256:7f70b3b56aff5f11cb4136c51a0f5a56fe6e4c8fbbac7b903076db99a8ef31c1
