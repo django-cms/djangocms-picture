@@ -1,3 +1,4 @@
+from cms import __version__ as cms_version
 from cms.api import add_plugin, create_page
 from cms.test_utils.testcases import CMSTestCase
 
@@ -17,14 +18,18 @@ class PicturePluginsTestCase(CMSTestCase):
             template="page.html",
             language=self.language,
         )
-        self.home.publish(self.language)
         self.page = create_page(
             title="content",
             template="page.html",
             language=self.language,
         )
-        self.page.publish(self.language)
-        self.placeholder = self.page.placeholders.get(slot="content")
+        if cms_version < '4':
+            self.home.publish(self.language)
+            self.page.publish(self.language)
+            self.placeholder = self.page.placeholders.get(slot="content")
+        else:
+            self.placeholder = self.page.get_placeholders(self.language).get(slot="content")
+
         self.superuser = self.get_superuser()
 
     def tearDown(self):
@@ -52,7 +57,6 @@ class PicturePluginsTestCase(CMSTestCase):
             language=self.language,
             picture=self.picture,
         )
-        self.page.publish(self.language)
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
 
         with self.login_user_context(self.superuser):
@@ -68,7 +72,6 @@ class PicturePluginsTestCase(CMSTestCase):
             picture=self.picture,
             alignment=get_alignment()[1][0],
         )
-        self.page.publish(self.language)
 
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
 
