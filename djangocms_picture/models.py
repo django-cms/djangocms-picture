@@ -73,6 +73,7 @@ class AbstractPicture(CMSPlugin):
         default=get_templates()[0][0],
         max_length=255,
     )
+    # picture = PictureField()
     picture = FilerImageField(
         verbose_name=_('Image'),
         blank=True,
