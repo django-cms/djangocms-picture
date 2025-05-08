@@ -113,9 +113,9 @@ django-cms==3.11.9 \
     --hash=sha256:52908f55c401aacbdb033586b8b88a09862ded3e714650a0b8f89ee9ad6d8218 \
     --hash=sha256:a383fb90159476da79d9e15f0b6701fbf85ec14eb1e7fe57ac8a1a60b55905c5
     # via djangocms-attributes-field
-django-filer==3.0.2 \
-    --hash=sha256:40a5e97ea771a5b09c5d31ccc4ad7e92e536b1c11cf81e73f731eb47c1f6e1a1 \
-    --hash=sha256:40e0a1bad632b20eaa85e786961b8e36bfa6cdfa88bfb709c4d25bb98e5c4318
+django-filer==3.3.0 \
+    --hash=sha256:21bc9ac9644e256d40db4a92486c7da8a7b55c062fed603ab69cb4906585c438 \
+    --hash=sha256:6f7fac2b800f4eda1f39fe8d2ee13ed29d7e22ea16f1f248bcb62701f055bbe2
     # via -r requirements.in
 django-formtools==2.4.1 \
     --hash=sha256:21f8d5dac737f1e636fa8a0a10969c1c32f525a6dfa27c29592827ba70d9643a \
