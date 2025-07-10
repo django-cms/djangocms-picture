@@ -12,7 +12,7 @@ from djangocms_picture.fields.forms import PictureFormField
 from djangocms_picture.backends import backend_registry
 
 
-class TestModel(models.Model):
+class PictureTestModel(models.Model):
     """Test model with PictureField."""
     name = models.CharField(max_length=100)
     picture = PictureField()
@@ -21,10 +21,10 @@ class TestModel(models.Model):
         app_label = 'test_app'
 
 
-class TestModelForm(ModelForm):
-    """Test form for TestModel."""
+class PictureTestModelForm(ModelForm):
+    """Test form for PictureTestModel."""
     class Meta:
-        model = TestModel
+        model = PictureTestModel
         fields = '__all__'
 
 
@@ -219,8 +219,9 @@ class PictureFieldTestCase(TestCase):
         picture_data.image_reference = 'test.jpg'
         field.validate(picture_data, None)  # Should not raise
         
-        # Test with invalid data (no image or URL)
+        # Test with invalid data (has data but no image or URL)
         picture_data = PictureData()
+        picture_data.width = 800  # Add some data to make it truthy
         with self.assertRaises(ValidationError):
             field.validate(picture_data, None)
         
@@ -340,13 +341,13 @@ class IntegrationTestCase(TestCase):
     
     def test_model_form_integration(self):
         """Test that model form works with PictureField."""
-        # Create form with picture data
+        # Create form with valid picture data (with image reference)
         form_data = {
             'name': 'Test Model',
-            'picture': '{"width": 800, "height": 600, "alt_text": "Test"}'
+            'picture': '{"width": 800, "height": 600, "alt_text": "Test", "image_reference": "test.jpg"}'
         }
         
-        form = TestModelForm(data=form_data)
+        form = PictureTestModelForm(data=form_data)
         
         # Form should be valid
         self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")

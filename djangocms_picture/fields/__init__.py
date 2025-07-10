@@ -220,6 +220,16 @@ class PictureData:
         elif self.image_reference:
             return f"Image: {self.image_reference}"
         return "Empty Picture"
+    
+    def __eq__(self, other):
+        """Check equality with another PictureData object."""
+        if not isinstance(other, PictureData):
+            return False
+        return self.data == other.data
+    
+    def __hash__(self):
+        """Make PictureData hashable."""
+        return hash(self.to_json())
 
 
 class PictureField(models.JSONField):
@@ -318,20 +328,32 @@ class PictureField(models.JSONField):
     
     def validate(self, value, model_instance):
         """Validate the field value."""
-        super().validate(value, model_instance)
-        
-        if value and isinstance(value, PictureData):
-            # Validate that we have either an image or external URL
-            if not value.image_reference and not value.external_url:
-                raise ValidationError(_('Either an image or external URL is required.'))
+        # Skip JSONField validation for PictureData objects
+        if isinstance(value, PictureData):
+            # Convert to dict for JSONField validation
+            dict_value = value.data if value else {}
+            models.Field.validate(self, dict_value, model_instance)
             
-            # Validate that we don't have both link types
-            if value.link_url and value.link_page_id:
-                raise ValidationError(_('Cannot have both external URL and page link.'))
+            # Custom validation for PictureData
+            if value is not None and value.data:  # Check if there's actual data
+                # Validate that we have either an image or external URL
+                if not value.image_reference and not value.external_url:
+                    raise ValidationError(_('Either an image or external URL is required.'))
+                
+                # Validate that we don't have both link types
+                if value.link_url and value.link_page_id:
+                    raise ValidationError(_('Cannot have both external URL and page link.'))
+        else:
+            # For non-PictureData values, use default JSONField validation
+            super().validate(value, model_instance)
     
     def formfield(self, **kwargs):
         """Return a form field for this model field."""
         from .forms import PictureFormField
+        
+        # Filter out JSONField-specific arguments that PictureFormField doesn't need
+        json_specific_args = ['encoder', 'decoder']
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k not in json_specific_args}
         
         defaults = {
             'backend': self.backend_name,
@@ -342,5 +364,7 @@ class PictureField(models.JSONField):
             'alignment_choices': self.alignment_choices,
             'max_size': self.max_size,
         }
-        defaults.update(kwargs)
-        return super().formfield(form_class=PictureFormField, **defaults) 
+        defaults.update(filtered_kwargs)
+        
+        # Create PictureFormField directly since we're handling the arguments ourselves
+        return PictureFormField(**defaults) 

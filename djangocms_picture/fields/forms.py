@@ -75,13 +75,16 @@ class PictureFormField(forms.Field):
     
     def to_python(self, value):
         """Convert form input to Python object."""
-        if not value:
+        if value is None or value == '':
             return None
             
         if isinstance(value, PictureData):
             return value
             
         if isinstance(value, str):
+            if not value.strip():
+                return None
+                
             try:
                 # Try to parse as JSON
                 data = json.loads(value)
@@ -113,13 +116,11 @@ class PictureFormField(forms.Field):
     
     def validate(self, value):
         """Validate the field value."""
-        super().validate(value)
+        # Check required field first
+        if self.required and (not value or not bool(value)):
+            raise ValidationError(_('This field is required.'))
         
         if value and isinstance(value, PictureData):
-            # Validate that we have either an image or external URL
-            if self.required and not value.image_reference and not value.external_url:
-                raise ValidationError(_('This field is required.'))
-            
             # Validate link configuration
             if value.link_url and value.link_page_id:
                 raise ValidationError(_('Cannot have both external URL and page link.'))
