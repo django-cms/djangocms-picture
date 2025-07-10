@@ -74,6 +74,9 @@ jobs:
           python -m coverage html --skip-covered --skip-empty
           python -m coverage report --fail-under=95
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+
       - name: Upload HTML report
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
