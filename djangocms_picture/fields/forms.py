@@ -4,29 +4,30 @@ Form fields for djangocms-picture.
 This module provides form fields and widgets for the reusable picture functionality.
 """
 import json
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from . import PictureData
 from ..backends import backend_registry
+from . import PictureData
 
 
 class PictureFormField(forms.Field):
     """
     Form field for picture configuration.
-    
+
     This field provides a comprehensive interface for configuring all
     picture-related options including image selection, dimensions,
     cropping, links, and accessibility features.
     """
-    
+
     def __init__(self, backend=None, responsive=True, breakpoints=None,
                  formats=None, allow_links=True, alignment_choices=None,
                  max_size=None, **kwargs):
         """
         Initialize PictureFormField.
-        
+
         Args:
             backend: Backend name to use
             responsive: Enable responsive images
@@ -48,17 +49,17 @@ class PictureFormField(forms.Field):
             ('right', _('Right')),
         ]
         self.max_size = max_size
-        
+
         # Set widget based on backend
         kwargs.setdefault('widget', self._get_widget())
         kwargs.setdefault('required', False)
-        
+
         super().__init__(**kwargs)
-    
+
     def _get_widget(self):
         """Get the appropriate widget for this field."""
         from ..widgets import PictureWidget
-        
+
         return PictureWidget(
             backend=self.backend_name,
             responsive=self.responsive,
@@ -68,23 +69,23 @@ class PictureFormField(forms.Field):
             alignment_choices=self.alignment_choices,
             max_size=self.max_size,
         )
-    
+
     def get_backend(self):
         """Get the image backend for this field."""
         return backend_registry.get_backend(self.backend_name)
-    
+
     def to_python(self, value):
         """Convert form input to Python object."""
         if value is None or value == '':
             return None
-            
+
         if isinstance(value, PictureData):
             return value
-            
+
         if isinstance(value, str):
             if not value.strip():
                 return None
-                
+
             try:
                 # Try to parse as JSON
                 data = json.loads(value)
@@ -94,10 +95,10 @@ class PictureFormField(forms.Field):
                 picture_data = PictureData()
                 picture_data.image_reference = value
                 return picture_data
-        
+
         if isinstance(value, dict):
             return PictureData(value)
-        
+
         # Handle file upload
         if hasattr(value, 'read'):
             # This is a file upload, save it using the backend
@@ -111,26 +112,26 @@ class PictureFormField(forms.Field):
                 return picture_data
             except ValidationError:
                 raise
-        
+
         return None
-    
+
     def validate(self, value):
         """Validate the field value."""
         # Check required field first
         if self.required and (not value or not bool(value)):
             raise ValidationError(_('This field is required.'))
-        
+
         if value and isinstance(value, PictureData):
             # Validate link configuration
             if value.link_url and value.link_page_id:
                 raise ValidationError(_('Cannot have both external URL and page link.'))
-            
+
             # Validate dimensions
             if value.width is not None and value.width <= 0:
                 raise ValidationError(_('Width must be positive.'))
             if value.height is not None and value.height <= 0:
                 raise ValidationError(_('Height must be positive.'))
-    
+
     def clean(self, value):
         """Clean and validate the field value."""
         value = self.to_python(value)
@@ -141,15 +142,15 @@ class PictureFormField(forms.Field):
 class ImageSelectionField(forms.Field):
     """
     Field for selecting images from different sources.
-    
+
     This field handles image selection from filer, file upload,
     or external URL depending on the backend configuration.
     """
-    
+
     def __init__(self, backend=None, **kwargs):
         """
         Initialize image selection field.
-        
+
         Args:
             backend: Backend name to use
             **kwargs: Additional field options
@@ -157,36 +158,36 @@ class ImageSelectionField(forms.Field):
         self.backend_name = backend
         kwargs.setdefault('required', False)
         super().__init__(**kwargs)
-    
+
     def get_backend(self):
         """Get the image backend for this field."""
         return backend_registry.get_backend(self.backend_name)
-    
+
     def to_python(self, value):
         """Convert form input to Python object."""
         if not value:
             return None
-        
-        backend = self.get_backend()
-        
+
+        self.get_backend()
+
         # Handle file upload
         if hasattr(value, 'read'):
             return value  # Return the uploaded file
-        
+
         # Handle existing image reference
         if isinstance(value, str):
             return value
-        
+
         return value
-    
+
     def validate(self, value):
         """Validate the uploaded image."""
         super().validate(value)
-        
+
         if value and hasattr(value, 'read'):
             backend = self.get_backend()
             backend.validate_image(value)
 
 
 # Export commonly used fields
-__all__ = ['PictureFormField', 'ImageSelectionField'] 
+__all__ = ['PictureFormField', 'ImageSelectionField']

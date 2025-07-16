@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from tempfile import mkdtemp
 import os
+from tempfile import mkdtemp
 
 SECRET_KEY = "test_key"
 

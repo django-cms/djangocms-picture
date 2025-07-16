@@ -1,15 +1,17 @@
+from cms.api import create_page
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-
-from cms.api import create_page
-
 from easy_thumbnails.files import ThumbnailFile
 from filer.models import ThumbnailOption
 
 from djangocms_picture.models import (
-    LINK_TARGET, PICTURE_RATIO, RESPONSIVE_IMAGE_CHOICES, Picture,
-    get_alignment, get_templates,
+    LINK_TARGET,
+    PICTURE_RATIO,
+    RESPONSIVE_IMAGE_CHOICES,
+    Picture,
+    get_alignment,
+    get_templates,
 )
 
 from .helpers import get_filer_image
