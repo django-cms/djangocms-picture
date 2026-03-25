@@ -1,42 +1,22 @@
-from cms import __version__ as cms_version
-from cms.api import add_plugin, create_page
+from cms.api import add_plugin
 from cms.test_utils.testcases import CMSTestCase
 
 from djangocms_picture.cms_plugins import PicturePlugin
 from djangocms_picture.models import get_alignment
 
+from .fixtures import TestFixture
 from .helpers import get_filer_image
 
 
-class PicturePluginsTestCase(CMSTestCase):
+class PicturePluginsTestCase(TestFixture, CMSTestCase):
 
     def setUp(self):
         self.picture = get_filer_image()
-        self.language = "en"
-        self.home = create_page(
-            title="home",
-            template="page.html",
-            language=self.language,
-        )
-        self.page = create_page(
-            title="content",
-            template="page.html",
-            language=self.language,
-        )
-        if cms_version < '4':
-            self.home.publish(self.language)
-            self.page.publish(self.language)
-            self.placeholder = self.page.placeholders.get(slot="content")
-        else:
-            self.placeholder = self.page.get_placeholders(self.language).get(slot="content")
-
-        self.superuser = self.get_superuser()
+        super().setUp()
 
     def tearDown(self):
         self.picture.delete()
-        self.home.delete()
-        self.page.delete()
-        self.superuser.delete()
+        super().tearDown()
 
     def test_picture_plugin(self):
         plugin = add_plugin(
@@ -49,18 +29,17 @@ class PicturePluginsTestCase(CMSTestCase):
         self.assertEqual(plugin.plugin_type, "PicturePlugin")
 
     def test_plugin_structure(self):
-        request_url = self.page.get_absolute_url(self.language) + "?toolbar_off=true"
-
         plugin = add_plugin(
             placeholder=self.placeholder,
             plugin_type=PicturePlugin.__name__,
             language=self.language,
             picture=self.picture,
         )
+        self.publish(self.page, self.language)
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
 
         with self.login_user_context(self.superuser):
-            response = self.client.get(request_url)
+            response = self.client.get(self.request_url)
 
         self.assertContains(response, 'src="/media/filer_public_thumbnails/filer_public')
 
@@ -72,10 +51,11 @@ class PicturePluginsTestCase(CMSTestCase):
             picture=self.picture,
             alignment=get_alignment()[1][0],
         )
+        self.publish(self.page, self.language)
 
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
 
         with self.login_user_context(self.superuser):
-            response = self.client.get(request_url)
+            response = self.client.get(self.request_url)
 
         self.assertContains(response, 'align-right')
