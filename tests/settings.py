@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-from tempfile import mkdtemp
 import os
+from tempfile import mkdtemp
 
 SECRET_KEY = "test_key"
 
@@ -13,27 +12,38 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.admin",
     "django.contrib.messages",
-
     "cms",
     "menus",
     "treebeard",
-    'easy_thumbnails',
-    'filer',
-
+    "easy_thumbnails",
+    "filer",
     "djangocms_picture",
 ]
+
+try:  # V4 test?
+    import djangocms_versioning  # noqa
+
+    INSTALLED_APPS += [
+        "djangocms_versioning",
+    ]
+except ImportError:  # Nope
+    pass
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "cms.middleware.user.CurrentUserMiddleware",
+    "cms.middleware.page.CurrentPageMiddleware",
+    "cms.middleware.toolbar.ToolbarMiddleware",
+    "cms.middleware.language.LanguageCookieMiddleware",
 ]
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join((os.path.dirname(__file__)), "templates"),
+            os.path.join(os.path.dirname(__file__), "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -47,40 +57,36 @@ TEMPLATES = [
     },
 ]
 
-SITE_ID=1
+SITE_ID = 1
 
-CMS_TEMPLATES = (
-    ("page.html", "Normal page"),
-)
+CMS_TEMPLATES = (("page.html", "Normal page"),)
 
 CMS_LANGUAGES = {
-    1: [{
-            'code': 'en',
-            'name': 'English',
-        }]
+    1: [
+        {
+            "code": "en",
+            "name": "English",
+        }
+    ]
 }
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": "mydatabase",
-        "TEST": {
-            # disable migrations when creating test database
-            "MIGRATE": False,
-        },
     }
 }
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = "en"
 
 THUMBNAIL_PROCESSORS = (
-    'easy_thumbnails.processors.colorspace',
-    'easy_thumbnails.processors.autocrop',
-    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
-    'easy_thumbnails.processors.filters',
+    "easy_thumbnails.processors.colorspace",
+    "easy_thumbnails.processors.autocrop",
+    "filer.thumbnail_processors.scale_and_crop_with_subject_location",
+    "easy_thumbnails.processors.filters",
 )
 
-THUMBNAIL_DEBUG =  True
+THUMBNAIL_DEBUG = True
 
 CMS_CONFIRM_VERSION4 = True
 
@@ -88,10 +94,10 @@ DJANGOCMS_PICTURE_RESPONSIVE_IMAGES = True
 
 DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS = [576, 768, 992]
 
-FILE_UPLOAD_TEMP_DIR =  mkdtemp()
+FILE_UPLOAD_TEMP_DIR = mkdtemp()
 
 ROOT_URLCONF = "tests.urls"
 
 MEDIA_URL = "/media/"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
