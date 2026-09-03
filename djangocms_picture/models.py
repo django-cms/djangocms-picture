@@ -336,7 +336,7 @@ class AbstractPicture(CMSPlugin):
             )
 
         # you shall only set one image kind
-        if not self.picture and not self.external_picture:
+        if self.backend in {"filer", "url"} and not self.picture and not self.external_picture:
             raise ValidationError(
                 gettext(
                     'You need to add either an image, '

@@ -60,3 +60,21 @@ jobs:
         coverage run -m pytest
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v6
+
+  finder:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.14"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip uv
+        uv pip install --system -r tests/requirements/dj61_cms51_finder.txt
+    - name: Run experimental finder tests
+      env:
+        DJANGO_SETTINGS_MODULE: tests.settings_finder
+      run: pytest tests/test_finder_backend.py -q
