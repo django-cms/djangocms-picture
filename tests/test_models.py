@@ -1,15 +1,17 @@
+from cms.api import create_page
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-
-from cms.api import create_page
-
-from easy_thumbnails.files import ThumbnailFile
 from filer.models import ThumbnailOption
 
+from djangocms_picture.backends import Rendition
 from djangocms_picture.models import (
-    LINK_TARGET, PICTURE_RATIO, RESPONSIVE_IMAGE_CHOICES, Picture,
-    get_alignment, get_templates,
+    LINK_TARGET,
+    PICTURE_RATIO,
+    RESPONSIVE_IMAGE_CHOICES,
+    Picture,
+    get_alignment,
+    get_templates,
 )
 
 from .helpers import get_filer_image
@@ -96,6 +98,23 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(str(instance), "1")
         self.assertEqual(instance.get_short_description(), "<file is missing>")
         self.assertIsNone(instance.copy_relations(instance))
+
+    def test_backend_asset(self):
+        instance = self.picture
+        self.assertEqual(instance.picture_backend.alias, "filer")
+        self.assertEqual(instance.picture_reference.backend, "filer")
+        self.assertEqual(instance.picture_reference.id, str(instance.picture_id))
+        self.assertEqual(instance.image_asset.info.label, "test_file.jpg")
+
+        instance.external_picture = self.external_picture
+        self.assertEqual(instance.picture_backend.alias, "url")
+        self.assertEqual(instance.picture_reference.backend, "url")
+        self.assertEqual(instance.picture_reference.id, self.external_picture)
+        self.assertEqual(instance.image_asset.get_original().url, self.external_picture)
+        self.assertEqual(
+            instance.get_size(),
+            {"size": (800, 600), "crop": False, "upscale": False},
+        )
 
     def test_clean(self):
         # test when internal and external links are given
@@ -209,7 +228,7 @@ class PictureModelTestCase(TestCase):
         instance = self.picture
         self.assertIsInstance(
             instance.img_srcset_data[0][1],
-            ThumbnailFile,
+            Rendition,
         )
         instance.external_picture = self.external_picture
         self.assertIsNone(instance.img_srcset_data)
