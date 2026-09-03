@@ -1,6 +1,7 @@
 from typing import Any
 
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from djangocms_picture.backends.base import BaseImageAsset, BasePictureBackend
 from djangocms_picture.backends.types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
@@ -30,6 +31,9 @@ class URLImageAsset(BaseImageAsset):
 
 class URLPictureBackend(BasePictureBackend):
     alias = "url"
+    label = _("External URL")
+    selection_field_name = "external_picture"
+    configuration_fields = frozenset()
     capabilities = URL_CAPABILITIES
 
     def form_field(self, *, required: bool = True, request: Any = None, **kwargs: Any) -> forms.URLField:
@@ -62,3 +66,8 @@ class URLPictureBackend(BasePictureBackend):
             },
         )
         return URLImageAsset(reference)
+
+    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
+        picture_instance.external_picture = value or None
+        if commit:
+            picture_instance.save(update_fields=["external_picture"])

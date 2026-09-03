@@ -67,6 +67,7 @@ class Rendition:
 
 @dataclass(frozen=True)
 class BackendCapabilities:
+    resize: bool = False
     crop: bool = False
     upscale: bool = False
     responsive: bool = False

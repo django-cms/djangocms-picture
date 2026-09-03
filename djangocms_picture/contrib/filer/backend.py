@@ -1,13 +1,21 @@
 from typing import Any
 
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from filer.utils.loader import load_model
 
 from djangocms_picture.backends.base import BaseImageAsset, BasePictureBackend
 from djangocms_picture.backends.types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
 
-FILER_CAPABILITIES = BackendCapabilities(crop=True, upscale=True, responsive=True, presets=True, upload=True)
+FILER_CAPABILITIES = BackendCapabilities(
+    resize=True,
+    crop=True,
+    upscale=True,
+    responsive=True,
+    presets=True,
+    upload=True,
+)
 
 
 class FilerImageAsset(BaseImageAsset):
@@ -39,6 +47,18 @@ class FilerImageAsset(BaseImageAsset):
 
 class FilerPictureBackend(BasePictureBackend):
     alias = "filer"
+    label = _("Media library")
+    selection_field_name = "picture"
+    configuration_fields = frozenset(
+        {
+            "use_automatic_scaling",
+            "use_no_cropping",
+            "use_crop",
+            "use_upscale",
+            "use_responsive_image",
+            "thumbnail_options",
+        }
+    )
     capabilities = FILER_CAPABILITIES
 
     def serialize(self, value: Any) -> PictureReference | None:
@@ -59,3 +79,8 @@ class FilerPictureBackend(BasePictureBackend):
     def get_asset(self, picture_instance: Any) -> FilerImageAsset | None:
         image = getattr(picture_instance, "picture", None)
         return FilerImageAsset(image) if image else None
+
+    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
+        picture_instance.picture = value
+        if commit:
+            picture_instance.save(update_fields=["picture"])

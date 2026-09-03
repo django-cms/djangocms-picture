@@ -84,6 +84,11 @@ class AbstractPicture(CMSPlugin):
         default=get_templates()[0][0],
         max_length=255,
     )
+    backend = models.CharField(
+        verbose_name=_("Image source"),
+        max_length=32,
+        default="filer",
+    )
     picture = FilerImageField(
         verbose_name=_('Image'),
         blank=True,
@@ -227,6 +232,13 @@ class AbstractPicture(CMSPlugin):
 
     class Meta:
         abstract = True
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        # Preserve the long-standing external URL precedence for callers that
+        # create plugins through the ORM/API instead of PictureForm.
+        if self.external_picture and self.backend in {"", "filer", "url"}:
+            self.backend = "url"
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         if self.picture and self.picture.label:

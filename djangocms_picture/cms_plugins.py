@@ -3,11 +3,16 @@ from cms.plugin_pool import plugin_pool
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from .backends import get_backends
 from .forms import PictureForm
 from .models import Picture
 
 # enable nesting of plugins inside the picture plugin
 PICTURE_NESTING = getattr(settings, 'DJANGOCMS_PICTURE_NESTING', False)
+
+
+def get_selection_fields() -> tuple[str, ...]:
+    return ("backend", *(backend.selection_field_name for backend in get_backends()))
 
 
 class PicturePlugin(CMSPluginBase):
@@ -19,10 +24,7 @@ class PicturePlugin(CMSPluginBase):
 
     fieldsets = [
         (None, {
-            'fields': (
-                'picture',
-                'external_picture',
-            )
+            'fields': get_selection_fields(),
         }),
         (_('Advanced settings'), {
             'classes': ('collapse',),

@@ -101,6 +101,7 @@ class PictureModelTestCase(TestCase):
 
     def test_backend_asset(self):
         instance = self.picture
+        self.assertEqual(instance.backend, "filer")
         self.assertEqual(instance.picture_backend.alias, "filer")
         self.assertEqual(instance.picture_reference.backend, "filer")
         self.assertEqual(instance.picture_reference.id, str(instance.picture_id))
@@ -115,6 +116,9 @@ class PictureModelTestCase(TestCase):
             instance.get_size(),
             {"size": (800, 600), "crop": False, "upscale": False},
         )
+
+        external = Picture.objects.create(external_picture=self.external_picture)
+        self.assertEqual(external.backend, "url")
 
     def test_clean(self):
         # test when internal and external links are given

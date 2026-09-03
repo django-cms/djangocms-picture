@@ -14,6 +14,12 @@ DEFAULT_BACKENDS = {
 }
 
 
+def get_backend_aliases() -> tuple[str, ...]:
+    configured = getattr(settings, "DJANGOCMS_PICTURE_BACKENDS", {})
+    aliases = dict.fromkeys((*DEFAULT_BACKENDS, *configured))
+    return tuple(aliases)
+
+
 def _backend_config(alias: str) -> tuple[str, dict[str, Any]]:
     configured = getattr(settings, "DJANGOCMS_PICTURE_BACKENDS", {})
     config = {**DEFAULT_BACKENDS, **configured}.get(alias)
@@ -42,6 +48,14 @@ def get_backend(alias: str) -> BasePictureBackend:
     return backend
 
 
+def get_backends() -> tuple[BasePictureBackend, ...]:
+    return tuple(get_backend(alias) for alias in get_backend_aliases())
+
+
+def get_backend_choices() -> tuple[tuple[str, str], ...]:
+    return tuple((backend.alias, str(backend.label)) for backend in get_backends())
+
+
 def clear_backend_cache() -> None:
     get_backend.cache_clear()
 
@@ -49,9 +63,11 @@ def clear_backend_cache() -> None:
 def get_backend_for_instance(instance: Any) -> BasePictureBackend:
     """Resolve legacy picture fields as backends without changing their storage."""
 
-    if getattr(instance, "external_picture", None):
-        return get_backend("url")
     alias = getattr(instance, "backend", None)
+    if alias and alias not in {"filer", "url"}:
+        return get_backend(alias)
+    if alias == "url" or getattr(instance, "external_picture", None):
+        return get_backend("url")
     if not alias and getattr(instance, "picture_id", None):
         alias = "filer"
     if not alias:
@@ -71,5 +87,8 @@ __all__ = [
     "UnsupportedBackendOperation",
     "clear_backend_cache",
     "get_backend",
+    "get_backend_aliases",
+    "get_backend_choices",
     "get_backend_for_instance",
+    "get_backends",
 ]
