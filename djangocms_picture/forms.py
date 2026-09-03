@@ -57,6 +57,11 @@ class PictureForm(forms.ModelForm):
         )
 
         selected_backend = self._get_selected_backend()
+        if not self.is_bound and self.instance and self.instance.pk:
+            self.initial.setdefault(
+                selected_backend.selection_field_name,
+                selected_backend.get_form_value(self.instance),
+            )
         self._configure_selection_fields(selected_backend)
         self._configure_backend_fields(selected_backend)
 
@@ -136,9 +141,16 @@ class PictureForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            backend.set_form_value(instance, value, commit=True)
             self.save_m2m()
         return instance
+
+    def _save_m2m(self) -> None:
+        """Persist backend-owned references after the plugin has a primary key."""
+
+        super()._save_m2m()
+        backend = get_backend(self.cleaned_data["backend"])
+        value = self.cleaned_data.get(backend.selection_field_name)
+        backend.set_form_value(self.instance, value, commit=True)
 
 
 def _install_backend_form_fields() -> None:
@@ -146,7 +158,12 @@ def _install_backend_form_fields() -> None:
 
     for backend in get_backends():
         if backend.selection_field_name not in PictureForm.base_fields:
-            PictureForm.base_fields[backend.selection_field_name] = backend.form_field(required=False)
+            field = backend.form_field(required=False)
+            PictureForm.base_fields[backend.selection_field_name] = field
+            # ModelAdmin.get_form() creates a subclass of PictureForm. Django's
+            # DeclarativeFieldsMetaclass rebuilds that subclass from declared_fields,
+            # so registering only in base_fields loses optional backend fields.
+            PictureForm.declared_fields[backend.selection_field_name] = field
 
 
 _install_backend_form_fields()

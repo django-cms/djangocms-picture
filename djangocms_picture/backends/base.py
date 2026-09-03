@@ -51,6 +51,12 @@ class BasePictureBackend(ABC):
     def supports_configuration_field(self, field_name: str) -> bool:
         return field_name in self.configuration_fields
 
+    def get_form_value(self, picture_instance: Any) -> Any:
+        """Return the backend value used to initialize its picker field."""
+
+        asset = self.get_asset(picture_instance)
+        return asset.reference.id if asset else None
+
     def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
         raise UnsupportedBackendOperation(f'The "{self.alias}" backend cannot store a selected image.')
 

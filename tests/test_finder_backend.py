@@ -3,12 +3,12 @@ from pathlib import Path
 import pytest
 from django.apps import apps
 
-
 pytest.importorskip("finder")
 if not apps.is_installed("djangocms_picture.contrib.finder"):
     pytest.skip("The finder contrib app is not installed.", allow_module_level=True)
 
 from django.core.files import File
+from django.forms import modelform_factory
 from django.test import TestCase
 from finder.contrib.image.models import ImageFileModel
 from finder.models.ambit import AmbitModel
@@ -56,6 +56,7 @@ class FinderBackendTestCase(TestCase):
         self.assertFalse(backend.capabilities.resize)
         self.assertFalse(backend.capabilities.upscale)
         self.assertFalse(backend.capabilities.responsive)
+        self.assertFalse(backend.capabilities.upload)
 
     def test_form_uses_finder_picker_and_disables_unsupported_options(self) -> None:
         form = PictureForm()
@@ -68,6 +69,15 @@ class FinderBackendTestCase(TestCase):
         self.assertTrue(form.fields["use_responsive_image"].disabled)
         self.assertTrue(form.fields["thumbnail_options"].disabled)
         self.assertIn("finder/js/finder-select.js", str(form.media))
+
+    def test_finder_picker_survives_admin_form_subclassing(self) -> None:
+        admin_form = modelform_factory(
+            Picture,
+            form=PictureForm,
+            fields=("template", "backend", "finder_image"),
+        )
+
+        self.assertIn("finder_image", admin_form.base_fields)
 
     def test_form_persists_finder_selection(self) -> None:
         form = PictureForm(
@@ -83,6 +93,31 @@ class FinderBackendTestCase(TestCase):
         picture.refresh_from_db()
         self.assertEqual(picture.backend, "finder")
         self.assertEqual(picture.picture_reference.id, str(self.image.id))
+
+    def test_admin_deferred_save_persists_finder_selection(self) -> None:
+        form = PictureForm(
+            data={
+                "backend": "finder",
+                "finder_image": str(self.image.id),
+                "template": "default",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        picture = form.save(commit=False)
+        picture.save()
+        form.save_m2m()
+        picture.refresh_from_db()
+
+        self.assertEqual(picture.picture_reference.id, str(self.image.id))
+
+    def test_existing_finder_selection_initializes_picker(self) -> None:
+        picture = Picture.objects.create(backend="finder")
+        get_backend("finder").set_form_value(picture, self.image.id, commit=True)
+
+        form = PictureForm(instance=picture)
+
+        self.assertEqual(form["finder_image"].value(), str(self.image.id))
 
     def test_reference_is_persisted_in_typed_extension(self) -> None:
         picture = Picture.objects.create(backend="finder")

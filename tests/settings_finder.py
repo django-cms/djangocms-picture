@@ -2,9 +2,8 @@ from tempfile import mkdtemp
 
 from .settings import *  # noqa: F403
 
-
-INSTALLED_APPS = [  # noqa: F405
-    *INSTALLED_APPS,
+INSTALLED_APPS = [
+    *INSTALLED_APPS,  # noqa: F405
     "django.contrib.staticfiles",
     "finder",
     "finder.contrib.image.pil",

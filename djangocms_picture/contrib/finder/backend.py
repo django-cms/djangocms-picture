@@ -15,7 +15,9 @@ from .models import FinderPictureReference
 FINDER_CAPABILITIES = BackendCapabilities(
     crop=True,
     responsive=False,
-    upload=True,
+    # The finder picker can upload interactively, but backend.upload() does
+    # not yet have enough folder/permission context for programmatic uploads.
+    upload=False,
     formats=(),
 )
 
