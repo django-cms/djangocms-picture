@@ -1,4 +1,4 @@
-from cms.plugin_base import CMSPluginBase
+from cms.plugin_base import CMSPluginBase, force_str
 from cms.plugin_pool import plugin_pool
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -22,14 +22,15 @@ class PicturePlugin(CMSPluginBase):
     allow_children = PICTURE_NESTING
     text_enabled = True
 
+    change_form_template = "djangocms_frontend/admin/base.html"
+
     fieldsets = [
         (None, {
-            'fields': get_selection_fields(),
+            'fields': ('template', *get_selection_fields()),
         }),
-        (_('Advanced settings'), {
+        (_('Attributes'), {
             'classes': ('collapse',),
             'fields': (
-                'template',
                 'use_responsive_image',
                 ('width', 'height'),
                 'alignment',
@@ -37,7 +38,7 @@ class PicturePlugin(CMSPluginBase):
                 'attributes',
             )
         }),
-        (_('Link settings'), {
+        (_('Link'), {
             'classes': ('collapse',),
             'fields': (
                 ('link_url', 'link_page'),
@@ -45,7 +46,7 @@ class PicturePlugin(CMSPluginBase):
                 'link_attributes',
             )
         }),
-        (_('Cropping settings'), {
+        (_('Cropping'), {
             'classes': ('collapse',),
             'fields': (
                 ('use_automatic_scaling', 'use_no_cropping'),
@@ -74,6 +75,9 @@ class PicturePlugin(CMSPluginBase):
         context['img_srcset_data'] = instance.img_srcset_data
 
         return super().render(context, instance, placeholder)
+
+    def __str__(self):
+        return force_str(super().__str__())
 
 
 plugin_pool.register_plugin(PicturePlugin)

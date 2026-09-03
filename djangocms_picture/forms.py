@@ -8,7 +8,7 @@ from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from .backends import BasePictureBackend, get_backend, get_backend_choices, get_backend_for_instance, get_backends
-from .models import Picture
+from .models import Picture, get_templates
 
 
 class PictureForm(forms.ModelForm):
@@ -35,6 +35,12 @@ class PictureForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.request = request
         self.backends = get_backends()
+
+        template_field = self.fields["template"]
+        template_field.choices = get_templates()
+        if len(template_field.choices) == 1:
+            template_field.widget = forms.HiddenInput()
+            self.initial.setdefault("template", template_field.choices[0][0])
 
         backend_field = self.fields["backend"]
         backend_field.choices = get_backend_choices()

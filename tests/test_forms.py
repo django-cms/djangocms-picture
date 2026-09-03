@@ -1,5 +1,6 @@
 import json
 
+from django import forms
 from django.test import TestCase, override_settings
 
 from djangocms_picture.forms import PictureForm
@@ -9,6 +10,22 @@ from .helpers import get_filer_image
 
 
 class PictureBackendFormTestCase(TestCase):
+    def test_single_template_is_a_hidden_input(self) -> None:
+        form = PictureForm()
+
+        self.assertIsInstance(form.fields["template"].widget, forms.HiddenInput)
+        self.assertEqual(form.initial["template"], "default")
+
+    @override_settings(DJANGOCMS_PICTURE_TEMPLATES=[("feature", "Feature")])
+    def test_multiple_templates_use_a_select_input(self) -> None:
+        form = PictureForm()
+
+        self.assertIsInstance(form.fields["template"].widget, forms.Select)
+        self.assertEqual(
+            list(form.fields["template"].choices),
+            [("default", "Default"), ("feature", "Feature")],
+        )
+
     def test_form_exposes_registered_backends(self) -> None:
         form = PictureForm()
 
