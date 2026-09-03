@@ -1,8 +1,6 @@
 from cms.api import create_page
-from django.apps import apps
 from django.contrib.sites.models import Site
-
-DJANGO_CMS4 = apps.is_installed("djangocms_versioning")
+from djangocms_versioning.models import Version
 
 
 class TestFixture:
@@ -22,72 +20,48 @@ class TestFixture:
             template="page.html",
         )
         self.placeholder = self.get_placeholders(self.page).get(slot="content")
-        self.request_url = self.page.get_absolute_url(self.language) + "?toolbar_off=true"
         return super().setUp()
 
     def tearDown(self):
         self.page.delete()
         self.home.delete()
-        if DJANGO_CMS4:
-            from djangocms_versioning.models import Version
-
-            Version.objects.all().delete()
+        Version.objects.all().delete()
         self.superuser.delete()
 
         return super().tearDown()
 
-    if DJANGO_CMS4:  # CMS V4
+    def _get_version(self, grouper, version_state, language=None):
+        language = language or self.language
 
-        def _get_version(self, grouper, version_state, language=None):
-            language = language or self.language
+        versions = Version.objects.filter_by_grouper(grouper).filter(state=version_state)
+        for version in versions:
+            if hasattr(version.content, "language") and version.content.language == language:
+                return version
 
-            from djangocms_versioning.models import Version
+    def publish(self, grouper, language=None):
+        from djangocms_versioning.constants import DRAFT
 
-            versions = Version.objects.filter_by_grouper(grouper).filter(state=version_state)
-            for version in versions:
-                if hasattr(version.content, "language") and version.content.language == language:
-                    return version
+        version = self._get_version(grouper, DRAFT, language)
+        if version is not None:
+            version.publish(self.superuser)
 
-        def publish(self, grouper, language=None):
-            from djangocms_versioning.constants import DRAFT
+    def unpublish(self, grouper, language=None):
+        from djangocms_versioning.constants import PUBLISHED
 
-            version = self._get_version(grouper, DRAFT, language)
-            if version is not None:
-                version.publish(self.superuser)
+        version = self._get_version(grouper, PUBLISHED, language)
+        if version is not None:
+            version.unpublish(self.superuser)
 
-        def unpublish(self, grouper, language=None):
-            from djangocms_versioning.constants import PUBLISHED
+    def create_page(self, title, **kwargs):
+        kwargs.setdefault("language", self.language)
+        kwargs.setdefault("created_by", self.superuser)
+        kwargs.setdefault("in_navigation", True)
+        kwargs.setdefault("limit_visibility_in_menu", None)
+        kwargs.setdefault("menu_title", title)
+        return create_page(title=title, **kwargs)
 
-            version = self._get_version(grouper, PUBLISHED, language)
-            if version is not None:
-                version.unpublish(self.superuser)
+    def get_placeholders(self, page):
+        from cms.models import PageContent, Placeholder
 
-        def create_page(self, title, **kwargs):
-            kwargs.setdefault("language", self.language)
-            kwargs.setdefault("created_by", self.superuser)
-            kwargs.setdefault("in_navigation", True)
-            kwargs.setdefault("limit_visibility_in_menu", None)
-            kwargs.setdefault("menu_title", title)
-            return create_page(title=title, **kwargs)
-
-        def get_placeholders(self, page):
-            from cms.models import PageContent, Placeholder
-
-            page_content = PageContent.admin_manager.latest_content().get(language=self.language, page=page)
-            return Placeholder.objects.get_for_obj(page_content)
-
-    else:  # CMS V3
-
-        def publish(self, page, language=None):
-            page.publish(language)
-
-        def unpublish(self, page, language=None):
-            page.unpublish(language)
-
-        def create_page(self, title, **kwargs):
-            kwargs.setdefault("language", self.language)
-            kwargs.setdefault("menu_title", title)
-            return create_page(title=title, **kwargs)
-
-        def get_placeholders(self, page):
-            return page.get_placeholders()
+        page_content = PageContent.admin_manager.latest_content().get(language=self.language, page=page)
+        return Placeholder.objects.get_for_obj(page_content)

@@ -36,10 +36,11 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
             picture=self.picture,
         )
         self.publish(self.page, self.language)
+        request_url = self.page.get_absolute_url(self.language) + "?toolbar_off=true"
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
 
         with self.login_user_context(self.superuser):
-            response = self.client.get(self.request_url)
+            response = self.client.get(request_url)
 
         self.assertContains(response, 'src="/media/filer_public_thumbnails/filer_public')
 
@@ -56,6 +57,6 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
 
         with self.login_user_context(self.superuser):
-            response = self.client.get(self.request_url)
+            response = self.client.get(request_url)
 
         self.assertContains(response, 'align-right')

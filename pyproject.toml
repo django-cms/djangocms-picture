@@ -24,14 +24,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Framework :: Django",
-    "Framework :: Django :: 4.2",
-    "Framework :: Django :: 5.0",
-    "Framework :: Django :: 5.1",
     "Framework :: Django :: 5.2",
     "Framework :: Django :: 6.0",
+    "Framework :: Django :: 6.1",
     "Framework :: Django CMS",
-    "Framework :: Django CMS :: 3.11",
-    "Framework :: Django CMS :: 4.1",
     "Framework :: Django CMS :: 5.0",
     "Framework :: Django CMS :: 5.1",
     "Topic :: Internet :: WWW/HTTP",
@@ -41,7 +37,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "django-cms>=3.11",
+    "django-cms>=5.0",
     "django-filer>=2.2",
     "djangocms-attributes-field>=1",
     "easy_thumbnails",
@@ -58,6 +54,9 @@ version = {attr = "djangocms_picture.__version__"}
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = ["."]
+python_files = ["test_*.py"]
+testpaths = ["tests"]
 
 [tool.ruff]
 exclude = [
