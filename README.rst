@@ -55,8 +55,15 @@ Installation
 For a manual install:
 
 * run ``pip install djangocms-picture``
-* add ``djangocms_picture`` to your ``INSTALLED_APPS``
+* add ``djangocms_picture`` and ``djangocms_picture.contrib.filer`` to your
+  ``INSTALLED_APPS``
 * run ``python manage.py migrate djangocms_picture``
+
+The explicit ``djangocms_picture.contrib.filer`` entry registers the
+django-filer integration. For backwards compatibility, omitting it currently
+leaves the configured filer backend available but raises a system-check
+warning. In a future version, django-filer support will not be available unless
+the contrib app is explicitly installed.
 
 
 Configuration
