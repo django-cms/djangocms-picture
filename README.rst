@@ -72,6 +72,31 @@ Configuration
 Note that the provided templates are very minimal by design. You are encouraged
 to adapt and override them to your project's requirements.
 
+Reusable backend picker
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Other forms can reuse the backend selector and all configured picker widgets as
+one field::
+
+    from django import forms
+    from djangocms_picture.fields import BackendImageField, BackendSelection
+
+
+    class HeroImageForm(forms.Form):
+        image = BackendImageField()
+
+
+The cleaned value is a ``BackendSelection`` containing ``backend`` and ``value``.
+Pass ``request=request`` when constructing the field if a remote DAM backend
+needs user or tenant context. The widget includes the JavaScript controller and
+all media declared by the backend picker widgets.
+
+Subwidgets have stable names based on backend aliases, for example
+``image_backend``, ``image_filer``, and ``image_url``. Only the selected
+backend's field is validated. Capability metadata and supported configuration
+fields are exposed to the controller so the active picker and related form
+options stay in sync.
+
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``
 setting::

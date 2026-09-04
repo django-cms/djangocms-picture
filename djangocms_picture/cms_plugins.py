@@ -1,18 +1,16 @@
+from typing import Any
+
 from cms.plugin_base import CMSPluginBase, force_str
 from cms.plugin_pool import plugin_pool
 from django.conf import settings
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
-from .backends import get_backends
 from .forms import PictureForm
 from .models import Picture
 
 # enable nesting of plugins inside the picture plugin
 PICTURE_NESTING = getattr(settings, 'DJANGOCMS_PICTURE_NESTING', False)
-
-
-def get_selection_fields() -> tuple[str, ...]:
-    return ("backend", *(backend.selection_field_name for backend in get_backends()))
 
 
 class PicturePlugin(CMSPluginBase):
@@ -26,7 +24,7 @@ class PicturePlugin(CMSPluginBase):
 
     fieldsets = [
         (None, {
-            'fields': ('template', *get_selection_fields()),
+            'fields': ('template', 'image_source'),
         }),
         (_('Attributes'), {
             'classes': ('collapse',),
@@ -55,6 +53,24 @@ class PicturePlugin(CMSPluginBase):
             )
         })
     ]
+
+    def get_form(
+        self,
+        request: HttpRequest,
+        obj: Picture | None = None,
+        change: bool = False,
+        **kwargs: Any,
+    ) -> type[PictureForm]:
+        form_class = super().get_form(request, obj=obj, change=change, **kwargs)
+
+        class RequestAwarePictureForm(form_class):
+            def __init__(self, *args: Any, **form_kwargs: Any) -> None:
+                form_kwargs.setdefault("request", request)
+                super().__init__(*args, **form_kwargs)
+
+        RequestAwarePictureForm.__name__ = form_class.__name__
+        RequestAwarePictureForm.__qualname__ = form_class.__qualname__
+        return RequestAwarePictureForm
 
     def get_render_template(self, context, instance, placeholder):
         return 'djangocms_picture/{}/picture.html'.format(instance.template)

@@ -22,6 +22,7 @@ from finder.models.folder import FolderModel
 from djangocms_picture.backends import PictureBackendError, PictureReference, RenditionSpec, get_backend
 from djangocms_picture.contrib.finder.backend import FinderImageAsset, FinderPictureBackend
 from djangocms_picture.contrib.finder.forms import FinderImageChoiceField
+from djangocms_picture.fields import BackendSelection
 from djangocms_picture.forms import PictureForm
 from djangocms_picture.models import Picture
 
@@ -71,30 +72,38 @@ class FinderBackendTestCase(TestCase):
 
     def test_form_uses_finder_picker_and_disables_unsupported_options(self) -> None:
         form = PictureForm()
+        source_field = form.fields["image_source"]
 
-        self.assertEqual(form.initial["backend"], "finder")
-        self.assertIn("finder_image", form.fields)
-        self.assertFalse(form.fields["finder_image"].disabled)
+        self.assertEqual(form.initial["image_source"], BackendSelection("finder", None))
+        self.assertIsInstance(source_field.backend_fields["finder"], FinderImageChoiceField)
         self.assertFalse(form.fields["use_crop"].disabled)
         self.assertTrue(form.fields["use_upscale"].disabled)
         self.assertTrue(form.fields["use_responsive_image"].disabled)
         self.assertTrue(form.fields["thumbnail_options"].disabled)
         self.assertIn("finder/js/finder-select.js", str(form.media))
 
+        html = source_field.widget.render(
+            "image_source",
+            form.initial["image_source"],
+            attrs={"id": "id_image_source"},
+        )
+        self.assertIn("<finder-file-select", html)
+        self.assertIn('name="image_source_finder"', html)
+
     def test_finder_picker_survives_admin_form_subclassing(self) -> None:
         admin_form = modelform_factory(
             Picture,
             form=PictureForm,
-            fields=("template", "backend", "finder_image"),
+            fields=("template", "image_source"),
         )
 
-        self.assertIn("finder_image", admin_form.base_fields)
+        self.assertIn("image_source", admin_form.base_fields)
 
     def test_form_persists_finder_selection(self) -> None:
         form = PictureForm(
             data={
-                "backend": "finder",
-                "finder_image": str(self.image.id),
+                "image_source_backend": "finder",
+                "image_source_finder": str(self.image.id),
                 "template": "default",
             }
         )
@@ -108,8 +117,8 @@ class FinderBackendTestCase(TestCase):
     def test_admin_deferred_save_persists_finder_selection(self) -> None:
         form = PictureForm(
             data={
-                "backend": "finder",
-                "finder_image": str(self.image.id),
+                "image_source_backend": "finder",
+                "image_source_finder": str(self.image.id),
                 "template": "default",
             }
         )
@@ -128,7 +137,10 @@ class FinderBackendTestCase(TestCase):
 
         form = PictureForm(instance=picture)
 
-        self.assertEqual(form["finder_image"].value(), str(self.image.id))
+        self.assertEqual(
+            form.initial["image_source"],
+            BackendSelection("finder", str(self.image.id)),
+        )
         self.assertEqual(picture.image_alt_text, self.image.name)
 
     def test_reference_is_persisted_in_typed_extension(self) -> None:

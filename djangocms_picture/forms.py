@@ -1,5 +1,3 @@
-import json
-from dataclasses import asdict
 from typing import Any
 
 from django import forms
@@ -7,24 +5,25 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
-from .backends import BasePictureBackend, get_backend, get_backend_choices, get_backend_for_instance, get_backends
+from .backends import BasePictureBackend, get_backend, get_backend_for_instance, get_backends
+from .fields import BackendImageField, BackendSelection
 from .models import Picture, get_templates
 
 
 class PictureForm(forms.ModelForm):
     """Select an image and expose only options supported by its backend."""
 
-    backend = forms.ChoiceField(label=_("Image source"))
+    # Django admin must see this as a declared field when it derives a plugin
+    # form. __init__ replaces it with the request-aware composite field.
+    image_source = forms.Field(label=_("Image source"))
 
     class Meta:
         model = Picture
         fields = "__all__"
+        exclude = ("backend", "picture", "external_picture")
         widgets = {
             "caption_text": forms.Textarea(attrs={"rows": 2}),
         }
-
-    class Media:
-        js = ("djangocms_picture/js/backend-form.js",)
 
     def __init__(
         self,
@@ -35,6 +34,11 @@ class PictureForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.request = request
         self.backends = get_backends()
+        self.fields["image_source"] = BackendImageField(
+            backends=self.backends,
+            request=request,
+            label=_("Image source"),
+        )
 
         template_field = self.fields["template"]
         template_field.choices = get_templates()
@@ -42,59 +46,38 @@ class PictureForm(forms.ModelForm):
             template_field.widget = forms.HiddenInput()
             self.initial.setdefault("template", template_field.choices[0][0])
 
-        backend_field = self.fields["backend"]
-        backend_field.choices = get_backend_choices()
-        backend_field.widget.attrs["data-picture-backend-selector"] = ""
-        backend_field.widget.attrs["data-picture-backends"] = json.dumps(
-            {
-                backend.alias: {
-                    "selectionField": backend.selection_field_name,
-                    "configurationFields": sorted(backend.configuration_fields),
-                    "capabilities": asdict(backend.capabilities),
-                }
-                for backend in self.backends
-            }
-        )
-
         selected_backend = self._get_selected_backend()
-        if not self.is_bound and self.instance and self.instance.pk:
-            self.initial.setdefault(
-                selected_backend.selection_field_name,
-                selected_backend.get_form_value(self.instance),
+        if not self.is_bound and "image_source" not in self.initial:
+            value = None
+            if self.instance:
+                value = selected_backend.get_form_value(self.instance)
+            self.initial["image_source"] = BackendSelection(
+                backend=selected_backend.alias,
+                value=value,
             )
-        self._configure_selection_fields(selected_backend)
         self._configure_backend_fields(selected_backend)
 
     def _get_selected_backend(self) -> BasePictureBackend:
         if self.is_bound:
-            alias = self.data.get(self.add_prefix("backend"))
+            alias = self.data.get(f'{self.add_prefix("image_source")}_backend')
+        elif isinstance(self.initial.get("image_source"), BackendSelection):
+            alias = self.initial["image_source"].backend
         elif self.instance and self.instance.pk:
             alias = get_backend_for_instance(self.instance).alias
-            self.initial["backend"] = alias
         else:
             model_default = Picture._meta.get_field("backend").default
             instance_backend = self.instance.backend
-            alias = self.initial.get("backend")
-            if not alias and instance_backend != model_default:
+            alias = None
+            if instance_backend != model_default:
                 alias = instance_backend
             alias = alias or getattr(settings, "DJANGOCMS_PICTURE_DEFAULT_BACKEND", model_default)
-            self.initial["backend"] = alias
 
         for backend in self.backends:
             if backend.alias == alias:
                 return backend
         # Choice validation reports an invalid alias. A deterministic fallback
         # keeps the rest of the form usable while showing the field error.
-        return get_backend("filer")
-
-    def _configure_selection_fields(self, selected_backend: BasePictureBackend) -> None:
-        for backend in self.backends:
-            field = self.fields.get(backend.selection_field_name)
-            if field is None:
-                continue
-            field.required = False
-            field.disabled = backend.alias != selected_backend.alias
-            field.widget.attrs["data-picture-backend-input"] = backend.alias
+        return self.backends[0]
 
     def _configure_backend_fields(self, selected_backend: BasePictureBackend) -> None:
         configurable_fields = {
@@ -111,33 +94,28 @@ class PictureForm(forms.ModelForm):
 
     def clean(self) -> dict[str, Any]:
         cleaned_data = super().clean()
-        alias = cleaned_data.get("backend")
-        if not alias:
-            return cleaned_data
-
-        backend = next((item for item in self.backends if item.alias == alias), None)
-        if backend is None:
-            return cleaned_data
-
-        field_name = backend.selection_field_name
-        if field_name not in self.fields:
-            self.add_error("backend", _("The selected image source does not provide a picker."))
-        elif not cleaned_data.get(field_name):
-            self.add_error(field_name, _("Select an image from this source."))
+        selection = cleaned_data.get("image_source")
+        if isinstance(selection, BackendSelection):
+            self._apply_selection(self.instance, selection)
         return cleaned_data
 
-    def save(self, commit: bool = True) -> Picture:
-        instance = super().save(commit=False)
-        backend = get_backend(self.cleaned_data["backend"])
+    @staticmethod
+    def _apply_selection(instance: Picture, selection: BackendSelection) -> BasePictureBackend:
+        backend = get_backend(selection.backend)
+        instance.backend = backend.alias
 
         # external_picture historically overrides all other sources. Clear it
         # when leaving the URL backend, while retaining filer data when URL is
         # selected so existing rollback behavior remains available.
         if backend.alias != "url":
             instance.external_picture = None
+        backend.set_form_value(instance, selection.value, commit=False)
+        return backend
 
-        value = self.cleaned_data.get(backend.selection_field_name)
-        backend.set_form_value(instance, value, commit=False)
+    def save(self, commit: bool = True) -> Picture:
+        instance = super().save(commit=False)
+        selection: BackendSelection = self.cleaned_data["image_source"]
+        self._apply_selection(instance, selection)
 
         if commit:
             instance.save()
@@ -148,22 +126,6 @@ class PictureForm(forms.ModelForm):
         """Persist backend-owned references after the plugin has a primary key."""
 
         super()._save_m2m()
-        backend = get_backend(self.cleaned_data["backend"])
-        value = self.cleaned_data.get(backend.selection_field_name)
-        backend.set_form_value(self.instance, value, commit=True)
-
-
-def _install_backend_form_fields() -> None:
-    """Install non-model picker fields declared by optional contrib backends."""
-
-    for backend in get_backends():
-        if backend.selection_field_name not in PictureForm.base_fields:
-            field = backend.form_field(required=False)
-            PictureForm.base_fields[backend.selection_field_name] = field
-            # ModelAdmin.get_form() creates a subclass of PictureForm. Django's
-            # DeclarativeFieldsMetaclass rebuilds that subclass from declared_fields,
-            # so registering only in base_fields loses optional backend fields.
-            PictureForm.declared_fields[backend.selection_field_name] = field
-
-
-_install_backend_form_fields()
+        selection: BackendSelection = self.cleaned_data["image_source"]
+        backend = get_backend(selection.backend)
+        backend.set_form_value(self.instance, selection.value, commit=True)

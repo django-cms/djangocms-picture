@@ -5,6 +5,7 @@ from django import forms
 from django.core.exceptions import ImproperlyConfigured
 from django.template import Context, Template
 from django.test import SimpleTestCase, TestCase, override_settings
+from filer.fields.image import AdminImageFormField
 
 from djangocms_picture.backends import (
     BasePictureBackend,
@@ -242,6 +243,12 @@ class BackendContractTestCase(SimpleTestCase):
 
 
 class FilerBackendCompatibilityTestCase(TestCase):
+    def test_filer_backend_exposes_its_native_picker_field(self) -> None:
+        field = FilerPictureBackend().form_field(required=False)
+
+        self.assertIsInstance(field, AdminImageFormField)
+        self.assertFalse(field.required)
+
     def test_filer_reference_round_trip(self) -> None:
         image = get_filer_image()
         backend = FilerPictureBackend()

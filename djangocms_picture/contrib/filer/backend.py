@@ -1,8 +1,10 @@
 from typing import Any
 
 from django.conf import settings
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
+from filer.fields.image import AdminImageFormField
 from filer.utils.loader import load_model
 
 from djangocms_picture.backends.base import BaseImageAsset, BasePictureBackend
@@ -60,6 +62,16 @@ class FilerPictureBackend(BasePictureBackend):
         }
     )
     capabilities = FILER_CAPABILITIES
+
+    def form_field(self, *, required: bool = True, request: Any = None, **kwargs: Any) -> AdminImageFormField:
+        image_model = load_model(settings.FILER_IMAGE_MODEL)
+        model_field = models.ForeignKey(image_model, on_delete=models.SET_NULL, null=True)
+        return model_field.formfield(
+            form_class=AdminImageFormField,
+            rel=model_field.remote_field,
+            required=required,
+            **kwargs,
+        )
 
     def serialize(self, value: Any) -> PictureReference | None:
         if value is None:
