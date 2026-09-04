@@ -3,7 +3,7 @@ parallel = True
 branch = True
 source = djangocms_picture
 omit =
-    migrations/*
+    */migrations/*
     tests/*
 
 [report]

@@ -28,6 +28,11 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
         plugin.full_clean()
         self.assertEqual(plugin.plugin_type, "PicturePlugin")
 
+    def test_backend_fields_follow_template_in_the_primary_fieldset(self) -> None:
+        fields = PicturePlugin.fieldsets[0][1]["fields"]
+
+        self.assertEqual(fields, ("template", "backend", "picture", "external_picture"))
+
     def test_plugin_structure(self):
         plugin = add_plugin(
             placeholder=self.placeholder,
@@ -38,6 +43,7 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
         self.publish(self.page, self.language)
         request_url = self.page.get_absolute_url(self.language) + "?toolbar_off=true"
         self.assertEqual(plugin.get_plugin_class_instance().name, "Image")
+        self.assertIsInstance(str(plugin.get_plugin_class_instance()), str)
 
         with self.login_user_context(self.superuser):
             response = self.client.get(request_url)

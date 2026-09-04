@@ -63,7 +63,6 @@ jobs:
 
   finder:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v6
     - name: Setup Python
@@ -77,4 +76,8 @@ jobs:
     - name: Run experimental finder tests
       env:
         DJANGO_SETTINGS_MODULE: tests.settings_finder
-      run: pytest tests/test_finder_backend.py -q
+      run: coverage run -m pytest tests/test_finder_backend.py -q
+    - name: Upload Finder coverage to Codecov
+      uses: codecov/codecov-action@v6
+      with:
+        flags: finder

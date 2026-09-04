@@ -1,0 +1,10 @@
+coverage:
+  status:
+    project:
+      default:
+        # Protect overall coverage while allowing focused backend additions.
+        target: 95%
+    patch:
+      default:
+        # Prefer behavior-driven tests over exercising defensive boilerplate.
+        target: 90%

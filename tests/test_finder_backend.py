@@ -1,4 +1,7 @@
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+from uuid import uuid4
 
 import pytest
 from django.apps import apps
@@ -7,15 +10,18 @@ pytest.importorskip("finder")
 if not apps.is_installed("djangocms_picture.contrib.finder"):
     pytest.skip("The finder contrib app is not installed.", allow_module_level=True)
 
+from django.core.exceptions import ValidationError
 from django.core.files import File
+from django.core.files.base import ContentFile
 from django.forms import modelform_factory
 from django.test import TestCase
 from finder.contrib.image.models import ImageFileModel
 from finder.models.ambit import AmbitModel
 from finder.models.folder import FolderModel
 
-from djangocms_picture.backends import PictureReference, RenditionSpec, get_backend
-from djangocms_picture.contrib.finder.backend import FinderPictureBackend
+from djangocms_picture.backends import PictureBackendError, PictureReference, RenditionSpec, get_backend
+from djangocms_picture.contrib.finder.backend import FinderImageAsset, FinderPictureBackend
+from djangocms_picture.contrib.finder.forms import FinderImageChoiceField
 from djangocms_picture.forms import PictureForm
 from djangocms_picture.models import Picture
 
@@ -57,6 +63,11 @@ class FinderBackendTestCase(TestCase):
         self.assertFalse(backend.capabilities.upscale)
         self.assertFalse(backend.capabilities.responsive)
         self.assertFalse(backend.capabilities.upload)
+
+    def test_backend_uses_finder_default_ambit_when_unconfigured(self) -> None:
+        field = FinderPictureBackend().form_field(required=False)
+
+        self.assertEqual(field.ambit, "public")
 
     def test_form_uses_finder_picker_and_disables_unsupported_options(self) -> None:
         form = PictureForm()
@@ -118,6 +129,7 @@ class FinderBackendTestCase(TestCase):
         form = PictureForm(instance=picture)
 
         self.assertEqual(form["finder_image"].value(), str(self.image.id))
+        self.assertEqual(picture.image_alt_text, self.image.name)
 
     def test_reference_is_persisted_in_typed_extension(self) -> None:
         picture = Picture.objects.create(backend="finder")
@@ -130,6 +142,36 @@ class FinderBackendTestCase(TestCase):
         self.assertEqual(picture.finder_reference.ambit, "public")
         self.assertEqual(picture.picture_reference.backend, "finder")
         self.assertEqual(picture.picture_reference.id, str(self.image.id))
+
+    def test_backend_handles_empty_stale_and_foreign_references(self) -> None:
+        backend = get_backend("finder")
+        unsaved_picture = Picture(backend="finder")
+        picture_without_reference = Picture.objects.create(backend="finder")
+
+        self.assertIsNone(backend.serialize(None))
+        self.assertIsNone(backend.serialize(uuid4()))
+        self.assertIsNone(backend.resolve(PictureReference(backend="url", id=str(self.image.id))))
+        self.assertIsNone(backend.resolve(PictureReference(backend="finder", id=str(uuid4()))))
+        self.assertIsNone(backend.get_asset(unsaved_picture))
+        self.assertIsNone(backend.get_asset(picture_without_reference))
+
+        backend.set_form_value(picture_without_reference, None, commit=True)
+        self.assertIsNone(backend.get_asset(picture_without_reference))
+
+    def test_backend_serializes_a_finder_image_instance(self) -> None:
+        reference = get_backend("finder").serialize(self.image)
+
+        self.assertIsNotNone(reference)
+        self.assertEqual(reference.id, str(self.image.id))
+
+    def test_picker_rejects_missing_and_non_image_inodes(self) -> None:
+        field = FinderImageChoiceField(required=False, ambit="public")
+
+        self.assertIsNone(field.clean(""))
+        with self.assertRaises(ValidationError):
+            field.clean(uuid4())
+        with self.assertRaises(ValidationError):
+            field.clean(self.root.id)
 
     def test_focal_crop_is_generated_in_sample_storage(self) -> None:
         asset = get_backend("finder").resolve(
@@ -152,3 +194,71 @@ class FinderBackendTestCase(TestCase):
 
         self.assertEqual((rendition.width, rendition.height), (800, 600))
         self.assertTrue(rendition.url.startswith("/media/finder/"))
+
+    def test_existing_crop_is_reused(self) -> None:
+        asset = get_backend("finder").resolve(
+            PictureReference(backend="finder", id=str(self.image.id))
+        )
+        self.assertIsNotNone(asset)
+        filename = asset.image.get_cropped_filename(173, 127)
+        rendition_path = f"{asset.image.id}/{filename}"
+        payload = get_image(image_name="cached.jpg", size=(173, 127))
+        with Path(payload["path"]).open("rb") as image_file:
+            asset.ambit.sample_storage.save(rendition_path, File(image_file))
+
+        try:
+            with patch.object(asset.image, "crop") as crop:
+                rendition = asset.get_rendition(RenditionSpec(width=173, height=127, crop=True))
+        finally:
+            asset.ambit.sample_storage.delete(rendition_path)
+
+        crop.assert_not_called()
+        self.assertEqual((rendition.width, rendition.height), (173, 127))
+
+    def test_crop_errors_are_normalized(self) -> None:
+        asset = get_backend("finder").resolve(
+            PictureReference(backend="finder", id=str(self.image.id))
+        )
+        self.assertIsNotNone(asset)
+
+        with (
+            patch.object(asset.ambit.sample_storage, "exists", return_value=False),
+            patch.object(asset.image, "crop", side_effect=RuntimeError("crop failed")),
+            self.assertRaises(PictureBackendError),
+        ):
+            asset.get_rendition(RenditionSpec(width=199, height=131, crop=True))
+
+    def test_asset_without_crop_support_reports_a_backend_error(self) -> None:
+        image = SimpleNamespace(
+            pk=uuid4(),
+            id=uuid4(),
+            folder=self.image.folder,
+            name="unsupported.bin",
+            width=800,
+            height=600,
+            meta_data={},
+            mime_type="application/octet-stream",
+            sha1="unsupported",
+        )
+        asset = FinderImageAsset(image)
+
+        with self.assertRaises(PictureBackendError):
+            asset.get_rendition(RenditionSpec(width=100, height=100, crop=True))
+
+    def test_svg_dimensions_are_read_from_the_rendition(self) -> None:
+        asset = get_backend("finder").resolve(
+            PictureReference(backend="finder", id=str(self.image.id))
+        )
+        self.assertIsNotNone(asset)
+        rendition_path = f"{asset.image.id}/dimensions.svg"
+        asset.ambit.sample_storage.save(
+            rendition_path,
+            ContentFile(b'<svg xmlns="http://www.w3.org/2000/svg" width="123" height="45"></svg>'),
+        )
+
+        try:
+            dimensions = asset._get_dimensions(rendition_path)
+        finally:
+            asset.ambit.sample_storage.delete(rendition_path)
+
+        self.assertEqual(dimensions, (123, 45))
