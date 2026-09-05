@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.test import TestCase, override_settings
 
+from djangocms_picture.backends import get_backend
 from djangocms_picture.backends.base import BasePictureBackend
 from djangocms_picture.backends.types import PictureReference
 from djangocms_picture.fields import BackendImageField, BackendSelection
@@ -39,10 +40,9 @@ class PictureBackendFormTestCase(TestCase):
             list(field.selector_field.choices),
             [("filer", "Media library"), ("url", "External URL")],
         )
-        payload = json.loads(field.widget.widgets[0].attrs["data-picture-backends"])
+        payload = json.loads(field.widget.selector_widget.attrs["data-picture-backends"])
         self.assertTrue(payload["filer"]["capabilities"]["crop"])
         self.assertFalse(payload["url"]["capabilities"]["crop"])
-        self.assertEqual(field.widget.widgets_names, ["_backend", "_filer", "_url"])
 
     def test_filer_picker_keeps_its_native_widget_markup(self) -> None:
         form = PictureForm()
@@ -83,7 +83,9 @@ class PictureBackendFormTestCase(TestCase):
     def test_configured_default_backend_is_used_for_new_plugins(self) -> None:
         form = PictureForm()
 
-        self.assertEqual(form.initial["image_source"], BackendSelection("url", None))
+        selection = form.initial["image_source"]
+        self.assertEqual(selection.backend.alias, "url")
+        self.assertIsNone(selection.value)
         self.assertTrue(form.fields["use_crop"].disabled)
 
     def test_selected_backend_requires_its_picker_value(self) -> None:
@@ -126,6 +128,49 @@ class PictureBackendFormTestCase(TestCase):
         self.assertEqual(instance.picture, image)
         self.assertIsNone(instance.external_picture)
 
+    def test_url_backend_selection_serialization_round_trip(self) -> None:
+        selection = BackendSelection(
+            get_backend("url"),
+            "https://example.com/image.jpg",
+        )
+
+        serialized = selection.serialize()
+        json_round_trip = json.loads(json.dumps(serialized))
+
+        self.assertEqual(
+            serialized,
+            {
+                "backend": "url",
+                "value": "https://example.com/image.jpg",
+            },
+        )
+        self.assertEqual(BackendSelection.deserialize(json_round_trip), selection)
+
+    def test_filer_backend_selection_uses_entangled_model_convention(self) -> None:
+        image = get_filer_image()
+        selection = BackendSelection(get_backend("filer"), image)
+
+        serialized = selection.serialize()
+        restored = BackendSelection.deserialize(json.loads(json.dumps(serialized)))
+
+        self.assertEqual(
+            serialized,
+            {
+                "backend": "filer",
+                "value": {
+                    "model": "filer.image",
+                    "pk": image.pk,
+                },
+            },
+        )
+        self.assertEqual(restored, selection)
+
+    def test_backend_selection_deserialization_rejects_invalid_data(self) -> None:
+        with self.assertRaises(TypeError):
+            BackendSelection.deserialize("url")
+        with self.assertRaises(ValueError):
+            BackendSelection.deserialize({"backend": "url"})
+
     def test_inactive_backend_value_is_not_validated(self) -> None:
         form = PictureForm(
             data={
@@ -137,10 +182,9 @@ class PictureBackendFormTestCase(TestCase):
         )
 
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertEqual(
-            form.cleaned_data["image_source"],
-            BackendSelection("url", "https://example.com/image.jpg"),
-        )
+        selection = form.cleaned_data["image_source"]
+        self.assertEqual(selection.backend.alias, "url")
+        self.assertEqual(selection.value, "https://example.com/image.jpg")
 
 
 class TextBackend(BasePictureBackend):
@@ -186,9 +230,11 @@ class IntegerBackend(TextBackend):
 
 class BackendImageFieldTestCase(TestCase):
     def setUp(self) -> None:
-        self.field = BackendImageField(backends=(TextBackend(), IntegerBackend()))
+        self.text_backend = TextBackend()
+        self.integer_backend = IntegerBackend()
+        self.field = BackendImageField(backends=(self.text_backend, self.integer_backend))
 
-    def test_named_widget_values_are_compressed_to_a_typed_selection(self) -> None:
+    def test_named_widget_values_are_cleaned_to_a_typed_selection(self) -> None:
         data = {
             "asset_backend": "integer",
             "asset_text": "ignored",
@@ -197,13 +243,28 @@ class BackendImageFieldTestCase(TestCase):
 
         raw_value = self.field.widget.value_from_datadict(data, {}, "asset")
 
-        self.assertEqual(self.field.widget.widgets_names, ["_backend", "_text", "_integer"])
-        self.assertEqual(self.field.clean(raw_value), BackendSelection("integer", 42))
+        self.assertEqual(
+            self.field.clean(raw_value),
+            BackendSelection(self.integer_backend, 42),
+        )
+        self.assertNotIsInstance(self.field, forms.MultiValueField)
+
+    def test_form_instances_do_not_share_backend_form_fields(self) -> None:
+        class ReusableForm(forms.Form):
+            image = BackendImageField(backends=(self.text_backend, self.integer_backend))
+
+        first = ReusableForm()
+        second = ReusableForm()
+
+        self.assertIsNot(
+            first.fields["image"].backend_fields["text"],
+            second.fields["image"].backend_fields["text"],
+        )
 
     def test_widget_renders_named_inputs_and_only_the_selected_picker(self) -> None:
         html = self.field.widget.render(
             "asset",
-            BackendSelection("integer", 42),
+            BackendSelection(self.integer_backend, 42),
             attrs={"id": "id_asset"},
         )
 
@@ -217,13 +278,16 @@ class BackendImageFieldTestCase(TestCase):
         self.assertNotIn('data-picture-backend-widget="integer" hidden', html)
 
     def test_only_the_selected_backend_field_is_validated(self) -> None:
-        value = ["text", "asset-id", "not-an-integer"]
+        value = BackendSelection(self.text_backend, "asset-id")
 
-        self.assertEqual(self.field.clean(value), BackendSelection("text", "asset-id"))
+        self.assertEqual(
+            self.field.clean(value),
+            BackendSelection(self.text_backend, "asset-id"),
+        )
 
     def test_selected_backend_validation_errors_are_preserved(self) -> None:
         with self.assertRaises(ValidationError):
-            self.field.clean(["integer", "ignored", "not-an-integer"])
+            self.field.clean(BackendSelection(self.integer_backend, "not-an-integer"))
 
     def test_widget_media_contains_the_controller(self) -> None:
         self.assertIn("djangocms_picture/js/backend-image-widget.js", self.field.widget.media._js)

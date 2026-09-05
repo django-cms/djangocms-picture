@@ -74,7 +74,10 @@ class FinderBackendTestCase(TestCase):
         form = PictureForm()
         source_field = form.fields["image_source"]
 
-        self.assertEqual(form.initial["image_source"], BackendSelection("finder", None))
+        self.assertEqual(
+            form.initial["image_source"],
+            BackendSelection(get_backend("finder"), None),
+        )
         self.assertIsInstance(source_field.backend_fields["finder"], FinderImageChoiceField)
         self.assertFalse(form.fields["use_crop"].disabled)
         self.assertTrue(form.fields["use_upscale"].disabled)
@@ -139,7 +142,7 @@ class FinderBackendTestCase(TestCase):
 
         self.assertEqual(
             form.initial["image_source"],
-            BackendSelection("finder", str(self.image.id)),
+            BackendSelection(get_backend("finder"), str(self.image.id)),
         )
         self.assertEqual(picture.image_alt_text, self.image.name)
 
@@ -175,6 +178,18 @@ class FinderBackendTestCase(TestCase):
 
         self.assertIsNotNone(reference)
         self.assertEqual(reference.id, str(self.image.id))
+
+    def test_backend_selection_serialization_restores_uuid_value(self) -> None:
+        selection = BackendSelection(get_backend("finder"), self.image.id)
+
+        serialized = selection.serialize()
+        restored = BackendSelection.deserialize(serialized)
+
+        self.assertEqual(
+            serialized,
+            {"backend": "finder", "value": str(self.image.id)},
+        )
+        self.assertEqual(restored, selection)
 
     def test_picker_rejects_missing_and_non_image_inodes(self) -> None:
         field = FinderImageChoiceField(required=False, ambit="public")

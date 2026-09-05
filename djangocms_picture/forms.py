@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
-from .backends import BasePictureBackend, get_backend, get_backend_for_instance, get_backends
+from .backends import BasePictureBackend, get_backend_for_instance, get_backends
 from .fields import BackendImageField, BackendSelection
 from .models import Picture, get_templates
 
@@ -52,7 +52,7 @@ class PictureForm(forms.ModelForm):
             if self.instance:
                 value = selected_backend.get_form_value(self.instance)
             self.initial["image_source"] = BackendSelection(
-                backend=selected_backend.alias,
+                backend=selected_backend,
                 value=value,
             )
         self._configure_backend_fields(selected_backend)
@@ -61,7 +61,7 @@ class PictureForm(forms.ModelForm):
         if self.is_bound:
             alias = self.data.get(f'{self.add_prefix("image_source")}_backend')
         elif isinstance(self.initial.get("image_source"), BackendSelection):
-            alias = self.initial["image_source"].backend
+            alias = self.initial["image_source"].backend.alias
         elif self.instance and self.instance.pk:
             alias = get_backend_for_instance(self.instance).alias
         else:
@@ -101,7 +101,7 @@ class PictureForm(forms.ModelForm):
 
     @staticmethod
     def _apply_selection(instance: Picture, selection: BackendSelection) -> BasePictureBackend:
-        backend = get_backend(selection.backend)
+        backend = selection.backend
         instance.backend = backend.alias
 
         # external_picture historically overrides all other sources. Clear it
@@ -127,5 +127,5 @@ class PictureForm(forms.ModelForm):
 
         super()._save_m2m()
         selection: BackendSelection = self.cleaned_data["image_source"]
-        backend = get_backend(selection.backend)
+        backend = selection.backend
         backend.set_form_value(self.instance, selection.value, commit=True)

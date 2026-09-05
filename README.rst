@@ -86,10 +86,16 @@ one field::
         image = BackendImageField()
 
 
-The cleaned value is a ``BackendSelection`` containing ``backend`` and ``value``.
+The cleaned value is a ``BackendSelection`` containing the configured backend
+instance in ``backend`` and that backend field's cleaned ``value``.
 Pass ``request=request`` when constructing the field if a remote DAM backend
 needs user or tenant context. The widget includes the JavaScript controller and
 all media declared by the backend picker widgets.
+
+``BackendSelection.serialize()`` returns a JSON-compatible dictionary, and
+``BackendSelection.deserialize()`` restores the configured backend and its
+cleaned value. Django model values use django-entangled's foreign-key convention:
+``{"model": "app_label.model_name", "pk": primary_key}``.
 
 Subwidgets have stable names based on backend aliases, for example
 ``image_backend``, ``image_filer``, and ``image_url``. Only the selected
