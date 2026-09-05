@@ -1,0 +1,13 @@
+<div class="djangocms-picture-backend-field" data-picture-backend-field>
+  {% for subwidget in widget.subwidgets %}
+    {% if subwidget.backend_alias %}
+      <div class="djangocms-picture-backend-picker" data-picture-backend-widget="{{ subwidget.backend_alias }}"{% if not subwidget.backend_active %} hidden{% endif %}>
+        {{ subwidget.rendered }}
+      </div>
+    {% else %}
+      <div class="djangocms-picture-backend-selector"{% if subwidget.selector_hidden %} hidden{% endif %}>
+        {{ subwidget.rendered }}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>

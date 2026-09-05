@@ -2,6 +2,8 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
+from typing import Any
+
 from cms.models import CMSPlugin
 from cms.models.fields import PageField
 from django.conf import settings
@@ -10,9 +12,18 @@ from django.db import models
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from djangocms_attributes_field.fields import AttributesField
-from easy_thumbnails.files import get_thumbnailer
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
+
+from .backends import (
+    BaseImageAsset,
+    BasePictureBackend,
+    PictureReference,
+    Rendition,
+    RenditionSpec,
+    get_backend_for_instance,
+)
+from .rendering import build_srcset, calculate_size
 
 
 # add setting for picture alignment, renders a class or inline styles
@@ -72,6 +83,11 @@ class AbstractPicture(CMSPlugin):
         choices=get_templates(),
         default=get_templates()[0][0],
         max_length=255,
+    )
+    backend = models.CharField(
+        verbose_name=_("Image source"),
+        max_length=32,
+        default="filer",
     )
     picture = FilerImageField(
         verbose_name=_('Image'),
@@ -217,24 +233,60 @@ class AbstractPicture(CMSPlugin):
     class Meta:
         abstract = True
 
-    def __str__(self):
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        # Preserve the long-standing external URL precedence for callers that
+        # create plugins through the ORM/API instead of PictureForm.
+        if self.external_picture and self.backend in {"", "filer", "url"}:
+            self.backend = "url"
+        super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
         if self.picture and self.picture.label:
             return self.picture.label
         return str(self.pk)
 
-    def get_short_description(self):
-        if self.external_picture:
-            return self.external_picture
-        if self.picture and self.picture.label:
-            return self.picture.label
+    @property
+    def picture_backend(self) -> BasePictureBackend:
+        """Return the backend selected by the instance's persisted reference."""
+
+        return get_backend_for_instance(self)
+
+    @property
+    def image_asset(self) -> BaseImageAsset | None:
+        """Return a backend-neutral image asset for rendering and metadata."""
+
+        return self.picture_backend.get_asset(self)
+
+    @property
+    def picture_reference(self) -> PictureReference | None:
+        asset = self.image_asset
+        return asset.reference if asset else None
+
+    @property
+    def image_alt_text(self) -> str:
+        # Keep the historical filer fallback when an external URL overrides a
+        # selected image. New backends expose their own fallback through info.
+        if self.picture and self.picture.default_alt_text:
+            return self.picture.default_alt_text
+        asset = self.image_asset
+        return asset.info.alt_text if asset else ''
+
+    def get_short_description(self) -> str:
+        asset = self.image_asset
+        if asset and asset.info.label:
+            return asset.info.label
         return gettext('<file is missing>')
 
-    def copy_relations(self, oldinstance):
+    def copy_relations(self, oldinstance: "AbstractPicture") -> None:
         # Because we have a ForeignKey, it's required to copy over
         # the reference from the instance to the new plugin.
         self.picture = oldinstance.picture
 
-    def get_size(self, width=None, height=None):
+    def get_size(
+        self,
+        width: int | float | None = None,
+        height: int | float | None = None,
+    ) -> dict[str, Any]:
         crop = self.use_crop
         upscale = self.use_upscale
         # use field thumbnail settings
@@ -247,37 +299,24 @@ class AbstractPicture(CMSPlugin):
             width = self.width
             height = self.height
 
-        if self.picture:
-            # calculate height when not given according to the
-            # golden ratio or fallback to the picture size
-            if crop:
-                if not height and width:
-                    if self.picture.width > self.picture.height:
-                        height = width / PICTURE_RATIO
-                    else:
-                        height = width * PICTURE_RATIO
-
-                elif not width and height:
-                    if self.picture.width > self.picture.height:
-                        width = height * PICTURE_RATIO
-                    else:
-                        width = height / PICTURE_RATIO
-
-            width = width or self.picture.width
-            height = height or self.picture.height
-
-        # ensure width and height are int
-        width = int(width) if width is not None else width
-        height = int(height) if height is not None else height
+        asset = self.image_asset
+        spec = calculate_size(
+            asset.info if asset else None,
+            width=width,
+            height=height,
+            crop=crop,
+            upscale=upscale,
+            picture_ratio=PICTURE_RATIO,
+        )
 
         options = {
-            'size': (width, height),
-            'crop': crop,
-            'upscale': upscale,
+            'size': (spec.width, spec.height),
+            'crop': spec.crop,
+            'upscale': spec.upscale,
         }
         return options
 
-    def get_link(self):
+    def get_link(self) -> str | bool:
         if self.link_url:
             return self.link_url
         elif self.link_page_id:
@@ -286,7 +325,7 @@ class AbstractPicture(CMSPlugin):
             return self.external_picture
         return False
 
-    def clean(self):
+    def clean(self) -> None:
         # there can be only one link type
         if self.link_url and self.link_page_id:
             raise ValidationError(
@@ -297,7 +336,7 @@ class AbstractPicture(CMSPlugin):
             )
 
         # you shall only set one image kind
-        if not self.picture and not self.external_picture:
+        if self.backend in {"filer", "url"} and not self.picture and not self.external_picture:
             raise ValidationError(
                 gettext(
                     'You need to add either an image, '
@@ -336,63 +375,55 @@ class AbstractPicture(CMSPlugin):
             raise ValidationError(message)
 
     @property
-    def is_responsive_image(self):
-        if self.external_picture:
+    def is_responsive_image(self) -> bool:
+        asset = self.image_asset
+        if not asset or not self.picture_backend.capabilities.responsive:
             return False
         if self.use_responsive_image == 'inherit':
             return getattr(settings, 'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES', False)
         return self.use_responsive_image == 'yes'
 
     @property
-    def img_srcset_data(self):
-        if not (self.picture and self.is_responsive_image):
+    def img_srcset_data(self) -> list[tuple[int, Rendition]] | None:
+        asset = self.image_asset
+        if not (asset and self.is_responsive_image):
             return None
 
-        srcset = []
-        thumbnailer = get_thumbnailer(self.picture)
         picture_options = self.get_size(self.width, self.height)
         picture_width = picture_options['size'][0]
-        thumbnail_options = {'crop': picture_options['crop']}
         breakpoints = getattr(
             settings,
             'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS',
             [576, 768, 992],
         )
-
-        for size in filter(lambda x: x < picture_width, breakpoints):
-            thumbnail_options['size'] = (size, size)
-            srcset.append((int(size), thumbnailer.get_thumbnail(thumbnail_options)))
-
-        return srcset
+        return build_srcset(
+            asset,
+            widths=breakpoints,
+            width=picture_width,
+            crop=picture_options['crop'],
+        )
 
     @property
-    def img_src(self):
-        # we want the external picture to take priority by design
-        # please open a ticket if you disagree for an open discussion
-        if self.external_picture:
-            return self.external_picture
-        # picture can be empty, for example when the image is removed from filer
-        # in this case we want to return an empty string to avoid #69
-        elif not self.picture:
+    def img_src(self) -> str:
+        asset = self.image_asset
+        # The image can be empty, for example when it is removed from filer.
+        if not asset:
             return ''
-        # return the original, unmodified picture
-        elif self.use_no_cropping:
-            return self.picture.url
+        if self.use_no_cropping:
+            return asset.get_original().url
 
         picture_options = self.get_size(
             width=self.width or 0,
             height=self.height or 0,
         )
-
-        thumbnail_options = {
-            'size': picture_options['size'],
-            'crop': picture_options['crop'],
-            'upscale': picture_options['upscale'],
-            'subject_location': self.picture.subject_location,
-        }
-
-        thumbnailer = get_thumbnailer(self.picture)
-        return thumbnailer.get_thumbnail(thumbnail_options).url
+        return asset.get_rendition(
+            RenditionSpec(
+                width=picture_options['size'][0],
+                height=picture_options['size'][1],
+                crop=picture_options['crop'],
+                upscale=picture_options['upscale'],
+            )
+        ).url
 
 
 class Picture(AbstractPicture):

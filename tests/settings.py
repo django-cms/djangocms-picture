@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     "easy_thumbnails",
     "filer",
     "djangocms_picture",
+    "djangocms_picture.contrib.filer",
 ]
 
 try:  # V4 test?

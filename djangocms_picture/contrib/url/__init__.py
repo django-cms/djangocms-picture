@@ -1,0 +1,1 @@
+"""External URL picture backend."""

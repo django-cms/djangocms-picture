@@ -1,4 +1,4 @@
-{% load thumbnail l10n %}
+{% load l10n %}
 
 {% if picture_link %}
     <a href="{{ picture_link }}"
@@ -15,7 +15,7 @@
 
 {% localize off %}
 <img src="{{ instance.img_src }}"
-    alt="{% if instance.attributes.alt %}{{ instance.attributes.alt }}{% elif instance.picture.default_alt_text %}{{ instance.picture.default_alt_text }}{% endif %}"
+    alt="{% if instance.attributes.alt %}{{ instance.attributes.alt }}{% else %}{{ instance.image_alt_text }}{% endif %}"
     {% if instance.width %} width="{{ instance.width }}"{% endif %}
     {% if instance.height %} height="{{ instance.height }}"{% endif %}
     {% if img_srcset_data %}

@@ -1,6 +1,9 @@
-from cms.plugin_base import CMSPluginBase
+from typing import Any
+
+from cms.plugin_base import CMSPluginBase, force_str
 from cms.plugin_pool import plugin_pool
 from django.conf import settings
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from .forms import PictureForm
@@ -17,17 +20,15 @@ class PicturePlugin(CMSPluginBase):
     allow_children = PICTURE_NESTING
     text_enabled = True
 
+    change_form_template = "djangocms_frontend/admin/base.html"
+
     fieldsets = [
         (None, {
-            'fields': (
-                'picture',
-                'external_picture',
-            )
+            'fields': ('template', 'image_source'),
         }),
-        (_('Advanced settings'), {
+        (_('Attributes'), {
             'classes': ('collapse',),
             'fields': (
-                'template',
                 'use_responsive_image',
                 ('width', 'height'),
                 'alignment',
@@ -35,7 +36,7 @@ class PicturePlugin(CMSPluginBase):
                 'attributes',
             )
         }),
-        (_('Link settings'), {
+        (_('Link'), {
             'classes': ('collapse',),
             'fields': (
                 ('link_url', 'link_page'),
@@ -43,7 +44,7 @@ class PicturePlugin(CMSPluginBase):
                 'link_attributes',
             )
         }),
-        (_('Cropping settings'), {
+        (_('Cropping'), {
             'classes': ('collapse',),
             'fields': (
                 ('use_automatic_scaling', 'use_no_cropping'),
@@ -52,6 +53,24 @@ class PicturePlugin(CMSPluginBase):
             )
         })
     ]
+
+    def get_form(
+        self,
+        request: HttpRequest,
+        obj: Picture | None = None,
+        change: bool = False,
+        **kwargs: Any,
+    ) -> type[PictureForm]:
+        form_class = super().get_form(request, obj=obj, change=change, **kwargs)
+
+        class RequestAwarePictureForm(form_class):
+            def __init__(self, *args: Any, **form_kwargs: Any) -> None:
+                form_kwargs.setdefault("request", request)
+                super().__init__(*args, **form_kwargs)
+
+        RequestAwarePictureForm.__name__ = form_class.__name__
+        RequestAwarePictureForm.__qualname__ = form_class.__qualname__
+        return RequestAwarePictureForm
 
     def get_render_template(self, context, instance, placeholder):
         return 'djangocms_picture/{}/picture.html'.format(instance.template)
@@ -72,6 +91,9 @@ class PicturePlugin(CMSPluginBase):
         context['img_srcset_data'] = instance.img_srcset_data
 
         return super().render(context, instance, placeholder)
+
+    def __str__(self):
+        return force_str(super().__str__())
 
 
 plugin_pool.register_plugin(PicturePlugin)

@@ -38,7 +38,7 @@ section.
 Documentation
 =============
 
-See ``REQUIREMENTS`` in the `setup.py <https://github.com/divio/djangocms-picture/blob/master/setup.py>`_
+See ``dependencies`` in the `pyproject.toml <https://github.com/django-cms/djangocms-picture/blob/master/pyproject.toml>`_
 file for additional dependencies:
 
 |python| |django| |djangocms|
@@ -55,8 +55,15 @@ Installation
 For a manual install:
 
 * run ``pip install djangocms-picture``
-* add ``djangocms_picture`` to your ``INSTALLED_APPS``
+* add ``djangocms_picture`` and ``djangocms_picture.contrib.filer`` to your
+  ``INSTALLED_APPS``
 * run ``python manage.py migrate djangocms_picture``
+
+The explicit ``djangocms_picture.contrib.filer`` entry registers the
+django-filer integration. For backwards compatibility, omitting it currently
+leaves the configured filer backend available but raises a system-check
+warning. In a future version, django-filer support will not be available unless
+the contrib app is explicitly installed.
 
 
 Configuration
@@ -64,6 +71,37 @@ Configuration
 
 Note that the provided templates are very minimal by design. You are encouraged
 to adapt and override them to your project's requirements.
+
+Reusable backend picker
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Other forms can reuse the backend selector and all configured picker widgets as
+one field::
+
+    from django import forms
+    from djangocms_picture.fields import BackendImageField, BackendSelection
+
+
+    class HeroImageForm(forms.Form):
+        image = BackendImageField()
+
+
+The cleaned value is a ``BackendSelection`` containing the configured backend
+instance in ``backend`` and that backend field's cleaned ``value``.
+Pass ``request=request`` when constructing the field if a remote DAM backend
+needs user or tenant context. The widget includes the JavaScript controller and
+all media declared by the backend picker widgets.
+
+``BackendSelection.serialize()`` returns a JSON-compatible dictionary, and
+``BackendSelection.deserialize()`` restores the configured backend and its
+cleaned value. Django model values use django-entangled's foreign-key convention:
+``{"model": "app_label.model_name", "pk": primary_key}``.
+
+Subwidgets have stable names based on backend aliases, for example
+``image_backend``, ``image_filer``, and ``image_url``. Only the selected
+backend's field is validated. Capability metadata and supported configuration
+fields are exposed to the controller so the active picker and related form
+options stay in sync.
 
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``
@@ -153,24 +191,26 @@ Running Tests
 
 You can run tests by executing::
 
-    virtualenv env
-    source env/bin/activate
-    pip install -r test_requirements/base.txt
-    python setup.py test
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install -r tests/requirements/dj61_cms51.txt
+    pytest
+
+Run ``tox`` to test all supported Django and django CMS combinations.
 
 
 .. |pypi| image:: https://badge.fury.io/py/djangocms-picture.svg
     :target: http://badge.fury.io/py/djangocms-picture
-.. |build| image:: https://travis-ci.org/divio/djangocms-picture.svg?branch=master
-    :target: https://travis-ci.org/divio/djangocms-picture
-.. |coverage| image:: https://codecov.io/gh/divio/djangocms-picture/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/divio/djangocms-picture
+.. |build| image:: https://github.com/django-cms/djangocms-picture/actions/workflows/test.yml/badge.svg?branch=master
+    :target: https://github.com/django-cms/djangocms-picture/actions/workflows/test.yml
+.. |coverage| image:: https://codecov.io/gh/django-cms/djangocms-picture/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/django-cms/djangocms-picture
 
-.. |python| image:: https://img.shields.io/badge/python-3.5+-blue.svg
+.. |python| image:: https://img.shields.io/badge/python-3.10--3.14-blue.svg
     :target: https://pypi.org/project/djangocms-picture/
-.. |django| image:: https://img.shields.io/badge/django-2.2,%203.0,%203.1-blue.svg
+.. |django| image:: https://img.shields.io/badge/django-5.2%20%7C%206.0%20%7C%206.1-blue.svg
     :target: https://www.djangoproject.com/
-.. |djangocms| image:: https://img.shields.io/badge/django%20CMS-3.7%2B-blue.svg
+.. |djangocms| image:: https://img.shields.io/badge/django%20CMS-5.0%20%7C%205.1-blue.svg
     :target: https://www.django-cms.org/
 
 

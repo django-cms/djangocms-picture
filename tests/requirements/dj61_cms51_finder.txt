@@ -1,0 +1,3 @@
+-r dj61_cms51.txt
+
+django-finder[image,svg] @ git+https://github.com/django-cms/django-filer.git@finder
