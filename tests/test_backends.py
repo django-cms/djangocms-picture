@@ -124,6 +124,10 @@ class BackendContractTestCase(SimpleTestCase):
         with self.assertRaises(UnsupportedBackendOperation):
             backend.set_form_value(object(), "image")
         with self.assertRaises(UnsupportedBackendOperation):
+            backend.copy_reference(object(), object())
+        with self.assertRaises(UnsupportedBackendOperation):
+            backend.clear_reference(object())
+        with self.assertRaises(UnsupportedBackendOperation):
             backend.form_field()
         with self.assertRaises(UnsupportedBackendOperation):
             backend.upload(object(), name="image.jpg")
@@ -275,3 +279,17 @@ class FilerBackendCompatibilityTestCase(TestCase):
         picture.refresh_from_db()
 
         self.assertEqual(picture.picture, image)
+
+    def test_filer_copies_and_clears_its_reference(self) -> None:
+        image = get_filer_image()
+        source = Picture.objects.create(picture=image)
+        target = Picture.objects.create()
+        backend = FilerPictureBackend()
+
+        backend.copy_reference(source, target)
+        target.refresh_from_db()
+        self.assertEqual(target.picture, image)
+
+        backend.clear_reference(target, commit=True)
+        target.refresh_from_db()
+        self.assertIsNone(target.picture)

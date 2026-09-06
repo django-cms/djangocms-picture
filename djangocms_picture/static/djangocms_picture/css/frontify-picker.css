@@ -1,0 +1,11 @@
+.djangocms-picture-frontify-preview {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.djangocms-picture-frontify-preview img {
+    max-height: 4rem;
+    max-width: 8rem;
+}

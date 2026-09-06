@@ -281,6 +281,9 @@ class AbstractPicture(CMSPlugin):
         # Because we have a ForeignKey, it's required to copy over
         # the reference from the instance to the new plugin.
         self.picture = oldinstance.picture
+        backend = get_backend_for_instance(oldinstance)
+        self.backend = backend.alias
+        backend.copy_reference(oldinstance, self)
 
     def get_size(
         self,

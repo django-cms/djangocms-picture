@@ -71,3 +71,6 @@ class URLPictureBackend(BasePictureBackend):
         picture_instance.external_picture = value or None
         if commit:
             picture_instance.save(update_fields=["external_picture"])
+
+    def copy_reference(self, source: Any, target: Any) -> None:
+        self.set_form_value(target, source.external_picture, commit=True)

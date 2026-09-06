@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="djangocms-picture-frontify" data-frontify-picker data-domain="{{ widget.domain }}" data-client-id="{{ widget.client_id }}">
+  {% include "django/forms/widgets/textarea.html" %}
+  <div class="djangocms-picture-frontify-preview"{% if not widget.preview_url %} hidden{% endif %}>
+    <img src="{{ widget.preview_url }}" alt="" data-frontify-preview>
+    <span data-frontify-label>{{ widget.label }}</span>
+  </div>
+  <button type="button" data-frontify-select>{% translate "Select Frontify image" %}</button>
+  <button type="button" data-frontify-clear{% if not widget.preview_url %} hidden{% endif %}>{% translate "Clear" %}</button>
+  <div data-frontify-mount></div>
+</div>

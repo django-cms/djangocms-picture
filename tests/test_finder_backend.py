@@ -158,6 +158,24 @@ class FinderBackendTestCase(TestCase):
         self.assertEqual(picture.picture_reference.backend, "finder")
         self.assertEqual(picture.picture_reference.id, str(self.image.id))
 
+    def test_plugin_copy_and_clear_use_finder_lifecycle_hooks(self) -> None:
+        source = Picture.objects.create(backend="finder")
+        target = Picture.objects.create(backend="finder")
+        backend = get_backend("finder")
+        backend.set_form_value(source, self.image.id, commit=True)
+
+        target.copy_relations(source)
+        target.refresh_from_db()
+        self.assertEqual(target.finder_reference.image.id, self.image.id)
+        self.assertEqual(target.backend, "finder")
+
+        backend.clear_reference(target, commit=True)
+        self.assertFalse(
+            target.__class__.objects.filter(
+                finder_reference__picture_plugin=target
+            ).exists()
+        )
+
     def test_backend_handles_empty_stale_and_foreign_references(self) -> None:
         backend = get_backend("finder")
         unsaved_picture = Picture(backend="finder")

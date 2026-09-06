@@ -60,6 +60,16 @@ class BasePictureBackend(ABC):
     def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
         raise UnsupportedBackendOperation(f'The "{self.alias}" backend cannot store a selected image.')
 
+    def copy_reference(self, source: Any, target: Any) -> None:
+        """Copy this backend's selected value to an already-saved target."""
+
+        raise UnsupportedBackendOperation(f'The "{self.alias}" backend cannot copy image references.')
+
+    def clear_reference(self, picture_instance: Any, *, commit: bool = False) -> None:
+        """Remove this backend's selected value from a picture instance."""
+
+        self.set_form_value(picture_instance, None, commit=commit)
+
     def form_field(self, *, required: bool = True, request: Any = None, **kwargs: Any) -> Any:
         raise UnsupportedBackendOperation(f'The "{self.alias}" backend does not provide a form field.')
 

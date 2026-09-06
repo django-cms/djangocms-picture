@@ -1,4 +1,7 @@
+import copy
 import json
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -11,6 +14,7 @@ from djangocms_picture.backends.types import PictureReference
 from djangocms_picture.fields import BackendImageField, BackendSelection
 from djangocms_picture.forms import PictureForm
 from djangocms_picture.models import Picture
+from djangocms_picture.widgets import BackendImageWidget
 
 from .helpers import get_filer_image
 
@@ -170,6 +174,42 @@ class PictureBackendFormTestCase(TestCase):
             BackendSelection.deserialize("url")
         with self.assertRaises(ValueError):
             BackendSelection.deserialize({"backend": "url"})
+        with self.assertRaises(ValueError):
+            BackendSelection.deserialize({"backend": "", "value": None})
+        with self.assertRaises(ValueError):
+            BackendSelection.deserialize({"backend": 42, "value": None})
+
+    def test_backend_selection_rejects_unsaved_foreign_keys(self) -> None:
+        selection = BackendSelection(get_backend("filer"), Picture())
+
+        with self.assertRaisesMessage(ValueError, "must be saved"):
+            selection.serialize()
+
+    def test_backend_selection_rejects_invalid_model_references(self) -> None:
+        with self.assertRaisesMessage(ValueError, "model label string"):
+            BackendSelection.deserialize(
+                {
+                    "backend": "filer",
+                    "value": {"model": 42, "pk": 1},
+                }
+            )
+        with self.assertRaisesMessage(ValueError, "Unknown model"):
+            BackendSelection.deserialize(
+                {
+                    "backend": "filer",
+                    "value": {"model": "missing.Image", "pk": 1},
+                }
+            )
+        with (
+            patch("djangocms_picture.fields.apps.get_model", return_value=None),
+            self.assertRaisesMessage(ValueError, "Unknown model"),
+        ):
+            BackendSelection.deserialize(
+                {
+                    "backend": "filer",
+                    "value": {"model": "filer.Image", "pk": 1},
+                }
+            )
 
     def test_inactive_backend_value_is_not_validated(self) -> None:
         form = PictureForm(
@@ -261,6 +301,26 @@ class BackendImageFieldTestCase(TestCase):
             second.fields["image"].backend_fields["text"],
         )
 
+    def test_field_requires_unique_backends(self) -> None:
+        with self.assertRaisesMessage(ValueError, "at least one backend"):
+            BackendImageField(backends=())
+        with self.assertRaisesMessage(ValueError, "aliases must be unique"):
+            BackendImageField(backends=(TextBackend(), TextBackend()))
+
+    def test_field_accepts_a_custom_composite_widget(self) -> None:
+        widget = BackendImageWidget(
+            (self.text_backend, self.integer_backend),
+            {"text": forms.TextInput(), "integer": forms.NumberInput()},
+        )
+
+        field = BackendImageField(
+            backends=(self.text_backend, self.integer_backend),
+            widget=widget,
+        )
+
+        self.assertIsInstance(field.widget, BackendImageWidget)
+        self.assertEqual(tuple(field.widget.backend_widgets), ("text", "integer"))
+
     def test_widget_renders_named_inputs_and_only_the_selected_picker(self) -> None:
         html = self.field.widget.render(
             "asset",
@@ -289,12 +349,93 @@ class BackendImageFieldTestCase(TestCase):
         with self.assertRaises(ValidationError):
             self.field.clean(BackendSelection(self.integer_backend, "not-an-integer"))
 
+    def test_invalid_backend_values_are_rejected(self) -> None:
+        with self.assertRaisesMessage(ValidationError, "Select a valid image source"):
+            self.field.clean("text")
+        with self.assertRaisesMessage(ValidationError, "Select a valid image source"):
+            self.field.clean(
+                BackendSelection(SimpleNamespace(alias="missing"), "asset-id")
+            )
+        with (
+            patch.object(self.field.selector_field, "clean", return_value="missing"),
+            self.assertRaisesMessage(ValidationError, "Select a valid image source"),
+        ):
+            self.field.clean(BackendSelection(self.text_backend, "asset-id"))
+
+    def test_optional_and_disabled_fields_handle_empty_values(self) -> None:
+        optional = BackendImageField(
+            backends=(self.text_backend, self.integer_backend),
+            required=False,
+        )
+
+        self.assertIsNone(optional.clean(None))
+        self.assertIsNone(optional.clean(BackendSelection(self.text_backend, "")))
+
+        disabled = copy.deepcopy(self.field)
+        disabled.disabled = True
+        disabled.initial = lambda: BackendSelection(self.integer_backend, 42)
+        self.assertEqual(
+            disabled.clean(BackendSelection(self.text_backend, "ignored")),
+            BackendSelection(self.integer_backend, 42),
+        )
+
+    def test_required_field_rejects_an_empty_selection(self) -> None:
+        with self.assertRaisesMessage(ValidationError, "Select an image from this source"):
+            self.field.clean(None)
+
+    def test_change_detection_delegates_to_the_selected_backend_field(self) -> None:
+        text = BackendSelection(self.text_backend, "asset-id")
+        same_text = BackendSelection(self.text_backend, "asset-id")
+        changed_text = BackendSelection(self.text_backend, "other-id")
+        integer = BackendSelection(self.integer_backend, 42)
+
+        self.assertFalse(self.field.has_changed(text, same_text))
+        self.assertTrue(self.field.has_changed(text, changed_text))
+        self.assertTrue(self.field.has_changed(text, integer))
+        self.assertTrue(self.field.has_changed(None, text))
+        self.assertFalse(self.field.has_changed(None, None))
+        self.assertTrue(self.field.has_changed(text, None))
+
+        self.field.disabled = True
+        self.assertFalse(self.field.has_changed(text, changed_text))
+
     def test_widget_media_contains_the_controller(self) -> None:
         self.assertIn("djangocms_picture/js/backend-image-widget.js", self.field.widget.media._js)
         self.assertIn(
             "djangocms_picture/css/backend-image-widget.css",
             self.field.widget.media._css["all"],
         )
+
+    def test_widget_implements_the_standard_widget_protocol(self) -> None:
+        widget = self.field.widget
+
+        self.assertEqual(
+            widget.value_from_datadict({"asset_backend": "missing"}, {}, "asset"),
+            "missing",
+        )
+        self.assertTrue(widget.value_omitted_from_data({}, {}, "asset"))
+        self.assertFalse(
+            widget.value_omitted_from_data({"asset_backend": "text"}, {}, "asset")
+        )
+        self.assertEqual(widget.id_for_label("id_asset"), "id_asset_backend")
+        self.assertEqual(widget.id_for_label(""), "")
+        self.assertFalse(widget.use_required_attribute(None))
+
+        widget.is_localized = True
+        context = widget.get_context("asset", None, attrs={})
+        self.assertEqual(len(context["widget"]["subwidgets"]), 3)
+        self.assertTrue(widget.selector_widget.is_localized)
+        self.assertTrue(
+            all(child.is_localized for child in widget.backend_widgets.values())
+        )
+
+    def test_widget_reports_multipart_backend_widgets(self) -> None:
+        widget = BackendImageWidget(
+            (self.text_backend,),
+            {"text": forms.FileInput()},
+        )
+
+        self.assertTrue(widget.needs_multipart_form)
 
     def test_backend_selector_is_hidden_when_only_one_backend_is_available(self) -> None:
         field = BackendImageField(backends=(TextBackend(),))

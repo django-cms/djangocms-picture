@@ -2,6 +2,16 @@
 Changelog
 =========
 
+5.0.0 (unreleased)
+==================
+
+* Added support for Django 5.2, 6.0, and 6.1 and django CMS 5.0 and 5.1.
+* Added pluggable filer, external URL, and experimental finder image backends.
+* Added a reusable, capability-aware backend picker field and JSON-serializable
+  backend selections.
+* Added an experimental, snapshot-backed Frontify backend.
+
+
 4.1.1 (2023-10-19)
 ==================
 

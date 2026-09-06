@@ -103,6 +103,92 @@ backend's field is validated. Capability metadata and supported configuration
 fields are exposed to the controller so the active picker and related form
 options stay in sync.
 
+Experimental django-finder backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The finder backend currently follows the latest commit on django-filer's
+upstream ``finder`` branch. Install it with the image integrations::
+
+    pip install "django-finder[image,svg] @ git+https://github.com/django-cms/django-filer.git@finder"
+
+Add finder and the djangocms-picture contrib app to ``INSTALLED_APPS``::
+
+    INSTALLED_APPS = [
+        # ...
+        "finder",
+        "finder.contrib.image.pil",
+        "finder.contrib.image.svg",
+        "djangocms_picture",
+        "djangocms_picture.contrib.finder",
+    ]
+
+Register finder and select the ambit used by its picker::
+
+    DJANGOCMS_PICTURE_BACKENDS = {
+        "finder": {
+            "BACKEND": "djangocms_picture.contrib.finder.backend.FinderPictureBackend",
+            "OPTIONS": {"ambit": "public"},
+        },
+    }
+    DJANGOCMS_PICTURE_DEFAULT_BACKEND = "finder"
+
+The finder picker API must also be included in the project URL configuration::
+
+    from django.urls import include, path
+
+    urlpatterns = [
+        # ...
+        path("finder/", include("finder.browser.urls")),
+    ]
+
+Run all migrations after enabling the contrib app. The backend currently
+supports original images and focal cropping. Resize without cropping, upscale,
+responsive sources, and programmatic backend uploads remain disabled until
+finder provides stable public APIs for those operations.
+
+Experimental Frontify backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Frontify proof-of-concept is implemented directly by djangocms-picture and
+does not require the older ``django-frontify`` package. Add the contrib app::
+
+    INSTALLED_APPS = [
+        # ...
+        "djangocms_picture",
+        "djangocms_picture.contrib.frontify",
+    ]
+
+Configure the public Finder client information and allow-list every host from
+which stored image URLs may be rendered::
+
+    DJANGOCMS_PICTURE_BACKENDS = {
+        "frontify": {
+            "BACKEND": "djangocms_picture.contrib.frontify.backend.FrontifyPictureBackend",
+            "OPTIONS": {
+                "account": "brand-library",
+                "domain": "example.frontify.com",
+                "client_id": "frontify-public-client-id",
+                "allowed_hosts": [
+                    "cdn.frontify.com",
+                    "assets.frontify.com",
+                ],
+            },
+        },
+    }
+
+Then run migrations. The picker requests permanent download URLs and persists
+only a normalized, render-safe snapshot: asset ID, dimensions, label, alt text,
+revision, focal point, and HTTPS processing/original URLs. Normal page renders
+do not contact Frontify. Access tokens, OAuth secrets, arbitrary picker
+metadata, query strings, and signed URL credentials are not stored.
+
+The default Frontify Finder script URL is pinned to version 2.0.1 on
+``unpkg.com``. A project may self-host it or select another reviewed version
+with the ``finder_script_url`` backend option. When using the default, allow
+that origin in the site's Content Security Policy. Production adoption still
+requires a provider refresh/revocation workflow and confirmation that the
+chosen account supplies genuinely permanent download and processing URLs.
+
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``
 setting::

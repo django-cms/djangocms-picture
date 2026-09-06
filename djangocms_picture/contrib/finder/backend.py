@@ -140,6 +140,9 @@ class FinderPictureBackend(BasePictureBackend):
             return
 
         reference = self.serialize(value)
+        if reference is None:
+            FinderPictureReference.objects.filter(picture_plugin=picture_instance).delete()
+            return
         snapshot = dict(reference.snapshot) if reference else {}
         ambit = str(reference.context.get("ambit", "")) if reference else ""
         with transaction.atomic():
@@ -147,6 +150,9 @@ class FinderPictureBackend(BasePictureBackend):
                 picture_plugin=picture_instance,
                 defaults={"image": value, "ambit": ambit, "snapshot": snapshot},
             )
+
+    def copy_reference(self, source: Any, target: Any) -> None:
+        self.set_form_value(target, self.get_form_value(source), commit=True)
 
     @staticmethod
     def _resolve_id(image_id: Any) -> AbstractFileModel | None:

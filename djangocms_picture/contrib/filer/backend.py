@@ -96,3 +96,6 @@ class FilerPictureBackend(BasePictureBackend):
         picture_instance.picture = value
         if commit:
             picture_instance.save(update_fields=["picture"])
+
+    def copy_reference(self, source: Any, target: Any) -> None:
+        self.set_form_value(target, source.picture, commit=True)
