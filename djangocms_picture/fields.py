@@ -204,3 +204,30 @@ class BackendImageField(forms.Field):
         if initial.backend.alias != data.backend.alias:
             return True
         return self.backend_fields[data.backend.alias].has_changed(initial.value, data.value)
+
+    def selection_from_instance(
+        self,
+        instance: Any,
+        backend: BasePictureBackend,
+    ) -> BackendSelection:
+        """Build widget initial data from unified model storage."""
+
+        configured_backend = self.backends_by_alias.get(backend.alias, backend)
+        return BackendSelection(
+            backend=configured_backend,
+            value=configured_backend.get_form_value(instance),
+        )
+
+    def apply_selection(
+        self,
+        instance: Any,
+        selection: BackendSelection,
+        *,
+        commit: bool = False,
+    ) -> None:
+        """Write a cleaned selection to an instance's unified storage fields."""
+
+        backend = self.backends_by_alias.get(selection.backend.alias)
+        if backend is None:
+            raise ValueError(f'Backend "{selection.backend.alias}" is not configured for this field.')
+        backend.set_form_value(instance, selection.value, commit=commit)

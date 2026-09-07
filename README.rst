@@ -113,10 +113,9 @@ removing or renaming the backend. An already persisted unknown alias renders as
 an unavailable image rather than failing the complete page, allowing the
 affected plugins to be edited and moved to an available backend.
 
-Changing backends retains inactive references and supported presentation
-settings. This permits an editor to switch back without losing the previous
-selection. Rendition options unsupported by the active backend are ignored at
-render time.
+Changing backends replaces the stored source while retaining supported
+presentation settings. Rendition options unsupported by the active backend are
+ignored at render time.
 
 Reusable backend picker
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,6 +136,15 @@ instance in ``backend`` and that backend field's cleaned ``value``.
 Pass ``request=request`` when constructing the field if a remote DAM backend
 needs user or tenant context. The widget includes the JavaScript controller and
 all media declared by the backend picker widgets.
+
+On ``PictureForm``, this single logical field writes the selected alias, the
+optional generic Django object and the versioned ``picture_config`` JSON. Model
+backends use a textual object ID, allowing filer integer keys and finder UUIDs
+to share the same fields. URL and DAM backends leave the generic object empty.
+The model exposes those backing columns as one virtual ``image_source`` value,
+a ``StoredPictureSource`` containing the alias, serialized reference and
+optional resolved object. Application and backend code should use that value
+instead of updating the three storage columns independently.
 
 ``BackendSelection.serialize()`` returns a JSON-compatible dictionary, and
 ``BackendSelection.deserialize()`` restores the configured backend and its
@@ -328,8 +336,9 @@ Upgrading custom picture templates to 5.0
 
 Version 5.0 introduces backend-neutral image assets. Existing custom templates
 for the picture plugin must be reviewed and may require adjustment. In
-particular, ``instance.picture`` only contains a value for the filer backend,
-and ``instance.external_picture`` only contains a value for the URL backend.
+particular, ``instance.picture`` contains the generic Django object for local
+model-backed sources such as filer and finder, while ``instance.external_picture``
+is a compatibility accessor for the URL backend.
 Templates supporting every backend should use:
 
 * ``instance.img_src`` for the rendered URL;
@@ -344,6 +353,15 @@ They retain ``url``, ``width`` and ``height``, but filer/easy-thumbnails-specifi
 attributes are no longer portable. Templates intended only for filer may
 continue to access ``instance.picture``, although the backend-neutral helpers
 are recommended.
+
+At the Python object level, filer-only code can continue reading
+``instance.picture`` and ``instance.picture_id`` and assigning either value.
+The database field itself is now generic, however, so ORM and model-introspection
+code must be adjusted: ``select_related("picture")``,
+``filter(picture_id=...)`` and ``Picture._meta.get_field("picture")`` no longer
+refer to a concrete filer foreign key. Use ``picture_content_type`` plus
+``picture_object_id`` for low-level queries, or use ``image_source`` and the
+backend-neutral rendering properties in application code.
 
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``

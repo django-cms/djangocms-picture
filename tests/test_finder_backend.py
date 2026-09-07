@@ -190,15 +190,16 @@ class FinderBackendTestCase(TestCase):
         self.assertEqual(attribution.copyright_notice, "© Example Photographer")
         self.assertEqual(attribution.license_name, "CC BY 4.0")
 
-    def test_reference_is_persisted_in_typed_extension(self) -> None:
+    def test_reference_is_persisted_in_generic_uuid_storage(self) -> None:
         picture = Picture.objects.create(backend="finder")
         backend = get_backend("finder")
 
         backend.set_form_value(picture, self.image.id, commit=True)
         picture.refresh_from_db()
 
-        self.assertEqual(picture.finder_reference.image.id, self.image.id)
-        self.assertEqual(picture.finder_reference.ambit, "public")
+        self.assertEqual(picture.picture.id, self.image.id)
+        self.assertEqual(picture.picture_object_id, str(self.image.id))
+        self.assertEqual(picture.picture_config["context"]["ambit"], "public")
         self.assertEqual(picture.picture_reference.backend, "finder")
         self.assertEqual(picture.picture_reference.id, str(self.image.id))
 
@@ -210,15 +211,15 @@ class FinderBackendTestCase(TestCase):
 
         target.copy_relations(source)
         target.refresh_from_db()
-        self.assertEqual(target.finder_reference.image.id, self.image.id)
+        self.assertEqual(target.picture.id, self.image.id)
+        self.assertEqual(target.picture_config, source.picture_config)
         self.assertEqual(target.backend, "finder")
 
         backend.clear_reference(target, commit=True)
-        self.assertFalse(
-            target.__class__.objects.filter(
-                finder_reference__picture_plugin=target
-            ).exists()
-        )
+        target.refresh_from_db()
+        self.assertIsNone(target.picture)
+        self.assertIsNone(target.picture_object_id)
+        self.assertEqual(target.picture_config, {})
 
     def test_backend_handles_empty_stale_and_foreign_references(self) -> None:
         backend = get_backend("finder")
@@ -291,13 +292,16 @@ class FinderBackendTestCase(TestCase):
 
     def test_hard_deleted_finder_image_leaves_a_non_rendering_tombstone(self) -> None:
         image = ImageFileModel.objects.get(pk=self.image.pk)
+        image_id = image.id
         picture = Picture.objects.create(backend="finder")
-        get_backend("finder").set_form_value(picture, image.id, commit=True)
+        get_backend("finder").set_form_value(picture, image_id, commit=True)
 
         image.delete()
         picture.refresh_from_db()
 
-        self.assertIsNone(picture.finder_reference.image)
+        self.assertIsNone(picture.picture)
+        self.assertEqual(picture.picture_object_id, str(image_id))
+        self.assertEqual(picture.picture_config["id"], str(image_id))
         self.assertIsNone(picture.image_asset)
 
     def test_real_cms_plugin_copy_preserves_finder_reference(self) -> None:
@@ -322,7 +326,8 @@ class FinderBackendTestCase(TestCase):
         copied = copies[0]
         copied.refresh_from_db()
         self.assertEqual(copied.backend, "finder")
-        self.assertEqual(copied.finder_reference.image.id, self.image.id)
+        self.assertEqual(copied.picture.id, self.image.id)
+        self.assertEqual(copied.picture_config, source.picture_config)
 
     def test_filer_migration_is_dry_runnable_auditable_and_reversible(self) -> None:
         filer_image = get_filer_image("migration.jpg")
@@ -373,8 +378,9 @@ class FinderBackendTestCase(TestCase):
         )
         picture.refresh_from_db()
         self.assertEqual(picture.backend, "finder")
-        self.assertEqual(picture.picture_id, filer_image.pk)
-        self.assertEqual(picture.finder_reference.image.id, migrated_image.id)
+        self.assertEqual(picture.picture_id, migrated_image.id)
+        self.assertEqual(picture.picture_object_id, str(migrated_image.id))
+        self.assertEqual(picture.picture_config["context"]["legacy_filer_id"], str(filer_image.pk))
 
         call_command(
             "migrate_picture_backend",
@@ -386,7 +392,8 @@ class FinderBackendTestCase(TestCase):
         picture.refresh_from_db()
         self.assertEqual(picture.backend, "filer")
         self.assertEqual(picture.picture_id, filer_image.pk)
-        self.assertEqual(picture.finder_reference.image.id, migrated_image.id)
+        self.assertEqual(picture.picture, filer_image)
+        self.assertEqual(picture.picture_config["backend"], "filer")
 
     def test_focal_crop_is_generated_in_sample_storage(self) -> None:
         asset = get_backend("finder").resolve(

@@ -41,8 +41,8 @@ Subclass ``BasePictureBackend`` and implement:
     rendering does not depend on provider availability.
 
 ``get_asset(instance)``
-    Load the selected reference from the owning model or a typed one-to-one
-    extension and return the resolved asset.
+    Load the selected reference from the picture plugin's generic object and
+    JSON configuration and return the resolved asset.
 
 An asset exposes ``reference``, ``info``, ``get_original()`` and
 ``get_rendition(spec)``. Both rendition methods return a backend-neutral
@@ -62,11 +62,34 @@ cleaned value is deliberately native: a filer model, finder UUID, external URL,
 or DAM payload. ``BackendImageField`` wraps configured backend fields and returns
 a ``BackendSelection`` containing the backend instance and native value.
 
-Implement ``set_form_value(instance, value, commit=False)`` to stage the native
-value and persist it after the owner exists. Implement ``copy_reference`` for CMS
-copy/paste and ``clear_reference`` when generic clearing is insufficient. Keep
-provider-specific columns in a typed extension model. Do not add dynamic model
-fields to ``Picture``.
+The base backend serializes references into ``picture_config`` and implements
+``set_form_value``, ``copy_reference`` and ``clear_reference``. Backends whose
+picker returns a Django model override ``prepare_storage`` and return a
+``StoredPictureSource`` containing both the serialized reference and model
+object. Django stores that object through ``picture_content_type`` and the
+textual ``picture_object_id``; textual IDs support integer, UUID and string
+primary keys. Remote and URL backends leave the generic object empty.
+
+``Picture.image_source`` is the virtual, typed interface to these backing
+columns. Assigning a ``StoredPictureSource`` updates the backend alias, generic
+model reference and JSON together. Reading it preserves the raw content type
+and object ID even when the referenced object has been deleted, so copying a
+plugin also preserves a useful tombstone. Backend implementations should not
+assign the backing columns directly. The descriptor accepts custom backing
+field names, so another image-consuming model can reuse the same storage value
+without adopting ``Picture``'s column names.
+
+The database constraint guarantees that content type and object ID are present
+as a pair, and model validation checks that the serialized and generic IDs
+match. A ``GenericForeignKey`` cannot create a database foreign-key constraint
+to every possible target model, however. Deleting a referenced asset can
+therefore leave a dangling object ID by design; rendering treats it as a
+missing asset while the stored reference and snapshot remain available for
+diagnostics, history and provider-specific recovery.
+
+Override the persistence hooks only for additional lifecycle work. Backend JSON
+must stay versioned and portable. Do not add provider-specific model fields or
+one-to-one reference models to ``Picture``.
 
 Capabilities
 ============
@@ -85,7 +108,8 @@ expire; and ``formats`` lists accepted output formats.
 Data and security boundary
 ==========================
 
-References contain asset identity and minimal render-safe context/snapshots.
+``picture_config`` contains a serialized ``PictureReference`` with asset
+identity and minimal render-safe context/snapshots.
 Focal points, source dimensions, alt text, MIME type and provider revision are
 source metadata. Display dimensions, crop intent, links, captions and HTML
 attributes stay on the consuming model. Credentials, access tokens and arbitrary
@@ -124,10 +148,11 @@ Verification checklist
 ======================
 
 Test empty, stale and foreign references; picker validation; all advertised
-rendition options; non-local storage; copy and clear hooks; provider deletion or
-revocation; tenant/ambit boundaries; serialization round trips; admin media; and
-real CMS plugin copy/paste. Run the backend against every supported Django and
-django CMS combination, not only the newest pair.
+rendition options; integer or UUID generic object IDs where applicable;
+non-local storage; copy and clear hooks; provider deletion or revocation;
+tenant/ambit boundaries; serialization round trips; admin media; and real CMS
+plugin copy/paste. Run the backend against every supported Django and django CMS
+combination, not only the newest pair.
 
 See ``examples/standalone_backend_form.py`` for use outside a CMS plugin and the
 shipped filer, finder, Frontify and Unsplash adapters for complete integrations.

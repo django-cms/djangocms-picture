@@ -119,6 +119,10 @@ class PictureBackendFormTestCase(TestCase):
         instance.refresh_from_db()
         self.assertEqual(instance.backend, "url")
         self.assertEqual(instance.external_picture, "https://example.com/image.jpg")
+        self.assertIsNone(instance.picture_content_type)
+        self.assertIsNone(instance.picture_object_id)
+        self.assertEqual(instance.picture_config["backend"], "url")
+        self.assertEqual(instance.picture_config["id"], "https://example.com/image.jpg")
 
     def test_switching_from_url_to_filer_clears_url_override(self) -> None:
         image = get_filer_image()
@@ -137,7 +141,25 @@ class PictureBackendFormTestCase(TestCase):
         instance = form.save(commit=False)
         self.assertEqual(instance.backend, "filer")
         self.assertEqual(instance.picture, image)
+        self.assertEqual(instance.picture_object_id, str(image.pk))
+        self.assertEqual(instance.picture_config["backend"], "filer")
         self.assertIsNone(instance.external_picture)
+
+    def test_backend_field_reads_and_writes_unified_model_storage(self) -> None:
+        image = get_filer_image()
+        instance = Picture()
+        field = BackendImageField()
+        selection = BackendSelection(get_backend("filer"), image)
+
+        field.apply_selection(instance, selection)
+
+        self.assertEqual(instance.picture, image)
+        self.assertEqual(instance.picture_object_id, str(image.pk))
+        self.assertEqual(instance.picture_config["id"], str(image.pk))
+        self.assertEqual(
+            field.selection_from_instance(instance, get_backend("filer")),
+            selection,
+        )
 
     def test_url_backend_selection_serialization_round_trip(self) -> None:
         selection = BackendSelection(

@@ -48,6 +48,26 @@ class PictureReference:
 
 
 @dataclass(frozen=True)
+class StoredPictureSource:
+    """One logical image source backed by generic-relation and JSON columns."""
+
+    backend: str
+    reference: PictureReference | None = None
+    source_object: Any | None = None
+    content_type_id: int | None = None
+    object_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.backend:
+            raise ValueError("A stored picture source requires a backend alias.")
+        if (self.content_type_id is None) != (self.object_id is None):
+            raise ValueError("A stored model reference requires both content type and object ID.")
+
+    def as_config(self) -> dict[str, Any]:
+        return self.reference.as_dict() if self.reference else {}
+
+
+@dataclass(frozen=True)
 class ImageInfo:
     label: str
     width: int | None

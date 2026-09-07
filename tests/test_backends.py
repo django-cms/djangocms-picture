@@ -170,12 +170,16 @@ class BackendContractTestCase(SimpleTestCase):
 
         self.assertFalse(backend.supports_configuration_field("crop"))
         self.assertIsNone(backend.get_form_value(object()))
-        with self.assertRaises(UnsupportedBackendOperation):
-            backend.set_form_value(object(), "image")
-        with self.assertRaises(UnsupportedBackendOperation):
-            backend.copy_reference(object(), object())
-        with self.assertRaises(UnsupportedBackendOperation):
-            backend.clear_reference(object())
+        instance = SimpleNamespace(
+            backend="different",
+            picture="existing",
+            picture_config={"backend": "different"},
+        )
+        backend.set_form_value(instance, "image")
+        self.assertIsNone(instance.picture)
+        self.assertEqual(instance.picture_config, {})
+        backend.clear_reference(instance)
+        self.assertEqual(instance.picture_config, {})
         with self.assertRaises(UnsupportedBackendOperation):
             backend.form_field()
         with self.assertRaises(UnsupportedBackendOperation):
@@ -360,6 +364,8 @@ class FilerBackendCompatibilityTestCase(TestCase):
         picture.refresh_from_db()
 
         self.assertEqual(picture.picture, image)
+        self.assertEqual(picture.picture_object_id, str(image.pk))
+        self.assertEqual(picture.picture_config["backend"], "filer")
 
     def test_filer_copies_and_clears_its_reference(self) -> None:
         image = get_filer_image()

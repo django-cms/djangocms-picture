@@ -25,7 +25,6 @@ from djangocms_picture.contrib.unsplash.data import (
     normalize_unsplash_payload,
 )
 from djangocms_picture.contrib.unsplash.forms import UnsplashImageChoiceField
-from djangocms_picture.contrib.unsplash.models import UnsplashPictureReference
 from djangocms_picture.contrib.unsplash.widgets import UnsplashPickerWidget
 from djangocms_picture.fields import BackendSelection
 from djangocms_picture.forms import PictureForm
@@ -222,14 +221,15 @@ class UnsplashBackendTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         picture = form.save()
         picture.refresh_from_db()
-        extension = picture.unsplash_reference
+        reference = PictureReference.from_dict(picture.picture_config)
 
         self.assertEqual(picture.backend, "unsplash")
-        self.assertEqual(extension.asset_id, "photo-42")
-        self.assertEqual(extension.snapshot["alt_text"], UNSPLASH_PAYLOAD["alt_description"])
-        self.assertEqual(extension.snapshot["attribution"]["creator_name"], "Annie Example")
+        self.assertIsNone(picture.picture)
+        self.assertEqual(reference.id, "photo-42")
+        self.assertEqual(reference.snapshot["alt_text"], UNSPLASH_PAYLOAD["alt_description"])
+        self.assertEqual(reference.snapshot["attribution"]["creator_name"], "Annie Example")
         self.assertEqual(
-            extension.snapshot["transform"],
+            reference.snapshot["transform"],
             {
                 "crop_mode": "entropy",
                 "focal_point": {"x": 0.5, "y": 0.5},
@@ -239,9 +239,9 @@ class UnsplashBackendTestCase(TestCase):
         )
         self.assertIn(
             "utm_source=cms-picture-tests",
-            extension.snapshot["attribution"]["creator_url"],
+            reference.snapshot["attribution"]["creator_url"],
         )
-        self.assertIn("ixid=required-view-token", extension.snapshot["raw_url"])
+        self.assertIn("ixid=required-view-token", reference.snapshot["raw_url"])
         self.assertEqual(picture.image_asset.info.width, 2400)
 
     def test_active_backend_alt_text_is_not_shadowed_by_retained_filer_image(self) -> None:
@@ -381,12 +381,12 @@ class UnsplashBackendTestCase(TestCase):
 
         target.copy_relations(source)
         target.refresh_from_db()
-        self.assertEqual(target.unsplash_reference.snapshot, source.unsplash_reference.snapshot)
+        self.assertEqual(target.picture_config, source.picture_config)
 
         backend.clear_reference(target, commit=True)
-        self.assertFalse(
-            UnsplashPictureReference.objects.filter(picture_plugin=target).exists()
-        )
+        target.refresh_from_db()
+        self.assertEqual(target.picture_config, {})
+        self.assertIsNone(target.picture)
 
     def test_backend_does_not_resolve_missing_or_malformed_references(self) -> None:
         backend = get_backend("unsplash")

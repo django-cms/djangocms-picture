@@ -9,6 +9,8 @@ Changelog
 * Added pluggable filer, external URL, and experimental finder image backends.
 * Added a reusable, capability-aware backend picker field and JSON-serializable
   backend selections.
+* Store image sources in a generic model relation and versioned JSON
+  configuration, removing backend-specific one-to-one reference tables.
 * Added an experimental, snapshot-backed Frontify backend.
 * Custom picture templates must be reviewed for the backend-neutral rendering
   API; use ``img_src`` and ``image_alt_text`` instead of assuming a filer image.

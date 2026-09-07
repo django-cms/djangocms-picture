@@ -28,7 +28,6 @@ from djangocms_picture.contrib.frontify.data import (
     normalize_frontify_payload,
 )
 from djangocms_picture.contrib.frontify.forms import FrontifyImageChoiceField
-from djangocms_picture.contrib.frontify.models import FrontifyPictureReference
 from djangocms_picture.contrib.frontify.widgets import FrontifyPickerWidget
 from djangocms_picture.fields import BackendSelection
 from djangocms_picture.forms import PictureForm
@@ -122,16 +121,17 @@ class FrontifyBackendTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         picture = form.save()
         picture.refresh_from_db()
-        extension = picture.frontify_reference
+        reference = PictureReference.from_dict(picture.picture_config)
 
         self.assertEqual(picture.backend, "frontify")
-        self.assertEqual(extension.asset_id, "asset-42")
-        self.assertEqual(extension.account, "brand-library")
-        self.assertEqual(extension.revision, "revision-7")
-        self.assertEqual(extension.snapshot["alt_text"], "A campaign landscape")
-        self.assertEqual(extension.snapshot["focal_point"], [0.25, 0.75])
-        self.assertEqual(extension.snapshot["processing_url"], "https://cdn.frontify.com/hero.jpg")
-        self.assertEqual(extension.snapshot["original_url"], "https://assets.frontify.com/hero.jpg")
+        self.assertIsNone(picture.picture)
+        self.assertEqual(reference.id, "asset-42")
+        self.assertEqual(reference.context["account"], "brand-library")
+        self.assertEqual(reference.snapshot["revision"], "revision-7")
+        self.assertEqual(reference.snapshot["alt_text"], "A campaign landscape")
+        self.assertEqual(reference.snapshot["focal_point"], [0.25, 0.75])
+        self.assertEqual(reference.snapshot["processing_url"], "https://cdn.frontify.com/hero.jpg")
+        self.assertEqual(reference.snapshot["original_url"], "https://assets.frontify.com/hero.jpg")
         self.assertEqual(picture.image_asset.info.width, 1600)
 
     def test_selection_round_trip_restores_identical_frontify_value(self) -> None:
@@ -364,12 +364,11 @@ class FrontifyBackendTestCase(TestCase):
 
         target.copy_relations(source)
         target.refresh_from_db()
-        self.assertEqual(target.frontify_reference.snapshot, source.frontify_reference.snapshot)
+        self.assertEqual(target.picture_config, source.picture_config)
 
         backend.clear_reference(target, commit=True)
-        self.assertFalse(
-            FrontifyPictureReference.objects.filter(picture_plugin=target).exists()
-        )
+        target.refresh_from_db()
+        self.assertEqual(target.picture_config, {})
 
     def test_disabled_or_missing_extensions_do_not_render(self) -> None:
         picture = Picture.objects.create(backend="frontify")
@@ -377,7 +376,12 @@ class FrontifyBackendTestCase(TestCase):
 
         backend = get_backend("frontify")
         backend.set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
-        FrontifyPictureReference.objects.filter(picture_plugin=picture).update(disabled=True)
+        reference = PictureReference.from_dict(picture.picture_config)
+        picture.picture_config = {
+            **picture.picture_config,
+            "snapshot": {**reference.snapshot, "disabled": True},
+        }
+        picture.save(update_fields=("picture_config",))
         picture.refresh_from_db()
 
         self.assertIsNone(picture.image_asset)
@@ -436,8 +440,9 @@ class FrontifyBackendTestCase(TestCase):
         picture.refresh_from_db()
 
         self.assertIsNotNone(refreshed)
-        self.assertEqual(picture.frontify_reference.revision, "revision-8")
-        self.assertIsNotNone(picture.frontify_reference.refreshed_at)
+        reference = PictureReference.from_dict(picture.picture_config)
+        self.assertEqual(reference.snapshot["revision"], "revision-8")
+        self.assertIsNotNone(reference.snapshot["refreshed_at"])
 
         revoked_backend = FrontifyPictureBackend(
             allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
@@ -445,7 +450,7 @@ class FrontifyBackendTestCase(TestCase):
         )
         self.assertIsNone(revoked_backend.refresh_instance(picture))
         picture.refresh_from_db()
-        self.assertTrue(picture.frontify_reference.disabled)
+        self.assertTrue(PictureReference.from_dict(picture.picture_config).snapshot["disabled"])
         self.assertEqual(revoked_backend.revoke("asset-42"), 1)
 
     def test_refresh_failure_keeps_last_known_good_snapshot(self) -> None:
@@ -458,14 +463,15 @@ class FrontifyBackendTestCase(TestCase):
         )
         picture = Picture.objects.create(backend="frontify")
         backend.set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
-        original_snapshot = dict(picture.frontify_reference.snapshot)
+        original_snapshot = dict(PictureReference.from_dict(picture.picture_config).snapshot)
 
         with self.assertRaises(TimeoutError):
             backend.refresh_instance(picture)
         picture.refresh_from_db()
 
-        self.assertEqual(picture.frontify_reference.snapshot, original_snapshot)
-        self.assertFalse(picture.frontify_reference.disabled)
+        current_snapshot = PictureReference.from_dict(picture.picture_config).snapshot
+        self.assertEqual(current_snapshot, original_snapshot)
+        self.assertFalse(current_snapshot.get("disabled", False))
         self.assertIsNotNone(backend.get_asset(picture))
 
     def test_refresh_rejects_foreign_and_changed_references(self) -> None:
@@ -492,12 +498,15 @@ class FrontifyBackendTestCase(TestCase):
 
         call_command("refresh_frontify_assets", dry_run=True, stdout=output)
         picture.refresh_from_db()
-        self.assertEqual(picture.frontify_reference.revision, "revision-7")
+        self.assertEqual(PictureReference.from_dict(picture.picture_config).snapshot["revision"], "revision-7")
         self.assertIn('"status": "would_refresh"', output.getvalue())
 
         call_command("refresh_frontify_assets", stdout=StringIO())
         picture.refresh_from_db()
-        self.assertEqual(picture.frontify_reference.revision, "settings-refresh")
+        self.assertEqual(
+            PictureReference.from_dict(picture.picture_config).snapshot["revision"],
+            "settings-refresh",
+        )
 
         revoked = Picture.objects.create(backend="frontify")
         backend.set_form_value(
@@ -511,4 +520,4 @@ class FrontifyBackendTestCase(TestCase):
             stdout=StringIO(),
         )
         revoked.refresh_from_db()
-        self.assertTrue(revoked.frontify_reference.disabled)
+        self.assertTrue(PictureReference.from_dict(revoked.picture_config).snapshot["disabled"])

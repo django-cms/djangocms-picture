@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from djangocms_picture.backends import get_backend
 from djangocms_picture.contrib.frontify.backend import FrontifyPictureBackend
-from djangocms_picture.contrib.frontify.models import FrontifyPictureReference
+from djangocms_picture.models import Picture
 
 
 class Command(BaseCommand):
@@ -27,25 +27,30 @@ class Command(BaseCommand):
         if options["batch_size"] < 1:
             raise CommandError("--batch-size must be greater than zero.")
 
-        queryset = FrontifyPictureReference.objects.select_related("picture_plugin").filter(
-            pk__gt=options["after_pk"]
+        queryset = Picture.objects.filter(
+            backend="frontify",
+            pk__gt=options["after_pk"],
         )
         if options["asset_id"]:
-            queryset = queryset.filter(asset_id=options["asset_id"])
-        if not options["include_disabled"]:
-            queryset = queryset.filter(disabled=False)
-
+            queryset = queryset.filter(picture_config__id=options["asset_id"])
         counts = {"refreshed": 0, "would_refresh": 0, "revoked": 0, "error": 0}
-        for extension in queryset.order_by("pk").iterator(chunk_size=options["batch_size"]):
+        for picture in queryset.order_by("pk").iterator(chunk_size=options["batch_size"]):
+            reference = backend.get_stored_reference(picture)
+            if (
+                not options["include_disabled"]
+                and reference is not None
+                and reference.snapshot.get("disabled")
+            ):
+                continue
             record: dict[str, Any] = {
                 "event": "frontify_reference",
-                "reference_pk": extension.pk,
-                "picture_pk": extension.picture_plugin_id,
-                "asset_id": extension.asset_id,
+                "reference_pk": picture.pk,
+                "picture_pk": picture.pk,
+                "asset_id": reference.id if reference else "",
             }
             try:
                 refreshed = backend.refresh_instance(
-                    extension.picture_plugin,
+                    picture,
                     commit=not options["dry_run"],
                 )
                 status = "would_refresh" if options["dry_run"] and refreshed else "refreshed"

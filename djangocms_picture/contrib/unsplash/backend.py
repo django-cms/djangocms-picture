@@ -23,7 +23,6 @@ from djangocms_picture.backends.types import (
 
 from .data import UNSPLASH_OUTPUT_FORMATS, normalize_unsplash_payload
 from .forms import UnsplashImageChoiceField
-from .models import UnsplashPictureReference
 
 UNSPLASH_FORMATS = tuple(sorted(UNSPLASH_OUTPUT_FORMATS - {""}))
 UNSPLASH_COLORS = frozenset(
@@ -262,58 +261,12 @@ class UnsplashPictureBackend(BasePictureBackend):
         )
 
     def get_asset(self, picture_instance: Any) -> UnsplashImageAsset | None:
-        if not getattr(picture_instance, "pk", None):
-            return None
-        try:
-            extension = picture_instance.unsplash_reference
-        except UnsplashPictureReference.DoesNotExist:
-            return None
-        return self.resolve(
-            PictureReference(
-                backend=self.alias,
-                id=extension.asset_id,
-                context={"application_name": self.application_name},
-                snapshot=extension.snapshot,
-            )
-        )
+        reference = self.get_stored_reference(picture_instance)
+        return self.resolve(reference) if reference else None
 
     def get_form_value(self, picture_instance: Any) -> dict[str, Any] | None:
-        if not getattr(picture_instance, "pk", None):
-            return None
-        try:
-            return dict(picture_instance.unsplash_reference.snapshot)
-        except UnsplashPictureReference.DoesNotExist:
-            return None
-
-    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
-        picture_instance._unsplash_image = value
-        if not commit:
-            return
-        reference = self.serialize(value)
-        if reference is None:
-            UnsplashPictureReference.objects.filter(picture_plugin=picture_instance).delete()
-            return
-        UnsplashPictureReference.objects.update_or_create(
-            picture_plugin=picture_instance,
-            defaults={
-                "asset_id": reference.id,
-                "snapshot": dict(reference.snapshot),
-            },
-        )
-
-    def copy_reference(self, source: Any, target: Any) -> None:
-        try:
-            extension = source.unsplash_reference
-        except UnsplashPictureReference.DoesNotExist:
-            UnsplashPictureReference.objects.filter(picture_plugin=target).delete()
-            return
-        UnsplashPictureReference.objects.update_or_create(
-            picture_plugin=target,
-            defaults={
-                "asset_id": extension.asset_id,
-                "snapshot": extension.snapshot,
-            },
-        )
+        reference = self.get_stored_reference(picture_instance)
+        return dict(reference.snapshot) if reference else None
 
 
 def _replace_image_query(url: str, params: dict[str, str | int]) -> str:

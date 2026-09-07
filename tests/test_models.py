@@ -1,10 +1,11 @@
 from cms.api import create_page
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 from django.test import TestCase, override_settings
 from filer.models import ThumbnailOption
 
-from djangocms_picture.backends import Rendition
+from djangocms_picture.backends import PictureReference, Rendition, StoredPictureSource
 from djangocms_picture.models import (
     LINK_TARGET,
     PICTURE_RATIO,
@@ -119,6 +120,60 @@ class PictureModelTestCase(TestCase):
 
         external = Picture.objects.create(external_picture=self.external_picture)
         self.assertEqual(external.backend, "url")
+
+    def test_image_source_descriptor_combines_backing_fields(self) -> None:
+        source = self.picture.image_source
+
+        self.assertEqual(source.backend, "filer")
+        self.assertEqual(source.reference.id, str(self.picture.picture_id))
+        self.assertEqual(source.source_object, self.picture.picture)
+        self.assertEqual(source.object_id, str(self.picture.picture_id))
+        self.assertEqual(source.content_type_id, self.picture.picture_content_type_id)
+
+        reference = PictureReference(backend="url", id=self.external_picture)
+        self.picture.image_source = StoredPictureSource(
+            backend="url",
+            reference=reference,
+        )
+
+        self.assertEqual(self.picture.backend, "url")
+        self.assertIsNone(self.picture.picture)
+        self.assertIsNone(self.picture.picture_content_type_id)
+        self.assertIsNone(self.picture.picture_object_id)
+        self.assertEqual(self.picture.picture_config, reference.as_dict())
+
+    def test_image_source_descriptor_rejects_another_backend_reference(self) -> None:
+        with self.assertRaisesMessage(ValueError, "reference backend must match"):
+            self.picture.image_source = StoredPictureSource(
+                backend="url",
+                reference=PictureReference(backend="filer", id="1"),
+            )
+
+    def test_legacy_picture_id_assignment_uses_unified_storage(self) -> None:
+        picture = Picture(picture_id=self.picture.picture_id)
+
+        self.assertEqual(picture.backend, "filer")
+        self.assertEqual(picture.picture, self.picture.picture)
+        self.assertEqual(picture.picture_object_id, str(self.picture.picture_id))
+        self.assertEqual(picture.picture_config["id"], str(self.picture.picture_id))
+
+    def test_generic_reference_columns_must_be_populated_as_a_pair(self) -> None:
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Picture.objects.filter(pk=self.picture.pk).update(
+                picture_content_type=None,
+                picture_object_id="orphan",
+            )
+
+    def test_backend_validates_serialized_and_model_reference_identity(self) -> None:
+        self.picture.picture_config = PictureReference(
+            backend="filer",
+            id="different",
+        ).as_dict()
+        self.picture.link_url = None
+        self.picture.link_page = None
+
+        with self.assertRaisesMessage(ValidationError, "IDs do not match"):
+            self.picture.clean()
 
     def test_clean(self):
         # test when internal and external links are given

@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Any
 
 from django.core.files.images import get_image_dimensions
-from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from finder.models.file import AbstractFileModel, FileModel
 
@@ -15,10 +14,10 @@ from djangocms_picture.backends.types import (
     PictureReference,
     Rendition,
     RenditionSpec,
+    StoredPictureSource,
 )
 
 from .forms import FinderImageChoiceField
-from .models import FinderPictureReference
 
 FINDER_CAPABILITIES = BackendCapabilities(
     crop=True,
@@ -115,6 +114,7 @@ class FinderPictureBackend(BasePictureBackend):
         }
     )
     capabilities = FINDER_CAPABILITIES
+    stores_model_reference = True
 
     @property
     def ambit(self) -> str | None:
@@ -143,6 +143,16 @@ class FinderPictureBackend(BasePictureBackend):
         image = value if isinstance(value, AbstractFileModel) else self._resolve_id(value)
         return FinderImageAsset(image).reference if image and self._image_is_allowed(image) else None
 
+    def prepare_storage(self, value: Any) -> StoredPictureSource:
+        image = value if isinstance(value, AbstractFileModel) else self._resolve_id(value)
+        if image is None or not self._image_is_allowed(image):
+            return StoredPictureSource(backend=self.alias)
+        return StoredPictureSource(
+            backend=self.alias,
+            reference=FinderImageAsset(image).reference,
+            source_object=image,
+        )
+
     def resolve(self, reference: PictureReference) -> FinderImageAsset | None:
         if reference.backend != self.alias:
             return None
@@ -150,38 +160,12 @@ class FinderPictureBackend(BasePictureBackend):
         return FinderImageAsset(image) if image else None
 
     def get_asset(self, picture_instance: Any) -> FinderImageAsset | None:
-        if not getattr(picture_instance, "pk", None):
+        image = getattr(picture_instance, "picture", None)
+        if image is None:
             return None
-        try:
-            extension = picture_instance.finder_reference
-        except FinderPictureReference.DoesNotExist:
-            return None
-        if not extension.image:
-            return None
-        image = extension.image
         if not isinstance(image, AbstractFileModel):
             image = self._resolve_id(image)
         return FinderImageAsset(image) if image and self._image_is_allowed(image) else None
-
-    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
-        picture_instance._finder_image = value
-        if not commit:
-            return
-
-        reference = self.serialize(value)
-        if reference is None:
-            FinderPictureReference.objects.filter(picture_plugin=picture_instance).delete()
-            return
-        snapshot = dict(reference.snapshot) if reference else {}
-        ambit = str(reference.context.get("ambit", "")) if reference else ""
-        with transaction.atomic():
-            FinderPictureReference.objects.update_or_create(
-                picture_plugin=picture_instance,
-                defaults={"image": value, "ambit": ambit, "snapshot": snapshot},
-            )
-
-    def copy_reference(self, source: Any, target: Any) -> None:
-        self.set_form_value(target, self.get_form_value(source), commit=True)
 
     def _resolve_id(self, image_id: Any) -> AbstractFileModel | None:
         try:

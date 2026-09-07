@@ -24,7 +24,6 @@ from djangocms_picture.backends.types import (
 
 from .data import is_frontify_snapshot_expired, normalize_frontify_payload
 from .forms import FrontifyImageChoiceField
-from .models import FrontifyPictureReference
 
 FRONTIFY_FORMATS = ("jpg", "jpeg", "png", "webp")
 FRONTIFY_CAPABILITIES = BackendCapabilities(
@@ -232,68 +231,14 @@ class FrontifyPictureBackend(BasePictureBackend):
         )
 
     def get_asset(self, picture_instance: Any) -> FrontifyImageAsset | None:
-        if not getattr(picture_instance, "pk", None):
-            return None
-        try:
-            extension = picture_instance.frontify_reference
-        except FrontifyPictureReference.DoesNotExist:
-            return None
-        if extension.disabled:
-            return None
-        reference = PictureReference(
-            backend=self.alias,
-            id=extension.asset_id,
-            context={"account": extension.account},
-            snapshot=extension.snapshot,
-        )
-        return self.resolve(reference)
+        reference = self.get_stored_reference(picture_instance)
+        return self.resolve(reference) if reference else None
 
     def get_form_value(self, picture_instance: Any) -> dict[str, Any] | None:
-        if not getattr(picture_instance, "pk", None):
+        reference = self.get_stored_reference(picture_instance)
+        if reference is None or reference.snapshot.get("disabled"):
             return None
-        try:
-            extension = picture_instance.frontify_reference
-        except FrontifyPictureReference.DoesNotExist:
-            return None
-        return dict(extension.snapshot) if not extension.disabled else None
-
-    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
-        picture_instance._frontify_image = value
-        if not commit:
-            return
-        reference = self.serialize(value)
-        if reference is None:
-            FrontifyPictureReference.objects.filter(picture_plugin=picture_instance).delete()
-            return
-        FrontifyPictureReference.objects.update_or_create(
-            picture_plugin=picture_instance,
-            defaults={
-                "asset_id": reference.id,
-                "account": str(reference.context.get("account", "")),
-                "snapshot": dict(reference.snapshot),
-                "revision": str(reference.snapshot.get("revision", "")),
-                "refreshed_at": timezone.now(),
-                "disabled": False,
-            },
-        )
-
-    def copy_reference(self, source: Any, target: Any) -> None:
-        try:
-            extension = source.frontify_reference
-        except FrontifyPictureReference.DoesNotExist:
-            FrontifyPictureReference.objects.filter(picture_plugin=target).delete()
-            return
-        FrontifyPictureReference.objects.update_or_create(
-            picture_plugin=target,
-            defaults={
-                "asset_id": extension.asset_id,
-                "account": extension.account,
-                "snapshot": extension.snapshot,
-                "revision": extension.revision,
-                "refreshed_at": extension.refreshed_at,
-                "disabled": extension.disabled,
-            },
-        )
+        return dict(reference.snapshot)
 
     def refresh(self, reference: PictureReference, *, request: Any = None) -> PictureReference:
         if reference.backend != self.alias:
@@ -320,39 +265,54 @@ class FrontifyPictureBackend(BasePictureBackend):
         request: Any = None,
         commit: bool = True,
     ) -> PictureReference | None:
-        try:
-            extension = picture_instance.frontify_reference
-        except FrontifyPictureReference.DoesNotExist as error:
-            raise PictureBackendError("The picture has no Frontify reference to refresh.") from error
-        reference = PictureReference(
-            backend=self.alias,
-            id=extension.asset_id,
-            context={"account": extension.account},
-            snapshot=extension.snapshot,
-        )
+        reference = self.get_stored_reference(picture_instance)
+        if reference is None:
+            raise PictureBackendError("The picture has no Frontify reference to refresh.")
         try:
             refreshed = self.refresh(reference, request=request)
         except FrontifyAssetRevoked:
             if commit:
-                extension.disabled = True
-                extension.refreshed_at = timezone.now()
-                extension.save(update_fields=("disabled", "refreshed_at"))
+                snapshot = {
+                    **reference.snapshot,
+                    "disabled": True,
+                    "refreshed_at": timezone.now().isoformat(),
+                }
+                picture_instance.picture_config = replace(reference, snapshot=snapshot).as_dict()
+                picture_instance.save(update_fields=("picture_config",))
             return None
         if commit:
-            extension.snapshot = dict(refreshed.snapshot)
-            extension.revision = str(refreshed.snapshot.get("revision", ""))
-            extension.refreshed_at = timezone.now()
-            extension.disabled = False
-            extension.save(update_fields=("snapshot", "revision", "refreshed_at", "disabled"))
+            snapshot = {
+                **refreshed.snapshot,
+                "disabled": False,
+                "refreshed_at": timezone.now().isoformat(),
+            }
+            picture_instance.picture_config = replace(refreshed, snapshot=snapshot).as_dict()
+            picture_instance.save(update_fields=("picture_config",))
         return refreshed
 
     def revoke(self, asset_id: str) -> int:
         """Disable stored references from an authenticated application webhook."""
 
-        return FrontifyPictureReference.objects.filter(asset_id=asset_id).update(
-            disabled=True,
-            refreshed_at=timezone.now(),
-        )
+        from djangocms_picture.models import Picture
+
+        count = 0
+        for picture in Picture.objects.filter(
+            backend=self.alias,
+            picture_config__id=asset_id,
+        ).iterator():
+            reference = self.get_stored_reference(picture)
+            if reference is None:
+                continue
+            snapshot = {
+                **reference.snapshot,
+                "disabled": True,
+                "refreshed_at": timezone.now().isoformat(),
+            }
+            Picture.objects.filter(pk=picture.pk).update(
+                picture_config=replace(reference, snapshot=snapshot).as_dict()
+            )
+            count += 1
+        return count
 
 
 def _append_query(url: str, params: list[tuple[str, str | int]]) -> str:

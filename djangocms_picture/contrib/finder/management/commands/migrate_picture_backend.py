@@ -1,6 +1,7 @@
 import json
 from collections.abc import Iterator
 from contextlib import nullcontext
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, TextIO
 from uuid import UUID
@@ -10,8 +11,9 @@ from django.db import transaction
 from finder.models.ambit import AmbitModel
 from finder.models.file import FileModel
 
-from djangocms_picture.contrib.finder.backend import FinderImageAsset
-from djangocms_picture.contrib.finder.models import FinderPictureReference
+from djangocms_picture.backends import get_backend
+from djangocms_picture.contrib.filer.backend import FilerPictureBackend
+from djangocms_picture.contrib.finder.backend import FinderImageAsset, FinderPictureBackend
 from djangocms_picture.models import Picture
 
 
@@ -33,7 +35,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--delete-finder-reference",
             action="store_true",
-            help="On finder-to-filer rollback, remove the finder extension after switching.",
+            help="Deprecated compatibility option; unified storage always replaces the old reference.",
         )
 
     def handle(self, *args: Any, **options: Any) -> None:
@@ -47,6 +49,12 @@ class Command(BaseCommand):
             raise CommandError("--limit must be greater than zero.")
 
         try:
+            finder_backend = get_backend("finder")
+            filer_backend = get_backend("filer")
+            if not isinstance(finder_backend, FinderPictureBackend):
+                raise CommandError('The "finder" backend must be FinderPictureBackend.')
+            if not isinstance(filer_backend, FilerPictureBackend):
+                raise CommandError('The "filer" backend must be FilerPictureBackend.')
             ambit = AmbitModel.objects.get(slug=options["ambit"])
         except AmbitModel.DoesNotExist as error:
             raise CommandError(f'Finder ambit "{options["ambit"]}" does not exist.') from error
@@ -63,7 +71,8 @@ class Command(BaseCommand):
                     destination=destination,
                     ambit=ambit,
                     dry_run=options["dry_run"],
-                    delete_finder_reference=options["delete_finder_reference"],
+                    finder_backend=finder_backend,
+                    filer_backend=filer_backend,
                 )
                 counts[record["status"]] += 1
                 self._audit(record, audit_stream)
@@ -92,7 +101,8 @@ class Command(BaseCommand):
         destination: str,
         ambit: AmbitModel,
         dry_run: bool,
-        delete_finder_reference: bool,
+        finder_backend: FinderPictureBackend,
+        filer_backend: FilerPictureBackend,
     ) -> dict[str, Any]:
         base = {
             "event": "picture",
@@ -103,59 +113,77 @@ class Command(BaseCommand):
         }
         try:
             if source == "filer":
-                image = self._finder_image_for_filer(picture, ambit)
+                filer_image = picture.picture
+                image = self._finder_image_for_filer(filer_image, ambit)
                 if image is None:
                     return {**base, "status": "skipped", "reason": "finder image not found"}
+                filer_id = getattr(filer_image, "pk", None)
                 finder_id = str(image.pk)
                 if not dry_run:
                     with transaction.atomic():
-                        FinderPictureReference.objects.update_or_create(
-                            picture_plugin=picture,
-                            defaults={
-                                "image": image.pk,
-                                "ambit": ambit.slug,
-                                "snapshot": self._snapshot(image),
+                        stored = finder_backend.prepare_storage(image)
+                        if stored.reference is None:
+                            raise ValueError("Finder did not accept the migrated image.")
+                        reference = replace(
+                            stored.reference,
+                            context={
+                                **stored.reference.context,
+                                "legacy_filer_id": str(filer_id),
                             },
                         )
-                        Picture.objects.filter(pk=picture.pk).update(backend="finder")
+                        picture.backend = "finder"
+                        picture.picture = stored.source_object
+                        picture.picture_config = reference.as_dict()
+                        picture.save(
+                            update_fields=(
+                                "backend",
+                                "picture_content_type",
+                                "picture_object_id",
+                                "picture_config",
+                            )
+                        )
                 return {
                     **base,
                     "status": "would_migrate" if dry_run else "migrated",
-                    "filer_id": picture.picture_id,
+                    "filer_id": filer_id,
                     "finder_id": finder_id,
                 }
 
-            if not picture.picture_id:
+            reference = finder_backend.get_stored_reference(picture)
+            if reference is None:
+                return {**base, "status": "skipped", "reason": "finder reference not found"}
+            filer_id = reference.context.get("legacy_filer_id")
+            if not filer_id:
                 return {**base, "status": "skipped", "reason": "preserved filer reference not found"}
             try:
-                extension = picture.finder_reference
-            except FinderPictureReference.DoesNotExist:
-                extension = None
-            if extension is None:
-                return {**base, "status": "skipped", "reason": "finder extension not found"}
-            image = extension.image
+                filer_image = filer_backend.resolve(
+                    replace(reference, backend="filer", id=str(filer_id), context={}, snapshot={})
+                )
+            except (TypeError, ValueError):
+                filer_image = None
+            if filer_image is None:
+                return {**base, "status": "skipped", "reason": "preserved filer reference not found"}
+            image = picture.picture
             if image and image.folder.get_ambit().pk != ambit.pk:
                 return {**base, "status": "skipped", "reason": "finder image belongs to another ambit"}
             finder_id = str(getattr(image, "pk", image)) if image else None
             if not dry_run:
                 with transaction.atomic():
-                    Picture.objects.filter(pk=picture.pk).update(backend="filer")
-                    if delete_finder_reference:
-                        extension.delete()
+                    filer_backend.set_form_value(picture, filer_image.image, commit=True)
             return {
                 **base,
                 "status": "would_migrate" if dry_run else "migrated",
-                "filer_id": picture.picture_id,
+                "filer_id": filer_id,
                 "finder_id": finder_id,
             }
         except Exception as error:  # Keep each row independently resumable and auditable.
             return {**base, "status": "error", "error": f"{type(error).__name__}: {error}"}
 
     @staticmethod
-    def _finder_image_for_filer(picture: Picture, ambit: AmbitModel) -> Any | None:
-        if not picture.picture_id or not picture.picture:
+    def _finder_image_for_filer(filer_image: Any, ambit: AmbitModel) -> Any | None:
+        if filer_image is None:
             return None
-        inode_id = UUID(Path(picture.picture.file.name).parent.name)
+        inode_id = UUID(Path(filer_image.file.name).parent.name)
         try:
             image = FileModel.objects.get_inode(
                 id=inode_id,

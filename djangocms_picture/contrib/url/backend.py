@@ -58,27 +58,5 @@ class URLPictureBackend(BasePictureBackend):
         return URLImageAsset(reference)
 
     def get_asset(self, picture_instance: Any) -> URLImageAsset | None:
-        url = getattr(picture_instance, "external_picture", None)
-        if not url:
-            return None
-        # Historically get_size() continued to use a retained filer image's
-        # dimensions while external_picture overrode its URL. Preserve that
-        # behavior until render data is an explicitly versioned public API.
-        legacy_image = getattr(picture_instance, "picture", None)
-        reference = PictureReference(
-            backend=self.alias,
-            id=url,
-            snapshot={
-                "width": getattr(legacy_image, "width", None),
-                "height": getattr(legacy_image, "height", None),
-            },
-        )
-        return URLImageAsset(reference)
-
-    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
-        picture_instance.external_picture = value or None
-        if commit:
-            picture_instance.save(update_fields=["external_picture"])
-
-    def copy_reference(self, source: Any, target: Any) -> None:
-        self.set_form_value(target, source.external_picture, commit=True)
+        reference = self.get_stored_reference(picture_instance)
+        return self.resolve(reference) if reference else None

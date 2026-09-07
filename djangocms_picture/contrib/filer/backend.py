@@ -15,6 +15,7 @@ from djangocms_picture.backends.types import (
     PictureReference,
     Rendition,
     RenditionSpec,
+    StoredPictureSource,
 )
 
 FILER_CAPABILITIES = BackendCapabilities(
@@ -72,6 +73,7 @@ class FilerPictureBackend(BasePictureBackend):
         }
     )
     capabilities = FILER_CAPABILITIES
+    stores_model_reference = True
 
     def form_field(self, *, required: bool = True, request: Any = None, **kwargs: Any) -> AdminImageFormField:
         image_model = load_model(settings.FILER_IMAGE_MODEL)
@@ -88,6 +90,14 @@ class FilerPictureBackend(BasePictureBackend):
             return None
         return PictureReference(backend=self.alias, id=str(value.pk))
 
+    def prepare_storage(self, value: Any) -> StoredPictureSource:
+        reference = self.serialize(value)
+        return StoredPictureSource(
+            backend=self.alias,
+            reference=reference,
+            source_object=value if reference else None,
+        )
+
     def resolve(self, reference: PictureReference) -> FilerImageAsset | None:
         if reference.backend != self.alias:
             return None
@@ -102,10 +112,5 @@ class FilerPictureBackend(BasePictureBackend):
         image = getattr(picture_instance, "picture", None)
         return FilerImageAsset(image) if image else None
 
-    def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
-        picture_instance.picture = value
-        if commit:
-            picture_instance.save(update_fields=["picture"])
-
-    def copy_reference(self, source: Any, target: Any) -> None:
-        self.set_form_value(target, source.picture, commit=True)
+    def get_form_value(self, picture_instance: Any) -> Any:
+        return getattr(picture_instance, "picture", None)

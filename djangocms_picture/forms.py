@@ -21,7 +21,12 @@ class PictureForm(forms.ModelForm):
     class Meta:
         model = Picture
         fields = "__all__"
-        exclude = ("backend", "picture", "external_picture")
+        exclude = (
+            "backend",
+            "picture_content_type",
+            "picture_object_id",
+            "picture_config",
+        )
         widgets = {
             "caption_text": forms.Textarea(attrs={"rows": 2}),
         }
@@ -56,12 +61,10 @@ class PictureForm(forms.ModelForm):
 
         selected_backend = self._get_selected_backend()
         if not self.is_bound and "image_source" not in self.initial:
-            value = None
-            if self.instance:
-                value = selected_backend.get_form_value(self.instance)
-            self.initial["image_source"] = BackendSelection(
-                backend=selected_backend,
-                value=value,
+            source_field = self.fields["image_source"]
+            self.initial["image_source"] = source_field.selection_from_instance(
+                self.instance,
+                selected_backend,
             )
         self._configure_backend_fields(selected_backend)
 
@@ -107,17 +110,10 @@ class PictureForm(forms.ModelForm):
             self._apply_selection(self.instance, selection)
         return cleaned_data
 
-    @staticmethod
-    def _apply_selection(instance: Picture, selection: BackendSelection) -> BasePictureBackend:
+    def _apply_selection(self, instance: Picture, selection: BackendSelection) -> BasePictureBackend:
         backend = selection.backend
-        instance.backend = backend.alias
-
-        # external_picture historically overrides all other sources. Clear it
-        # when leaving the URL backend, while retaining filer data when URL is
-        # selected so existing rollback behavior remains available.
-        if backend.alias != "url":
-            instance.external_picture = None
-        backend.set_form_value(instance, selection.value, commit=False)
+        source_field: BackendImageField = self.fields["image_source"]
+        source_field.apply_selection(instance, selection)
         return backend
 
     def save(self, commit: bool = True) -> Picture:
@@ -129,11 +125,3 @@ class PictureForm(forms.ModelForm):
             instance.save()
             self.save_m2m()
         return instance
-
-    def _save_m2m(self) -> None:
-        """Persist backend-owned references after the plugin has a primary key."""
-
-        super()._save_m2m()
-        selection: BackendSelection = self.cleaned_data["image_source"]
-        backend = selection.backend
-        backend.set_form_value(self.instance, selection.value, commit=True)

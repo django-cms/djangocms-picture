@@ -8,22 +8,27 @@ from typing import Any
 from cms.models import CMSPlugin
 from cms.models.fields import PageField
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from djangocms_attributes_field.fields import AttributesField
-from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
 
 from .backends import (
     BaseImageAsset,
     BasePictureBackend,
     ImageAttribution,
+    PictureBackendError,
     PictureReference,
+    PictureSourceDescriptor,
     Rendition,
     RenditionSpec,
+    StoredPictureSource,
+    UnavailablePictureBackend,
     get_backend_for_instance,
 )
 from .linking import DJANGOCMS_LINK_ENABLED, PictureLinkField, resolve_picture_link
@@ -93,23 +98,31 @@ class AbstractPicture(CMSPlugin):
         max_length=32,
         default="filer",
     )
-    picture = FilerImageField(
-        verbose_name=_('Image'),
+    picture_content_type = models.ForeignKey(
+        ContentType,
+        verbose_name=_("Image model"),
         blank=True,
         null=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
+        on_delete=models.PROTECT,
+        related_name="+",
     )
-    external_picture = models.URLField(
-        verbose_name=_('External image'),
+    picture_object_id = models.CharField(
+        verbose_name=_("Image object ID"),
         blank=True,
         null=True,
         max_length=255,
-        help_text=_(
-            'If provided, overrides the embedded image. '
-            'Certain options such as cropping are not applicable to external images.'
-        )
     )
+    picture = GenericForeignKey(
+        "picture_content_type",
+        "picture_object_id",
+        for_concrete_model=False,
+    )
+    picture_config = models.JSONField(
+        verbose_name=_("Image source configuration"),
+        blank=True,
+        default=dict,
+    )
+    image_source = PictureSourceDescriptor()
     width = models.PositiveIntegerField(
         verbose_name=_('Width'),
         blank=True,
@@ -240,12 +253,98 @@ class AbstractPicture(CMSPlugin):
 
     class Meta:
         abstract = True
+        indexes = [
+            models.Index(
+                fields=("picture_content_type", "picture_object_id"),
+                name="dcp_picture_object_idx",
+            ),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(picture_content_type__isnull=True, picture_object_id__isnull=True)
+                    | models.Q(picture_content_type__isnull=False, picture_object_id__isnull=False)
+                ),
+                name="dcp_picture_object_pair",
+            ),
+        ]
+
+    @property
+    def picture_id(self) -> Any | None:
+        """Return the typed object ID used by historical filer integrations."""
+
+        if self.picture_object_id is None:
+            return None
+        content_type = self.picture_content_type
+        model = content_type.model_class() if content_type is not None else None
+        if model is not None:
+            return model._meta.pk.to_python(self.picture_object_id)
+        return self.picture_object_id
+
+    @picture_id.setter
+    def picture_id(self, value: Any | None) -> None:
+        """Accept historical filer ID assignment while using generic storage."""
+
+        if value is None:
+            if self.backend == "filer":
+                self.image_source = StoredPictureSource(backend="filer")
+            else:
+                self.picture = None
+            return
+
+        from filer.utils.loader import load_model
+
+        image_model = load_model(settings.FILER_IMAGE_MODEL)
+        content_type = ContentType.objects.get_for_model(
+            image_model,
+            for_concrete_model=False,
+        )
+        identifier = str(image_model._meta.pk.to_python(value))
+        self.image_source = StoredPictureSource(
+            backend="filer",
+            reference=PictureReference(backend="filer", id=identifier),
+            content_type_id=content_type.pk,
+            object_id=identifier,
+        )
+
+    @property
+    def external_picture(self) -> str | None:
+        """Expose URL backend values through the historical public attribute."""
+
+        source = self.image_source
+        reference = source.reference
+        return reference.id if reference is not None and reference.backend == "url" else None
+
+    @external_picture.setter
+    def external_picture(self, value: str | None) -> None:
+        if value:
+            image = self.picture
+            snapshot = {
+                "width": getattr(image, "width", None),
+                "height": getattr(image, "height", None),
+                "alt_text": getattr(image, "default_alt_text", "") or "",
+            }
+            self.image_source = StoredPictureSource(
+                backend="url",
+                reference=PictureReference(
+                    backend="url",
+                    id=str(value),
+                    snapshot=snapshot,
+                ),
+            )
+        elif getattr(self, "backend", None) == "url":
+            self.image_source = StoredPictureSource(backend="url")
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        # Preserve the long-standing external URL precedence for callers that
-        # create plugins through the ORM/API instead of PictureForm.
-        if self.external_picture and self.backend in {"", "filer", "url"}:
-            self.backend = "url"
+        if self.backend == "filer" and self.picture is not None and not self.picture_config:
+            self.image_source = StoredPictureSource(
+                backend="filer",
+                reference=PictureReference(
+                    backend="filer",
+                    id=str(self.picture.pk),
+                ),
+                source_object=self.picture,
+            )
         if DJANGOCMS_LINK_ENABLED:
             self.sync_legacy_link_fields()
             update_fields = kwargs.get("update_fields")
@@ -254,8 +353,9 @@ class AbstractPicture(CMSPlugin):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        if self.picture and self.picture.label:
-            return self.picture.label
+        label = getattr(self.picture, "label", None) or getattr(self.picture, "name", None)
+        if label:
+            return str(label)
         return str(self.pk)
 
     @property
@@ -298,9 +398,6 @@ class AbstractPicture(CMSPlugin):
         return gettext('<file is missing>')
 
     def copy_relations(self, oldinstance: "AbstractPicture") -> None:
-        # Because we have a ForeignKey, it's required to copy over
-        # the reference from the instance to the new plugin.
-        self.picture = oldinstance.picture
         backend = get_backend_for_instance(oldinstance)
         self.backend = backend.alias
         backend.copy_reference(oldinstance, self)
@@ -395,6 +492,12 @@ class AbstractPicture(CMSPlugin):
             self.link_page_id = page_pk
 
     def clean(self) -> None:
+        backend = self.picture_backend
+        try:
+            backend.validate_storage(self)
+        except PictureBackendError as error:
+            raise ValidationError(str(error)) from error
+
         # there can be only one link type
         if not DJANGOCMS_LINK_ENABLED and self.link_url and self.link_page_id:
             raise ValidationError(
@@ -405,7 +508,12 @@ class AbstractPicture(CMSPlugin):
             )
 
         # you shall only set one image kind
-        if self.backend in {"filer", "url"} and not self.picture and not self.external_picture:
+        source = self.image_source
+        if (
+            not isinstance(backend, UnavailablePictureBackend)
+            and source.reference is None
+            and source.object_id is None
+        ):
             raise ValidationError(
                 gettext(
                     'You need to add either an image, '
@@ -498,5 +606,5 @@ class AbstractPicture(CMSPlugin):
 
 class Picture(AbstractPicture):
 
-    class Meta:
+    class Meta(AbstractPicture.Meta):
         abstract = False

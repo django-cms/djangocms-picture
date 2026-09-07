@@ -21,8 +21,9 @@ exists in the requested ambit. Apply the migration in bounded batches::
         --from filer --to finder --ambit public --batch-size 250
 
 Use ``--after-pk`` to resume after the last audited primary key and ``--limit``
-for an operational window. The original ``Picture.picture_id`` is retained. This
-makes rollback independent of media copying::
+for an operational window. The original filer ID is retained in the finder
+reference's versioned configuration. This makes rollback independent of media
+copying::
 
     python manage.py migrate_picture_backend \
         --from finder --to filer --ambit public --dry-run
@@ -30,8 +31,9 @@ makes rollback independent of media copying::
     python manage.py migrate_picture_backend \
         --from finder --to filer --ambit public
 
-Rollback retains the finder extension by default, allowing another forward run.
-Pass ``--delete-finder-reference`` only after deciding that metadata is no longer
-needed. Skipped rows remain on their source backend. Errors are isolated per row,
-reported in the audit, and make the command exit unsuccessfully after later rows
-have been inspected.
+Unified storage contains only the active source, so rollback replaces the finder
+generic reference with the filer reference. The legacy
+``--delete-finder-reference`` option is accepted as a no-op for scripting
+compatibility. Skipped rows remain on their source backend. Errors are isolated
+per row, reported in the audit, and make the command exit unsuccessfully after
+later rows have been inspected.

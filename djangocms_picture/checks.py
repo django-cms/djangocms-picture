@@ -76,7 +76,7 @@ def check_frontify_backend(
     app_configs: Iterable[AppConfig] | None = None,
     **kwargs: Any,
 ) -> list[CheckMessage]:
-    """Require the snapshot extension app when Frontify is configured."""
+    """Require Frontify's forms, static assets and commands when configured."""
 
     if "frontify" not in get_backend_aliases() or apps.is_installed(FRONTIFY_CONTRIB_APP):
         return []
@@ -95,7 +95,7 @@ def check_unsplash_backend(
     app_configs: Iterable[AppConfig] | None = None,
     **kwargs: Any,
 ) -> list[CheckMessage]:
-    """Require the reference model and admin picker when Unsplash is configured."""
+    """Require the Unsplash picker application when configured."""
 
     if "unsplash" not in get_backend_aliases() or apps.is_installed(UNSPLASH_CONTRIB_APP):
         return []

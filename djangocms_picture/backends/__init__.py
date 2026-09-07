@@ -12,6 +12,7 @@ from .base import (
     UnavailablePictureBackend,
     UnsupportedBackendOperation,
 )
+from .storage import PictureSourceDescriptor
 from .types import (
     BackendCapabilities,
     ImageAttribution,
@@ -19,6 +20,7 @@ from .types import (
     PictureReference,
     Rendition,
     RenditionSpec,
+    StoredPictureSource,
 )
 
 DEFAULT_BACKENDS = {
@@ -102,8 +104,10 @@ __all__ = [
     "ImageInfo",
     "PictureBackendError",
     "PictureReference",
+    "PictureSourceDescriptor",
     "Rendition",
     "RenditionSpec",
+    "StoredPictureSource",
     "UnsupportedBackendOperation",
     "UnavailablePictureBackend",
     "clear_backend_cache",
