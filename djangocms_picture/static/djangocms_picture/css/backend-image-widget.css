@@ -1,3 +1,6 @@
 .djangocms-picture-backend-selector {
     margin-bottom: 0.5rem;
 }
+.djangocms-picture-backend-field {
+    width: 100%;
+}
