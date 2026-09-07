@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -21,11 +21,11 @@ from djangocms_picture.backends.types import (
     RenditionSpec,
 )
 
-from .data import normalize_unsplash_payload
+from .data import UNSPLASH_OUTPUT_FORMATS, normalize_unsplash_payload
 from .forms import UnsplashImageChoiceField
 from .models import UnsplashPictureReference
 
-UNSPLASH_FORMATS = ("jpg", "png", "webp")
+UNSPLASH_FORMATS = tuple(sorted(UNSPLASH_OUTPUT_FORMATS - {""}))
 UNSPLASH_COLORS = frozenset(
     {
         "",
@@ -68,16 +68,25 @@ class UnsplashImageAsset(BaseImageAsset):
         self.attribution = ImageAttribution.from_mapping(snapshot.get("attribution"))
 
     def get_original(self) -> Rendition:
+        transform = self.reference.snapshot.get("transform", {})
+        params = _output_params(transform)
         return Rendition(
-            url=str(self.reference.snapshot["full_url"]),
+            url=(
+                _replace_image_query(str(self.reference.snapshot["raw_url"]), params)
+                if params
+                else str(self.reference.snapshot["full_url"])
+            ),
             width=self.info.width,
             height=self.info.height,
         )
 
     def get_rendition(self, spec: RenditionSpec) -> Rendition:
-        if spec.format and spec.format not in UNSPLASH_FORMATS:
-            raise PictureBackendError(f'Unsplash does not support the "{spec.format}" format.')
-        if spec.quality is not None and not 0 <= spec.quality <= 100:
+        transform = self.reference.snapshot.get("transform", {})
+        output_format = spec.format or transform.get("format")
+        quality = spec.quality if spec.quality is not None else transform.get("quality")
+        if output_format and output_format not in UNSPLASH_FORMATS:
+            raise PictureBackendError(f'Unsplash does not support the "{output_format}" format.')
+        if quality is not None and not 0 <= quality <= 100:
             raise PictureBackendError("Unsplash rendition quality must be between 0 and 100.")
 
         width, height = self._rendition_dimensions(spec)
@@ -87,13 +96,18 @@ class UnsplashImageAsset(BaseImageAsset):
         if height:
             params["h"] = height
         if spec.crop and width and height:
-            params.update({"fit": "crop", "crop": "entropy"})
+            crop_mode = str(transform.get("crop_mode") or "entropy")
+            params.update({"fit": "crop", "crop": crop_mode})
+            if crop_mode == "focalpoint":
+                focal_point = transform.get("focal_point", {})
+                params["fp-x"] = str(focal_point.get("x", 0.5))
+                params["fp-y"] = str(focal_point.get("y", 0.5))
         elif width or height:
             params["fit"] = "max"
-        if spec.format:
-            params["fm"] = spec.format
-        if spec.quality is not None:
-            params["q"] = spec.quality
+        if output_format:
+            params["fm"] = output_format
+        if quality is not None:
+            params["q"] = quality
 
         return Rendition(
             url=_replace_image_query(str(self.reference.snapshot["raw_url"]), params),
@@ -314,6 +328,17 @@ def _replace_image_query(url: str, params: dict[str, str | int]) -> str:
     ]
     query.extend((key, str(value)) for key, value in params.items())
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urlencode(query), ""))
+
+
+def _output_params(transform: Any) -> dict[str, str | int]:
+    if not isinstance(transform, Mapping):
+        return {}
+    params: dict[str, str | int] = {}
+    if transform.get("format"):
+        params["fm"] = str(transform["format"])
+    if transform.get("quality") is not None:
+        params["q"] = int(transform["quality"])
+    return params
 
 
 def _with_admin_popup_parameter(url: str) -> str:

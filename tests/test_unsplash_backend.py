@@ -168,6 +168,11 @@ class UnsplashBackendTestCase(TestCase):
         self.assertContains(response, 'name="orientation"')
         self.assertContains(response, 'name="color"')
         self.assertContains(response, 'name="order_by"')
+        self.assertContains(response, "data-unsplash-focal-circle")
+        self.assertContains(response, "data-unsplash-crop-mode")
+        self.assertContains(response, "data-unsplash-format")
+        self.assertContains(response, "data-unsplash-quality")
+        self.assertContains(response, "data-unsplash-save")
         self.assertContains(response, "djangocms_picture/js/unsplash-popup.js")
         self.assertNotContains(response, '<header id="header">')
         self.assertNotContains(response, '<ol class="breadcrumbs">')
@@ -204,6 +209,15 @@ class UnsplashBackendTestCase(TestCase):
         self.assertEqual(extension.asset_id, "photo-42")
         self.assertEqual(extension.snapshot["alt_text"], UNSPLASH_PAYLOAD["alt_description"])
         self.assertEqual(extension.snapshot["attribution"]["creator_name"], "Annie Example")
+        self.assertEqual(
+            extension.snapshot["transform"],
+            {
+                "crop_mode": "entropy",
+                "focal_point": {"x": 0.5, "y": 0.5},
+                "format": "",
+                "quality": None,
+            },
+        )
         self.assertIn(
             "utm_source=cms-picture-tests",
             extension.snapshot["attribution"]["creator_url"],
@@ -254,6 +268,50 @@ class UnsplashBackendTestCase(TestCase):
         self.assertEqual(query["fm"], ["webp"])
         self.assertEqual(query["q"], ["75"])
         self.assertIn("ixid=required-view-token", asset.get_original().url)
+
+    def test_picker_transform_controls_unsplash_renditions(self) -> None:
+        payload = {
+            **UNSPLASH_PAYLOAD,
+            "transform": {
+                "crop_mode": "focalpoint",
+                "focal_point": {"x": 0.25, "y": 0.75},
+                "format": "webp",
+                "quality": 68,
+            },
+        }
+        reference = get_backend("unsplash").serialize(payload)
+        self.assertIsNotNone(reference)
+        asset = UnsplashImageAsset(reference)
+
+        rendition = asset.get_rendition(
+            RenditionSpec(width=600, height=300, crop=True)
+        )
+        query = parse_qs(urlsplit(rendition.url).query)
+
+        self.assertEqual(query["crop"], ["focalpoint"])
+        self.assertEqual(query["fp-x"], ["0.25"])
+        self.assertEqual(query["fp-y"], ["0.75"])
+        self.assertEqual(query["fm"], ["webp"])
+        self.assertEqual(query["q"], ["68"])
+        original_query = parse_qs(urlsplit(asset.get_original().url).query)
+        self.assertEqual(original_query["fm"], ["webp"])
+        self.assertEqual(original_query["q"], ["68"])
+
+    def test_explicit_rendition_options_override_picker_transform(self) -> None:
+        payload = {
+            **UNSPLASH_PAYLOAD,
+            "transform": {"format": "webp", "quality": 68},
+        }
+        reference = get_backend("unsplash").serialize(payload)
+        self.assertIsNotNone(reference)
+
+        rendition = UnsplashImageAsset(reference).get_rendition(
+            RenditionSpec(format="jpg", quality=90)
+        )
+        query = parse_qs(urlsplit(rendition.url).query)
+
+        self.assertEqual(query["fm"], ["jpg"])
+        self.assertEqual(query["q"], ["90"])
 
     def test_rendition_dimensions_respect_upscale_setting(self) -> None:
         reference = get_backend("unsplash").serialize(UNSPLASH_PAYLOAD)
@@ -347,6 +405,14 @@ class UnsplashBackendTestCase(TestCase):
                 },
             },
             {**UNSPLASH_PAYLOAD, "user": {}},
+            {**UNSPLASH_PAYLOAD, "transform": []},
+            {**UNSPLASH_PAYLOAD, "transform": {"crop_mode": "random"}},
+            {
+                **UNSPLASH_PAYLOAD,
+                "transform": {"focal_point": {"x": -0.1, "y": 0.5}},
+            },
+            {**UNSPLASH_PAYLOAD, "transform": {"format": "gif"}},
+            {**UNSPLASH_PAYLOAD, "transform": {"quality": 101}},
         )
 
         for payload in invalid_payloads:

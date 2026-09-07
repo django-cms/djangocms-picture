@@ -307,10 +307,14 @@ authentication; never configure or expose the Unsplash secret key. A site's
 Content Security Policy must permit connections to
 ``https://api.unsplash.com`` and images from ``https://images.unsplash.com``.
 
-Selecting a photo triggers its ``download_location`` event, and stored
-renditions preserve Unsplash's ``ixid`` view-tracking parameter. Photographer
-and provider metadata remains available as ``instance.image_attribution`` for
-projects that want to render it. Consult the
+Clicking a search result moves it into a preview. Editors can drag a filer-style
+focus circle over the source image, choose an automatic or directional crop,
+and set an optional output format and quality. ``Save selection`` stores these
+defaults and triggers the photo's ``download_location`` event. Picture-level
+width, height, upscale and responsive settings still control the requested
+rendition dimensions. Stored renditions preserve Unsplash's ``ixid``
+view-tracking parameter. Photographer and provider metadata remains available
+as ``instance.image_attribution`` for projects that want to render it. Consult the
 `Unsplash API guidelines <https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines>`_
 before deploying the integration.
 

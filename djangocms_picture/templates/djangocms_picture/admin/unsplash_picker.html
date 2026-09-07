@@ -27,6 +27,63 @@
     data-page="1"
     data-total-pages="1"
   >
+    <section class="djangocms-picture-unsplash-selection" data-unsplash-selection hidden>
+      <h2>{% translate "Selected image" %}</h2>
+      <div class="djangocms-picture-unsplash-selection-layout">
+        <figure class="djangocms-picture-unsplash-large-preview">
+          <div class="djangocms-picture-unsplash-focal-editor" data-unsplash-focal-editor>
+            <img src="" alt="" data-unsplash-selected-image>
+            <span
+              class="djangocms-picture-unsplash-focal-circle"
+              role="slider"
+              tabindex="0"
+              aria-label="{% translate 'Focus point' %}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="50"
+              data-unsplash-focal-circle
+            ></span>
+          </div>
+          <figcaption data-unsplash-selected-attribution></figcaption>
+        </figure>
+        <div class="djangocms-picture-unsplash-transform">
+          <label>
+            <span>{% translate "Cropping" %}</span>
+            <select data-unsplash-crop-mode>
+              <option value="auto">{% translate "Automatic subject" %}</option>
+              <option value="focalpoint">{% translate "Focus point" %}</option>
+              <option value="faces">{% translate "Faces" %}</option>
+              <option value="entropy">{% translate "High detail (entropy)" %}</option>
+              <option value="edges">{% translate "Edges" %}</option>
+              <option value="center">{% translate "Centre" %}</option>
+              <option value="top">{% translate "Top" %}</option>
+              <option value="bottom">{% translate "Bottom" %}</option>
+              <option value="left">{% translate "Left" %}</option>
+              <option value="right">{% translate "Right" %}</option>
+            </select>
+          </label>
+          <input type="hidden" value="0.5" data-unsplash-focal-x>
+          <input type="hidden" value="0.5" data-unsplash-focal-y>
+          <label>
+            <span>{% translate "Output format" %}</span>
+            <select data-unsplash-format>
+              <option value="">{% translate "Automatic" %}</option>
+              <option value="jpg">JPEG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WebP</option>
+            </select>
+          </label>
+          <label>
+            <span>{% translate "Quality" %}</span>
+            <input type="number" min="0" max="100" step="1" placeholder="{% translate 'Automatic' %}" data-unsplash-quality>
+          </label>
+          <div class="djangocms-picture-unsplash-actions">
+            <button type="button" class="button default" data-unsplash-save>{% translate "Save selection" %}</button>
+            <button type="button" class="button" data-unsplash-cancel>{% translate "Cancel" %}</button>
+          </div>
+        </div>
+      </div>
+    </section>
     <form class="djangocms-picture-unsplash-filters" data-unsplash-search-form>
       <input type="search" placeholder="{% translate 'Search Unsplash' %}" required autofocus data-unsplash-query>
       <select name="orientation" aria-label="{% translate 'Orientation' %}">

@@ -32,6 +32,77 @@
     padding: 0.5rem;
 }
 
+.djangocms-picture-unsplash-selection {
+    background: var(--darkened-bg, #f8f8f8);
+    border: 1px solid var(--border-color, #ccc);
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.djangocms-picture-unsplash-selection h2 {
+    margin-top: 0;
+}
+
+.djangocms-picture-unsplash-selection-layout {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(16rem, 2fr) minmax(14rem, 1fr);
+}
+
+.djangocms-picture-unsplash-large-preview {
+    margin: 0;
+    min-width: 0;
+}
+
+.djangocms-picture-unsplash-large-preview img {
+    display: block;
+    height: auto;
+    max-height: 250px;
+    max-width: 100%;
+    width: auto;
+}
+
+.djangocms-picture-unsplash-focal-editor {
+    cursor: crosshair;
+    display: inline-block;
+    max-width: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.djangocms-picture-unsplash-focal-circle {
+    background: rgb(255 255 255 / 50%);
+    border: 2px solid #f00;
+    border-radius: 50%;
+    box-sizing: border-box;
+    cursor: move;
+    height: 28px;
+    margin: -14px;
+    position: absolute;
+    width: 28px;
+    z-index: 1;
+}
+
+.djangocms-picture-unsplash-focal-circle:focus {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary, #417690);
+    outline: 0;
+}
+
+.djangocms-picture-unsplash-large-preview figcaption {
+    margin-top: 0.35rem;
+}
+
+.djangocms-picture-unsplash-transform,
+.djangocms-picture-unsplash-transform label {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.djangocms-picture-unsplash-transform {
+    align-content: start;
+    gap: 0.75rem;
+}
+
 .djangocms-picture-unsplash-status {
     margin: 0.5rem 0;
 }
@@ -61,6 +132,11 @@
     width: 100%;
 }
 
+.djangocms-picture-unsplash-result button[aria-pressed="true"] {
+    border-color: var(--primary, #417690);
+    box-shadow: 0 0 0 2px var(--primary, #417690);
+}
+
 .djangocms-picture-unsplash-result img {
     aspect-ratio: 4 / 3;
     display: block;
@@ -71,4 +147,10 @@
 .djangocms-picture-unsplash-result small {
     display: block;
     margin-top: 0.25rem;
+}
+
+@media (max-width: 700px) {
+    .djangocms-picture-unsplash-selection-layout {
+        grid-template-columns: 1fr;
+    }
 }

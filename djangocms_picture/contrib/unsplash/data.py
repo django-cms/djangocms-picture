@@ -5,6 +5,22 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from djangocms_picture.backends.types import ImageAttribution
 
+UNSPLASH_CROP_MODES = frozenset(
+    {
+        "auto",
+        "bottom",
+        "center",
+        "edges",
+        "entropy",
+        "faces",
+        "focalpoint",
+        "left",
+        "right",
+        "top",
+    }
+)
+UNSPLASH_OUTPUT_FORMATS = frozenset({"", "jpg", "png", "webp"})
+
 
 class UnsplashPayloadError(ValueError):
     """Raised when an Unsplash picker payload is incomplete or unsafe."""
@@ -89,6 +105,7 @@ def normalize_unsplash_payload(
         provider_name="Unsplash",
         provider_url=_with_attribution_query(photo_url, application_name),
     )
+    transform = _transform(payload.get("transform"))
 
     return {
         "id": asset_id,
@@ -102,6 +119,7 @@ def normalize_unsplash_payload(
         "download_location": download_location,
         "attribution": attribution.as_dict(),
         "revision": str(payload.get("revision") or payload.get("updated_at") or ""),
+        "transform": transform,
     }
 
 
@@ -158,3 +176,60 @@ def _dimension(value: Any, name: str) -> int | None:
     if dimension <= 0:
         raise UnsplashPayloadError(f"Unsplash image {name} must be positive.")
     return dimension
+
+
+def _transform(value: Any) -> dict[str, Any]:
+    if value in (None, ""):
+        value = {}
+    if not isinstance(value, Mapping):
+        raise UnsplashPayloadError("Unsplash image transform settings must be an object.")
+
+    crop_mode = str(value.get("crop_mode") or "entropy")
+    if crop_mode not in UNSPLASH_CROP_MODES:
+        raise UnsplashPayloadError("Unsplash crop mode is not supported.")
+
+    focal_point = value.get("focal_point") or {}
+    if not isinstance(focal_point, Mapping):
+        raise UnsplashPayloadError("Unsplash focal point must be an object.")
+    focal_x = _focal_coordinate(focal_point.get("x", 0.5), "x")
+    focal_y = _focal_coordinate(focal_point.get("y", 0.5), "y")
+
+    output_format = str(value.get("format") or "")
+    if output_format not in UNSPLASH_OUTPUT_FORMATS:
+        raise UnsplashPayloadError("Unsplash output format is not supported.")
+
+    quality_value = value.get("quality")
+    if quality_value in (None, ""):
+        quality = None
+    else:
+        if isinstance(quality_value, bool):
+            raise UnsplashPayloadError("Unsplash image quality must be an integer.")
+        try:
+            quality = int(quality_value)
+        except (TypeError, ValueError) as error:
+            raise UnsplashPayloadError("Unsplash image quality must be an integer.") from error
+        if not 0 <= quality <= 100:
+            raise UnsplashPayloadError("Unsplash image quality must be between 0 and 100.")
+
+    return {
+        "crop_mode": crop_mode,
+        "focal_point": {"x": focal_x, "y": focal_y},
+        "format": output_format,
+        "quality": quality,
+    }
+
+
+def _focal_coordinate(value: Any, axis: str) -> float:
+    if isinstance(value, bool):
+        raise UnsplashPayloadError(f"Unsplash focal point {axis} must be a number.")
+    try:
+        coordinate = float(value)
+    except (TypeError, ValueError) as error:
+        raise UnsplashPayloadError(
+            f"Unsplash focal point {axis} must be a number."
+        ) from error
+    if not 0 <= coordinate <= 1:
+        raise UnsplashPayloadError(
+            f"Unsplash focal point {axis} must be between 0 and 1."
+        )
+    return coordinate
