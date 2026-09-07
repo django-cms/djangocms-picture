@@ -245,17 +245,26 @@ for attribution links::
         },
     }
 
-Then run migrations. ``orientation`` may optionally be ``landscape``,
-``portrait`` or ``squarish``. The picker authenticates directly with Unsplash
-public authentication; never configure or expose the Unsplash secret key. A
-site's Content Security Policy must permit connections to
+The picture plugin registers its staff-only, admin-styled picker with the
+django CMS admin automatically. No project URL entry is needed. Standalone
+forms outside the django CMS plugin admin can set the backend's ``picker_url``
+option.
+
+Run migrations. The popup lets editors filter searches by orientation,
+colour, relevance/latest ordering and result page. ``orientation``, ``color``
+and ``order_by`` backend options set their initial values; ``collections`` can
+restrict searches to configured collection IDs. The site-controlled
+``content_filter`` remains fixed for all editor searches.
+
+The staff-only popup authenticates directly with Unsplash public
+authentication; never configure or expose the Unsplash secret key. A site's
+Content Security Policy must permit connections to
 ``https://api.unsplash.com`` and images from ``https://images.unsplash.com``.
 
 Selecting a photo triggers its ``download_location`` event, and stored
-renditions preserve Unsplash's ``ixid`` view-tracking parameter. The default
-template renders linked photographer and Unsplash attribution with the required
-``utm_source`` and ``utm_medium`` parameters. Custom picture templates must also
-render ``instance.image_attribution`` to remain API-compliant. Consult the
+renditions preserve Unsplash's ``ixid`` view-tracking parameter. Photographer
+and provider metadata remains available as ``instance.image_attribution`` for
+projects that want to render it. Consult the
 `Unsplash API guidelines <https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines>`_
 before deploying the integration.
 

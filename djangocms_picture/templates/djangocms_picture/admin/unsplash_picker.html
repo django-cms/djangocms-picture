@@ -1,0 +1,57 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'djangocms_picture/css/unsplash-picker.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'djangocms_picture/js/unsplash-popup.js' %}" defer></script>
+{% endblock %}
+
+{% block header %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+  <div
+    class="djangocms-picture-unsplash-popup"
+    data-unsplash-popup
+    data-field-id="{{ field_id }}"
+    data-access-key="{{ access_key }}"
+    data-application-name="{{ application_name }}"
+    data-per-page="{{ per_page }}"
+    data-content-filter="{{ content_filter }}"
+    data-collections="{{ collections }}"
+    data-page="1"
+    data-total-pages="1"
+  >
+    <form class="djangocms-picture-unsplash-filters" data-unsplash-search-form>
+      <input type="search" placeholder="{% translate 'Search Unsplash' %}" required autofocus data-unsplash-query>
+      <select name="orientation" aria-label="{% translate 'Orientation' %}">
+        {% for value, label in orientation_choices %}
+          <option value="{{ value }}"{% if value == selected_orientation %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <select name="color" aria-label="{% translate 'Colour' %}">
+        {% for value, label in color_choices %}
+          <option value="{{ value }}"{% if value == selected_color %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <select name="order_by" aria-label="{% translate 'Order' %}">
+        {% for value, label in order_choices %}
+          <option value="{{ value }}"{% if value == selected_order %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="button default" data-unsplash-search>{% translate "Search" %}</button>
+    </form>
+    <div class="djangocms-picture-unsplash-status" role="status" aria-live="polite" data-unsplash-status></div>
+    <div class="djangocms-picture-unsplash-results" data-unsplash-results></div>
+    <nav class="djangocms-picture-unsplash-pagination" aria-label="{% translate 'Search result pages' %}" data-unsplash-pagination hidden>
+      <button type="button" class="button" data-unsplash-previous>{% translate "Previous" %}</button>
+      <span data-unsplash-page></span>
+      <button type="button" class="button" data-unsplash-next>{% translate "Next" %}</button>
+    </nav>
+  </div>
+{% endblock %}

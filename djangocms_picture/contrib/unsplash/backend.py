@@ -2,7 +2,9 @@ from collections.abc import Sequence
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from django.contrib.admin.options import IS_POPUP_VAR
 from django.core.exceptions import ImproperlyConfigured
+from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext_lazy as _
 
 from djangocms_picture.backends.base import (
@@ -24,6 +26,22 @@ from .forms import UnsplashImageChoiceField
 from .models import UnsplashPictureReference
 
 UNSPLASH_FORMATS = ("jpg", "png", "webp")
+UNSPLASH_COLORS = frozenset(
+    {
+        "",
+        "black_and_white",
+        "black",
+        "white",
+        "yellow",
+        "orange",
+        "red",
+        "purple",
+        "magenta",
+        "green",
+        "teal",
+        "blue",
+    }
+)
 UNSPLASH_CAPABILITIES = BackendCapabilities(
     resize=True,
     crop=True,
@@ -142,7 +160,21 @@ class UnsplashPictureBackend(BasePictureBackend):
             raise ImproperlyConfigured(
                 'Unsplash orientation must be "landscape", "portrait", or "squarish".'
             )
+        color = options.get("color", "")
+        if color not in UNSPLASH_COLORS:
+            raise ImproperlyConfigured("Unsplash color is not a supported search colour.")
+        order_by = options.get("order_by", "relevant")
+        if order_by not in {"relevant", "latest"}:
+            raise ImproperlyConfigured('Unsplash order_by must be "relevant" or "latest".')
+        collections = options.get("collections", ())
+        if isinstance(collections, str):
+            collections = tuple(value.strip() for value in collections.split(",") if value.strip())
+        elif isinstance(collections, Sequence):
+            collections = tuple(str(value).strip() for value in collections if str(value).strip())
+        else:
+            raise ImproperlyConfigured("Unsplash collections must be a string or sequence.")
         self.per_page = per_page
+        self.collections = collections
 
     @property
     def application_name(self) -> str:
@@ -161,14 +193,24 @@ class UnsplashPictureBackend(BasePictureBackend):
     ) -> UnsplashImageChoiceField:
         return UnsplashImageChoiceField(
             required=required,
-            access_key=str(self.options["access_key"]).strip(),
+            picker_url=self.get_picker_url(),
             application_name=self.application_name,
-            per_page=self.per_page,
-            content_filter=self.options.get("content_filter", "high"),
-            orientation=self.options.get("orientation", ""),
             allowed_image_hosts=self.allowed_image_hosts,
             **kwargs,
         )
+
+    def get_picker_url(self) -> str:
+        configured_url = self.options.get("picker_url")
+        if configured_url:
+            return _with_admin_popup_parameter(str(configured_url))
+        try:
+            picker_url = reverse("admin:djangocms_picture_unsplash_picker")
+        except NoReverseMatch as error:
+            raise ImproperlyConfigured(
+                "The Unsplash picker admin URL is unavailable. Ensure django CMS admin "
+                "URLs are included, or configure the Unsplash picker_url option."
+            ) from error
+        return _with_admin_popup_parameter(picker_url)
 
     def serialize(self, value: Any) -> PictureReference | None:
         if not value:
@@ -272,3 +314,16 @@ def _replace_image_query(url: str, params: dict[str, str | int]) -> str:
     ]
     query.extend((key, str(value)) for key, value in params.items())
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urlencode(query), ""))
+
+
+def _with_admin_popup_parameter(url: str) -> str:
+    parsed = urlsplit(url)
+    query = [
+        (key, value)
+        for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+        if key != IS_POPUP_VAR
+    ]
+    query.append((IS_POPUP_VAR, "1"))
+    return urlunsplit(
+        (parsed.scheme, parsed.netloc, parsed.path, urlencode(query), parsed.fragment)
+    )

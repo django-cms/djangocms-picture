@@ -11,18 +11,12 @@ class UnsplashPickerWidget(forms.Textarea):
     def __init__(
         self,
         *,
-        access_key: str,
+        picker_url: str,
         application_name: str,
-        per_page: int,
-        content_filter: str,
-        orientation: str,
         attrs: Mapping[str, Any] | None = None,
     ) -> None:
-        self.access_key = access_key
+        self.picker_url = picker_url
         self.application_name = application_name
-        self.per_page = per_page
-        self.content_filter = content_filter
-        self.orientation = orientation
         super().__init__(attrs={"hidden": True, **(attrs or {})})
 
     @property
@@ -57,11 +51,8 @@ class UnsplashPickerWidget(forms.Textarea):
             attribution = {}
         context["widget"].update(
             {
-                "access_key": self.access_key,
+                "picker_url": self.picker_url,
                 "application_name": self.application_name,
-                "per_page": self.per_page,
-                "content_filter": self.content_filter,
-                "orientation": self.orientation,
                 "preview_url": payload.get("preview_url") or "",
                 "label": payload.get("label") or "",
                 "photographer_name": attribution.get("creator_name") or "",

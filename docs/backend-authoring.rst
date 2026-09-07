@@ -44,7 +44,11 @@ An asset exposes ``reference``, ``info``, ``get_original()`` and
 ``get_rendition(spec)``. Both rendition methods return a backend-neutral
 ``Rendition`` with URL and actual dimensions. Providers that require visible
 credit expose an ``ImageAttribution`` through ``asset.attribution``; consuming
-templates must render its creator and provider links.
+templates can render it where required. The shared type supports creator and
+provider names and links, a copyright notice, and licence name and link. Use
+``ImageAttribution.from_mapping()`` for external metadata so unsafe link schemes
+are discarded consistently. Return ``None`` when the source has no trustworthy
+credit metadata; do not infer authorship from a bare image URL.
 
 Selection and persistence
 =========================
@@ -59,6 +63,15 @@ value and persist it after the owner exists. Implement ``copy_reference`` for CM
 copy/paste and ``clear_reference`` when generic clearing is insufficient. Keep
 provider-specific columns in a typed extension model. Do not add dynamic model
 fields to ``Picture``.
+
+Admin URLs
+==========
+
+A contrib app that needs an admin-side picker or API endpoint can register a
+non-rendering system ``CMSPluginBase`` in its own ``cms_plugins.py`` and return
+the backend-specific patterns from ``get_plugin_urls()``. Wrap views with
+``admin.site.admin_view()``, and reverse their names through the ``admin``
+namespace. The Unsplash contrib package provides a concrete example.
 
 Capabilities
 ============

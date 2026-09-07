@@ -15,15 +15,21 @@
     display: block;
 }
 
-.djangocms-picture-unsplash-search {
+.djangocms-picture-unsplash-actions,
+.djangocms-picture-unsplash-filters,
+.djangocms-picture-unsplash-pagination {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.djangocms-picture-unsplash-search input {
+.djangocms-picture-unsplash-filters input {
     flex: 1 1 15rem;
     min-width: 10rem;
+}
+
+.djangocms-picture-unsplash-popup {
+    padding: 0.5rem;
 }
 
 .djangocms-picture-unsplash-status {
@@ -34,6 +40,12 @@
     display: grid;
     gap: 0.75rem;
     grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+}
+
+.djangocms-picture-unsplash-pagination {
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 .djangocms-picture-unsplash-result {

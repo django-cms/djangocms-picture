@@ -2,11 +2,8 @@
 <div
   class="djangocms-picture-unsplash"
   data-unsplash-picker
-  data-access-key="{{ widget.access_key }}"
+  data-picker-url="{{ widget.picker_url }}"
   data-application-name="{{ widget.application_name }}"
-  data-per-page="{{ widget.per_page }}"
-  data-content-filter="{{ widget.content_filter }}"
-  data-orientation="{{ widget.orientation }}"
 >
   {% include "django/forms/widgets/textarea.html" %}
   <div class="djangocms-picture-unsplash-preview" data-unsplash-current{% if not widget.preview_url %} hidden{% endif %}>
@@ -21,11 +18,8 @@
       </small>
     </span>
   </div>
-  <div class="djangocms-picture-unsplash-search">
-    <input type="search" placeholder="{% translate 'Search Unsplash' %}" data-unsplash-query>
-    <button type="button" data-unsplash-search>{% translate "Search" %}</button>
+  <div class="djangocms-picture-unsplash-actions">
+    <button type="button" class="button" data-unsplash-open>{% translate "Select Unsplash image" %}</button>
     <button type="button" data-unsplash-clear{% if not widget.preview_url %} hidden{% endif %}>{% translate "Clear" %}</button>
   </div>
-  <div class="djangocms-picture-unsplash-status" role="status" aria-live="polite" data-unsplash-status></div>
-  <div class="djangocms-picture-unsplash-results" data-unsplash-results></div>
 </div>

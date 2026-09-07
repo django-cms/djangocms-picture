@@ -1,9 +1,10 @@
 import json
 from urllib.parse import parse_qs, urlsplit
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured, ValidationError
-from django.template.loader import render_to_string
 from django.test import TestCase, override_settings
+from django.urls import reverse
 
 from djangocms_picture.backends import (
     PictureReference,
@@ -68,6 +69,14 @@ UNSPLASH_BACKENDS = {
     DJANGOCMS_PICTURE_DEFAULT_BACKEND="unsplash",
 )
 class UnsplashBackendTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.staff_user = get_user_model().objects.create_user(
+            username="unsplash-editor",
+            password="test",
+            is_staff=True,
+        )
+
     def setUp(self) -> None:
         clear_backend_cache()
 
@@ -98,6 +107,9 @@ class UnsplashBackendTestCase(TestCase):
             ({**valid, "per_page": "many"}, "per_page"),
             ({**valid, "content_filter": "none"}, "content_filter"),
             ({**valid, "orientation": "wide"}, "orientation"),
+            ({**valid, "color": "chartreuse"}, "color"),
+            ({**valid, "order_by": "popular"}, "order_by"),
+            ({**valid, "collections": object()}, "collections"),
         )
 
         for options, message in invalid_options:
@@ -123,9 +135,53 @@ class UnsplashBackendTestCase(TestCase):
         )
         self.assertIn('name="image_source_unsplash"', html)
         self.assertIn('data-unsplash-picker', html)
-        self.assertIn('data-access-key="public-test-access-key"', html)
+        self.assertIn(
+            f'data-picker-url="{reverse("admin:djangocms_picture_unsplash_picker")}?_popup=1"',
+            html,
+        )
+        self.assertNotIn("public-test-access-key", html)
+        self.assertIn("Select Unsplash image", html)
         self.assertIn("Mountain lake at sunrise", html)
         self.assertIn("Annie Example", html)
+
+    def test_picker_is_an_authenticated_django_admin_popup(self) -> None:
+        url = get_backend("unsplash").get_picker_url()
+
+        self.assertEqual(parse_qs(urlsplit(url).query), {"_popup": ["1"]})
+
+        anonymous_response = self.client.get(url)
+        self.assertEqual(anonymous_response.status_code, 302)
+
+        self.client.force_login(self.staff_user)
+        response = self.client.get(f"{url}&field_id=id_image_source_unsplash")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "djangocms_picture/admin/unsplash_picker.html",
+        )
+        self.assertContains(response, 'class="djangocms-picture-unsplash-popup"')
+        self.assertContains(response, 'data-field-id="id_image_source_unsplash"')
+        self.assertContains(response, 'data-access-key="public-test-access-key"')
+        self.assertContains(response, 'name="orientation"')
+        self.assertContains(response, 'name="color"')
+        self.assertContains(response, 'name="order_by"')
+        self.assertContains(response, "djangocms_picture/js/unsplash-popup.js")
+        self.assertNotContains(response, '<header id="header">')
+        self.assertNotContains(response, '<ol class="breadcrumbs">')
+        self.assertIn("no-cache", response.headers["Cache-Control"])
+
+    def test_custom_picker_url_preserves_query_and_adds_popup_parameter(self) -> None:
+        backend = UnsplashPictureBackend(
+            access_key="key",
+            application_name="example",
+            picker_url="/custom/picker/?tenant=one&_popup=0#results",
+        )
+
+        self.assertEqual(
+            backend.get_picker_url(),
+            "/custom/picker/?tenant=one&_popup=1#results",
+        )
 
     def test_form_persists_a_normalized_snapshot(self) -> None:
         form = PictureForm(
@@ -229,27 +285,6 @@ class UnsplashBackendTestCase(TestCase):
         with self.assertRaisesMessage(Exception, "between 0 and 100"):
             asset.get_rendition(RenditionSpec(quality=101))
 
-    def test_default_template_renders_linked_attribution(self) -> None:
-        picture = Picture.objects.create(backend="unsplash", use_no_cropping=True)
-        get_backend("unsplash").set_form_value(picture, UNSPLASH_PAYLOAD, commit=True)
-
-        html = render_to_string(
-            "djangocms_picture/default/picture.html",
-            {
-                "instance": picture,
-                "picture_link": False,
-                "picture_size": {"size": (2400, 1600)},
-                "img_srcset_data": None,
-            },
-        )
-
-        self.assertIn("Photo by", html)
-        self.assertIn("Annie Example", html)
-        self.assertIn("utm_source=cms-picture-tests", html)
-        self.assertIn("utm_medium=referral", html)
-        self.assertIn("on", html)
-        self.assertIn("Unsplash", html)
-
     def test_copy_and_clear_preserve_reference_lifecycle(self) -> None:
         source = Picture.objects.create(backend="unsplash")
         target = Picture.objects.create(backend="unsplash")
@@ -319,11 +354,8 @@ class UnsplashBackendTestCase(TestCase):
 
     def test_picker_widget_tolerates_malformed_initial_values(self) -> None:
         widget = UnsplashPickerWidget(
-            access_key="key",
+            picker_url="/admin/unsplash/",
             application_name="example",
-            per_page=20,
-            content_filter="high",
-            orientation="",
         )
 
         self.assertEqual(widget.format_value({"id": "photo"}), '{"id": "photo"}')

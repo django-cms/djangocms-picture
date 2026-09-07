@@ -17,11 +17,8 @@ class UnsplashImageChoiceField(forms.JSONField):
     def __init__(
         self,
         *,
-        access_key: str,
+        picker_url: str,
         application_name: str,
-        per_page: int = 20,
-        content_filter: str = "high",
-        orientation: str = "",
         allowed_image_hosts: Sequence[str] = ("images.unsplash.com",),
         **kwargs: Any,
     ) -> None:
@@ -30,11 +27,8 @@ class UnsplashImageChoiceField(forms.JSONField):
         kwargs.setdefault(
             "widget",
             UnsplashPickerWidget(
-                access_key=access_key,
+                picker_url=picker_url,
                 application_name=application_name,
-                per_page=per_page,
-                content_filter=content_filter,
-                orientation=orientation,
             ),
         )
         super().__init__(**kwargs)
