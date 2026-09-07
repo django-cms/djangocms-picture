@@ -1,10 +1,12 @@
 from dataclasses import dataclass, field
-from typing import Any, Mapping
+from typing import Any, ClassVar, Mapping
 
 
 @dataclass(frozen=True)
 class PictureReference:
     """Serializable reference to an image owned by a picture backend."""
+
+    SERIALIZATION_VERSION: ClassVar[int] = 1
 
     backend: str
     id: str
@@ -13,6 +15,7 @@ class PictureReference:
 
     def as_dict(self) -> dict[str, Any]:
         return {
+            "version": self.SERIALIZATION_VERSION,
             "backend": self.backend,
             "id": self.id,
             "context": dict(self.context),
@@ -23,6 +26,9 @@ class PictureReference:
     def from_dict(cls, value: Mapping[str, Any]) -> "PictureReference":
         if not isinstance(value, Mapping):
             raise TypeError("A picture reference must be a mapping.")
+        version = value.get("version", cls.SERIALIZATION_VERSION)
+        if version != cls.SERIALIZATION_VERSION:
+            raise ValueError(f"Unsupported picture reference version: {version!r}.")
         try:
             backend = value["backend"]
             identifier = value["id"]

@@ -1,7 +1,7 @@
 import copy
 import json
 from dataclasses import dataclass
-from typing import Any, Iterable, Mapping
+from typing import Any, ClassVar, Iterable, Mapping
 
 from django import forms
 from django.apps import apps
@@ -20,6 +20,8 @@ from .widgets import BackendImageWidget
 class BackendSelection:
     """A cleaned backend and the value returned by its picker."""
 
+    SERIALIZATION_VERSION: ClassVar[int] = 1
+
     backend: BasePictureBackend
     value: Any
 
@@ -27,6 +29,7 @@ class BackendSelection:
         """Return the selection as JSON-compatible backend and value data."""
 
         return {
+            "version": self.SERIALIZATION_VERSION,
             "backend": self.backend.alias,
             "value": _serialize_selection_value(self.value),
         }
@@ -42,6 +45,9 @@ class BackendSelection:
 
         if not isinstance(data, Mapping):
             raise TypeError("A backend selection must be a mapping.")
+        version = data.get("version", cls.SERIALIZATION_VERSION)
+        if version != cls.SERIALIZATION_VERSION:
+            raise ValueError(f"Unsupported backend selection version: {version!r}.")
         try:
             alias = data["backend"]
             serialized_value = data["value"]

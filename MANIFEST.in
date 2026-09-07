@@ -6,3 +6,5 @@ recursive-include djangocms_picture/locale *
 recursive-exclude * *.py[co]
 recursive-include tests *.py
 recursive-include tests *.txt
+recursive-include docs *.rst
+recursive-include examples *.py

@@ -13,6 +13,8 @@ INSTALLED_APPS = [
 
 FINDER_STORAGE_ROOT = mkdtemp()
 FINDER_SAMPLE_STORAGE_ROOT = mkdtemp()
+FINDER_PRIVATE_STORAGE_ROOT = mkdtemp()
+FINDER_PRIVATE_SAMPLE_STORAGE_ROOT = mkdtemp()
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -36,6 +38,22 @@ STORAGES = {
             "allow_overwrite": True,
         },
     },
+    "finder_private": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": FINDER_PRIVATE_STORAGE_ROOT,
+            "base_url": "/media/finder-private/",
+            "allow_overwrite": True,
+        },
+    },
+    "finder_private_samples": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": FINDER_PRIVATE_SAMPLE_STORAGE_ROOT,
+            "base_url": "/media/finder-private-samples/",
+            "allow_overwrite": True,
+        },
+    },
 }
 
 FINDER_DEFAULT_AMBIT = "public"
@@ -43,7 +61,10 @@ DJANGOCMS_PICTURE_DEFAULT_BACKEND = "finder"
 DJANGOCMS_PICTURE_BACKENDS = {
     "finder": {
         "BACKEND": "djangocms_picture.contrib.finder.backend.FinderPictureBackend",
-        "OPTIONS": {"ambit": FINDER_DEFAULT_AMBIT},
+        "OPTIONS": {
+            "ambit": FINDER_DEFAULT_AMBIT,
+            "allowed_ambits": [FINDER_DEFAULT_AMBIT],
+        },
     },
 }
 ROOT_URLCONF = "tests.urls_finder"

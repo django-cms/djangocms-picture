@@ -99,12 +99,20 @@ class FinderPictureBackend(BasePictureBackend):
     def ambit(self) -> str | None:
         return self.options.get("ambit")
 
+    @property
+    def allowed_ambits(self) -> tuple[str, ...]:
+        configured = self.options.get("allowed_ambits")
+        if configured is not None:
+            return tuple(str(ambit) for ambit in configured)
+        return (self.ambit,) if self.ambit else ()
+
     def form_field(self, *, required: bool = True, request: Any = None, **kwargs: Any) -> FinderImageChoiceField:
         if self.ambit:
             kwargs.setdefault("ambit", self.ambit)
         return FinderImageChoiceField(
             required=required,
             accept_mime_types=["image/*"],
+            allowed_ambits=self.allowed_ambits,
             **kwargs,
         )
 
@@ -112,7 +120,7 @@ class FinderPictureBackend(BasePictureBackend):
         if not value:
             return None
         image = value if isinstance(value, AbstractFileModel) else self._resolve_id(value)
-        return FinderImageAsset(image).reference if image else None
+        return FinderImageAsset(image).reference if image and self._image_is_allowed(image) else None
 
     def resolve(self, reference: PictureReference) -> FinderImageAsset | None:
         if reference.backend != self.alias:
@@ -132,7 +140,7 @@ class FinderPictureBackend(BasePictureBackend):
         image = extension.image
         if not isinstance(image, AbstractFileModel):
             image = self._resolve_id(image)
-        return FinderImageAsset(image) if image else None
+        return FinderImageAsset(image) if image and self._image_is_allowed(image) else None
 
     def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
         picture_instance._finder_image = value
@@ -154,9 +162,12 @@ class FinderPictureBackend(BasePictureBackend):
     def copy_reference(self, source: Any, target: Any) -> None:
         self.set_form_value(target, self.get_form_value(source), commit=True)
 
-    @staticmethod
-    def _resolve_id(image_id: Any) -> AbstractFileModel | None:
+    def _resolve_id(self, image_id: Any) -> AbstractFileModel | None:
         try:
-            return FileModel.objects.get_inode(id=image_id, is_folder=False, mime_types=["image/*"])
+            image = FileModel.objects.get_inode(id=image_id, is_folder=False, mime_types=["image/*"])
         except (FileModel.DoesNotExist, TypeError, ValueError):
             return None
+        return image if self._image_is_allowed(image) else None
+
+    def _image_is_allowed(self, image: AbstractFileModel) -> bool:
+        return not self.allowed_ambits or image.folder.get_ambit().slug in self.allowed_ambits

@@ -94,7 +94,9 @@ all media declared by the backend picker widgets.
 
 ``BackendSelection.serialize()`` returns a JSON-compatible dictionary, and
 ``BackendSelection.deserialize()`` restores the configured backend and its
-cleaned value. Django model values use django-entangled's foreign-key convention:
+cleaned value. The public envelope contains ``"version": 1``; unversioned data
+is accepted as legacy version 1 and unknown versions fail explicitly. Django
+model values use django-entangled's foreign-key convention:
 ``{"model": "app_label.model_name", "pk": primary_key}``.
 
 Subwidgets have stable names based on backend aliases, for example
@@ -127,7 +129,10 @@ Register finder and select the ambit used by its picker::
     DJANGOCMS_PICTURE_BACKENDS = {
         "finder": {
             "BACKEND": "djangocms_picture.contrib.finder.backend.FinderPictureBackend",
-            "OPTIONS": {"ambit": "public"},
+            "OPTIONS": {
+                "ambit": "public",
+                "allowed_ambits": ["public"],
+            },
         },
     }
     DJANGOCMS_PICTURE_DEFAULT_BACKEND = "finder"
@@ -145,6 +150,10 @@ Run all migrations after enabling the contrib app. The backend currently
 supports original images and focal cropping. Resize without cropping, upscale,
 responsive sources, and programmatic backend uploads remain disabled until
 finder provides stable public APIs for those operations.
+
+To migrate plugin references after running django-finder's ``filer_to_finder``
+command, use the dry-runnable, batched and reversible workflow documented in
+`docs/migrating-filer-to-finder.rst <docs/migrating-filer-to-finder.rst>`_.
 
 Experimental Frontify backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,12 +191,35 @@ revision, focal point, and HTTPS processing/original URLs. Normal page renders
 do not contact Frontify. Access tokens, OAuth secrets, arbitrary picker
 metadata, query strings, and signed URL credentials are not stored.
 
-The default Frontify Finder script URL is pinned to version 2.0.1 on
-``unpkg.com``. A project may self-host it or select another reviewed version
-with the ``finder_script_url`` backend option. When using the default, allow
-that origin in the site's Content Security Policy. Production adoption still
-requires a provider refresh/revocation workflow and confirmation that the
-chosen account supplies genuinely permanent download and processing URLs.
+The MIT-licensed Frontify Finder 2.0.1 SDK is bundled in this package, so the
+admin does not load executable code from a CDN. A project may select another
+reviewed, self-hosted build with the ``finder_script_url`` backend option.
+
+For provider refreshes, configure a callable or import path as ``refresher``.
+It receives ``(reference, request=None)`` and returns a fresh Finder payload.
+Returning ``None`` marks the stored reference revoked when refreshed::
+
+    "OPTIONS": {
+        # ...picker and host options above...
+        "refresher": "myproject.frontify.refresh_asset",
+    }
+
+Refresh snapshots outside the render path with::
+
+    python manage.py refresh_frontify_assets --dry-run
+    python manage.py refresh_frontify_assets --batch-size 100
+
+An authenticated application webhook can call ``backend.revoke(asset_id)``.
+If an account cannot issue permanent URLs, set ``allow_expiring_urls=True``;
+the expiry is stored, signed query parameters are preserved, and expired assets
+stop rendering until refresh. ``expiry_leeway_seconds`` can prevent emitting a
+URL that is about to expire. Credentials and access tokens remain deployment
+configuration and are never stored in picture references.
+
+Backend implementers should read
+`docs/backend-authoring.rst <docs/backend-authoring.rst>`_. A concrete proposal
+for the missing finder resize contract is in
+`docs/finder-rendition-api-proposal.rst <docs/finder-rendition-api-proposal.rst>`_.
 
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``

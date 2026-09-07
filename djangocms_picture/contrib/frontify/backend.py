@@ -1,8 +1,11 @@
 from collections.abc import Sequence
+from dataclasses import replace
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from django.core.exceptions import ImproperlyConfigured
+from django.utils import timezone
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
 from djangocms_picture.backends.base import (
@@ -18,7 +21,7 @@ from djangocms_picture.backends.types import (
     RenditionSpec,
 )
 
-from .data import normalize_frontify_payload
+from .data import is_frontify_snapshot_expired, normalize_frontify_payload
 from .forms import FrontifyImageChoiceField
 from .models import FrontifyPictureReference
 
@@ -31,14 +34,24 @@ FRONTIFY_CAPABILITIES = BackendCapabilities(
     permanent_urls=True,
     formats=FRONTIFY_FORMATS,
 )
-DEFAULT_FINDER_SCRIPT_URL = "https://unpkg.com/@frontify/frontify-finder@2.0.1/dist/index.js"
+DEFAULT_FINDER_SCRIPT_URL = "djangocms_picture/vendor/frontify-finder/index.js"
+
+
+class FrontifyAssetRevoked(PictureBackendError):
+    """Raised by a refresher when Frontify no longer exposes an asset."""
 
 
 class FrontifyImageAsset(BaseImageAsset):
     capabilities = FRONTIFY_CAPABILITIES
 
-    def __init__(self, reference: PictureReference) -> None:
+    def __init__(
+        self,
+        reference: PictureReference,
+        *,
+        capabilities: BackendCapabilities = FRONTIFY_CAPABILITIES,
+    ) -> None:
         self.reference = reference
+        self.capabilities = capabilities
         snapshot = reference.snapshot
         self.info = ImageInfo(
             label=str(snapshot.get("label") or reference.id),
@@ -84,7 +97,7 @@ class FrontifyImageAsset(BaseImageAsset):
 
         width, height = self._rendition_dimensions(spec)
         processing_url = str(snapshot["processing_url"])
-        url = f"{processing_url}?{urlencode(params)}" if params else processing_url
+        url = _append_query(processing_url, params)
         return Rendition(url=url, width=width, height=height)
 
     def _rendition_dimensions(self, spec: RenditionSpec) -> tuple[int | None, int | None]:
@@ -123,6 +136,17 @@ class FrontifyPictureBackend(BasePictureBackend):
             raise ImproperlyConfigured(
                 "The Frontify backend requires a non-empty allowed_hosts option."
             )
+        refresher = options.get("refresher")
+        if isinstance(refresher, str):
+            refresher = import_string(refresher)
+        if refresher is not None and not callable(refresher):
+            raise ImproperlyConfigured("The Frontify refresher option must be callable or an import path.")
+        self._refresher = refresher
+        self.capabilities = replace(
+            FRONTIFY_CAPABILITIES,
+            refresh=refresher is not None,
+            permanent_urls=not bool(options.get("allow_expiring_urls", False)),
+        )
 
     @property
     def allowed_hosts(self) -> Sequence[str]:
@@ -148,6 +172,7 @@ class FrontifyPictureBackend(BasePictureBackend):
                 "alt_text_field",
                 "alt-tag_{language_code}",
             ),
+            allow_expiring_urls=bool(self.options.get("allow_expiring_urls", False)),
             **kwargs,
         )
 
@@ -162,6 +187,10 @@ class FrontifyPictureBackend(BasePictureBackend):
                 "alt-tag_{language_code}",
             ),
         )
+        if snapshot.get("expires_at") and not self.options.get("allow_expiring_urls", False):
+            raise PictureBackendError(
+                "Frontify returned expiring URLs; enable allow_expiring_urls or request permanent download URLs."
+            )
         return PictureReference(
             backend=self.alias,
             id=snapshot["id"],
@@ -175,6 +204,11 @@ class FrontifyPictureBackend(BasePictureBackend):
         if reference.snapshot.get("disabled"):
             return None
         try:
+            if is_frontify_snapshot_expired(
+                reference.snapshot,
+                leeway_seconds=int(self.options.get("expiry_leeway_seconds", 0)),
+            ):
+                return None
             snapshot = normalize_frontify_payload(
                 reference.snapshot,
                 allowed_hosts=self.allowed_hosts,
@@ -191,7 +225,8 @@ class FrontifyPictureBackend(BasePictureBackend):
                 id=snapshot["id"],
                 context=reference.context,
                 snapshot=snapshot,
-            )
+            ),
+            capabilities=self.capabilities,
         )
 
     def get_asset(self, picture_instance: Any) -> FrontifyImageAsset | None:
@@ -212,8 +247,13 @@ class FrontifyPictureBackend(BasePictureBackend):
         return self.resolve(reference)
 
     def get_form_value(self, picture_instance: Any) -> dict[str, Any] | None:
-        asset = self.get_asset(picture_instance)
-        return dict(asset.reference.snapshot) if asset else None
+        if not getattr(picture_instance, "pk", None):
+            return None
+        try:
+            extension = picture_instance.frontify_reference
+        except FrontifyPictureReference.DoesNotExist:
+            return None
+        return dict(extension.snapshot) if not extension.disabled else None
 
     def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
         picture_instance._frontify_image = value
@@ -230,9 +270,92 @@ class FrontifyPictureBackend(BasePictureBackend):
                 "account": str(reference.context.get("account", "")),
                 "snapshot": dict(reference.snapshot),
                 "revision": str(reference.snapshot.get("revision", "")),
+                "refreshed_at": timezone.now(),
                 "disabled": False,
             },
         )
 
     def copy_reference(self, source: Any, target: Any) -> None:
-        self.set_form_value(target, self.get_form_value(source), commit=True)
+        try:
+            extension = source.frontify_reference
+        except FrontifyPictureReference.DoesNotExist:
+            FrontifyPictureReference.objects.filter(picture_plugin=target).delete()
+            return
+        FrontifyPictureReference.objects.update_or_create(
+            picture_plugin=target,
+            defaults={
+                "asset_id": extension.asset_id,
+                "account": extension.account,
+                "snapshot": extension.snapshot,
+                "revision": extension.revision,
+                "refreshed_at": extension.refreshed_at,
+                "disabled": extension.disabled,
+            },
+        )
+
+    def refresh(self, reference: PictureReference, *, request: Any = None) -> PictureReference:
+        if reference.backend != self.alias:
+            raise PictureBackendError("A Frontify backend can only refresh Frontify references.")
+        if self._refresher is None:
+            return super().refresh(reference, request=request)
+        payload = self._refresher(reference, request=request)
+        if payload is None:
+            raise FrontifyAssetRevoked(f'Frontify asset "{reference.id}" is no longer available.')
+        refreshed = self.serialize(payload)
+        if refreshed is None or refreshed.id != reference.id:
+            raise PictureBackendError("A Frontify refresh must return the same asset id.")
+        return PictureReference(
+            backend=self.alias,
+            id=refreshed.id,
+            context=reference.context,
+            snapshot=refreshed.snapshot,
+        )
+
+    def refresh_instance(
+        self,
+        picture_instance: Any,
+        *,
+        request: Any = None,
+        commit: bool = True,
+    ) -> PictureReference | None:
+        try:
+            extension = picture_instance.frontify_reference
+        except FrontifyPictureReference.DoesNotExist as error:
+            raise PictureBackendError("The picture has no Frontify reference to refresh.") from error
+        reference = PictureReference(
+            backend=self.alias,
+            id=extension.asset_id,
+            context={"account": extension.account},
+            snapshot=extension.snapshot,
+        )
+        try:
+            refreshed = self.refresh(reference, request=request)
+        except FrontifyAssetRevoked:
+            if commit:
+                extension.disabled = True
+                extension.refreshed_at = timezone.now()
+                extension.save(update_fields=("disabled", "refreshed_at"))
+            return None
+        if commit:
+            extension.snapshot = dict(refreshed.snapshot)
+            extension.revision = str(refreshed.snapshot.get("revision", ""))
+            extension.refreshed_at = timezone.now()
+            extension.disabled = False
+            extension.save(update_fields=("snapshot", "revision", "refreshed_at", "disabled"))
+        return refreshed
+
+    def revoke(self, asset_id: str) -> int:
+        """Disable stored references from an authenticated application webhook."""
+
+        return FrontifyPictureReference.objects.filter(asset_id=asset_id).update(
+            disabled=True,
+            refreshed_at=timezone.now(),
+        )
+
+
+def _append_query(url: str, params: list[tuple[str, str | int]]) -> str:
+    if not params:
+        return url
+    parsed = urlsplit(url)
+    query = [*parse_qsl(parsed.query, keep_blank_values=True), *params]
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urlencode(query), parsed.fragment))

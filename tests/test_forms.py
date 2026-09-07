@@ -144,6 +144,7 @@ class PictureBackendFormTestCase(TestCase):
         self.assertEqual(
             serialized,
             {
+                "version": 1,
                 "backend": "url",
                 "value": "https://example.com/image.jpg",
             },
@@ -160,6 +161,7 @@ class PictureBackendFormTestCase(TestCase):
         self.assertEqual(
             serialized,
             {
+                "version": 1,
                 "backend": "filer",
                 "value": {
                     "model": "filer.image",
@@ -178,6 +180,13 @@ class PictureBackendFormTestCase(TestCase):
             BackendSelection.deserialize({"backend": "", "value": None})
         with self.assertRaises(ValueError):
             BackendSelection.deserialize({"backend": 42, "value": None})
+        with self.assertRaisesMessage(ValueError, "Unsupported backend selection version"):
+            BackendSelection.deserialize({"version": 2, "backend": "url", "value": None})
+
+        self.assertEqual(
+            BackendSelection.deserialize({"backend": "url", "value": "https://example.com/legacy.jpg"}),
+            BackendSelection(get_backend("url"), "https://example.com/legacy.jpg"),
+        )
 
     def test_backend_selection_rejects_unsaved_foreign_keys(self) -> None:
         selection = BackendSelection(get_backend("filer"), Picture())

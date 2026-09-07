@@ -58,6 +58,11 @@ class BackendContractTestCase(SimpleTestCase):
         )
 
         self.assertEqual(PictureReference.from_dict(reference.as_dict()), reference)
+        self.assertEqual(reference.as_dict()["version"], 1)
+        self.assertEqual(
+            PictureReference.from_dict({"backend": "url", "id": "legacy"}),
+            PictureReference(backend="url", id="legacy"),
+        )
 
     def test_reference_rejects_invalid_values(self) -> None:
         with self.assertRaises(TypeError):
@@ -68,6 +73,8 @@ class BackendContractTestCase(SimpleTestCase):
             PictureReference.from_dict({"backend": "", "id": "image"})
         with self.assertRaises(ValueError):
             PictureReference.from_dict({"backend": "url", "id": ""})
+        with self.assertRaisesMessage(ValueError, "Unsupported picture reference version"):
+            PictureReference.from_dict({"version": 2, "backend": "url", "id": "image"})
 
     def test_reference_normalizes_identifier_and_empty_metadata(self) -> None:
         reference = PictureReference.from_dict(

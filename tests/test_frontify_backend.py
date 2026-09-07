@@ -1,9 +1,13 @@
 import json
+from datetime import timedelta
+from io import StringIO
 from urllib.parse import parse_qs, urlsplit
 
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.management import call_command
 from django.test import TestCase
+from django.utils import timezone
 
 if not apps.is_installed("djangocms_picture.contrib.frontify"):
     from unittest import SkipTest
@@ -12,6 +16,7 @@ if not apps.is_installed("djangocms_picture.contrib.frontify"):
 
 from djangocms_picture.backends import PictureReference, RenditionSpec, get_backend
 from djangocms_picture.contrib.frontify.backend import (
+    DEFAULT_FINDER_SCRIPT_URL,
     FrontifyImageAsset,
     FrontifyPictureBackend,
 )
@@ -56,9 +61,13 @@ class FrontifyBackendTestCase(TestCase):
         self.assertTrue(backend.capabilities.responsive)
         self.assertFalse(backend.capabilities.upscale)
         self.assertFalse(backend.capabilities.upload)
+        self.assertTrue(backend.capabilities.refresh)
+        self.assertTrue(backend.capabilities.permanent_urls)
 
         with self.assertRaisesMessage(ImproperlyConfigured, "allowed_hosts"):
             FrontifyPictureBackend()
+        with self.assertRaisesMessage(ImproperlyConfigured, "refresher"):
+            FrontifyPictureBackend(allowed_hosts=("cdn.frontify.com",), refresher=object())
 
     def test_form_uses_frontify_picker_and_preserves_its_media(self) -> None:
         form = PictureForm()
@@ -66,7 +75,11 @@ class FrontifyBackendTestCase(TestCase):
 
         self.assertIsInstance(field.backend_fields["frontify"], FrontifyImageChoiceField)
         self.assertEqual(form.initial["image_source"].backend, get_backend("frontify"))
-        self.assertIn("@frontify/frontify-finder@2.0.1", str(form.media))
+        self.assertEqual(
+            DEFAULT_FINDER_SCRIPT_URL,
+            "djangocms_picture/vendor/frontify-finder/index.js",
+        )
+        self.assertIn(DEFAULT_FINDER_SCRIPT_URL, str(form.media))
         self.assertIn("djangocms_picture/js/frontify-picker.js", str(form.media))
 
         html = field.widget.render(
@@ -319,3 +332,134 @@ class FrontifyBackendTestCase(TestCase):
         picture.refresh_from_db()
 
         self.assertIsNone(picture.image_asset)
+
+    def test_expiring_urls_are_tracked_preserved_and_stop_rendering(self) -> None:
+        backend = FrontifyPictureBackend(
+            allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
+            allow_expiring_urls=True,
+            expiry_leeway_seconds=30,
+        )
+        self.assertFalse(backend.capabilities.permanent_urls)
+        future = (timezone.now() + timedelta(hours=1)).isoformat()
+        reference = backend.serialize(
+            {
+                **FRONTIFY_PAYLOAD,
+                "previewUrl": "https://cdn.frontify.com/hero.jpg?token=preview",
+                "downloadUrl": "https://assets.frontify.com/hero.jpg?token=download",
+                "expiresAt": future,
+            }
+        )
+        self.assertIsNotNone(reference)
+        asset = backend.resolve(reference)
+        self.assertIsNotNone(asset)
+        rendition = asset.get_rendition(RenditionSpec(width=320))
+        self.assertEqual(parse_qs(urlsplit(rendition.url).query)["token"], ["preview"])
+        self.assertEqual(parse_qs(urlsplit(rendition.url).query)["width"], ["320"])
+
+        expired = backend.serialize(
+            {
+                **FRONTIFY_PAYLOAD,
+                "expiresAt": (timezone.now() - timedelta(minutes=1)).isoformat(),
+            }
+        )
+        self.assertIsNotNone(expired)
+        self.assertIsNone(backend.resolve(expired))
+
+        with self.assertRaisesMessage(Exception, "allow_expiring_urls"):
+            get_backend("frontify").serialize(
+                {**FRONTIFY_PAYLOAD, "expiresAt": future}
+            )
+
+    def test_refresh_updates_snapshot_and_revocation_disables_reference(self) -> None:
+        def refresh(reference: PictureReference, *, request: object = None) -> dict[str, object]:
+            return {**FRONTIFY_PAYLOAD, "id": reference.id, "modifiedAt": "revision-8"}
+
+        backend = FrontifyPictureBackend(
+            allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
+            account="brand-library",
+            refresher=refresh,
+        )
+        self.assertTrue(backend.capabilities.refresh)
+        picture = Picture.objects.create(backend="frontify")
+        backend.set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
+
+        refreshed = backend.refresh_instance(picture)
+        picture.refresh_from_db()
+
+        self.assertIsNotNone(refreshed)
+        self.assertEqual(picture.frontify_reference.revision, "revision-8")
+        self.assertIsNotNone(picture.frontify_reference.refreshed_at)
+
+        revoked_backend = FrontifyPictureBackend(
+            allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
+            refresher=lambda reference, request=None: None,
+        )
+        self.assertIsNone(revoked_backend.refresh_instance(picture))
+        picture.refresh_from_db()
+        self.assertTrue(picture.frontify_reference.disabled)
+        self.assertEqual(revoked_backend.revoke("asset-42"), 1)
+
+    def test_refresh_failure_keeps_last_known_good_snapshot(self) -> None:
+        def fail(reference: PictureReference, *, request: object = None) -> None:
+            raise TimeoutError("provider unavailable")
+
+        backend = FrontifyPictureBackend(
+            allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
+            refresher=fail,
+        )
+        picture = Picture.objects.create(backend="frontify")
+        backend.set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
+        original_snapshot = dict(picture.frontify_reference.snapshot)
+
+        with self.assertRaises(TimeoutError):
+            backend.refresh_instance(picture)
+        picture.refresh_from_db()
+
+        self.assertEqual(picture.frontify_reference.snapshot, original_snapshot)
+        self.assertFalse(picture.frontify_reference.disabled)
+        self.assertIsNotNone(backend.get_asset(picture))
+
+    def test_refresh_rejects_foreign_and_changed_references(self) -> None:
+        backend = FrontifyPictureBackend(
+            allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
+        )
+        with self.assertRaisesMessage(Exception, "only refresh Frontify"):
+            backend.refresh(PictureReference(backend="url", id="asset-42"))
+        with self.assertRaisesMessage(Exception, "does not support refreshes"):
+            backend.refresh(PictureReference(backend="frontify", id="asset-42"))
+
+        changed = FrontifyPictureBackend(
+            allowed_hosts=("cdn.frontify.com", "assets.frontify.com"),
+            refresher=lambda reference, request=None: {**FRONTIFY_PAYLOAD, "id": "different"},
+        )
+        with self.assertRaisesMessage(Exception, "same asset id"):
+            changed.refresh(PictureReference(backend="frontify", id="asset-42"))
+
+    def test_refresh_command_supports_dry_run_and_revocation(self) -> None:
+        backend = get_backend("frontify")
+        picture = Picture.objects.create(backend="frontify")
+        backend.set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
+        output = StringIO()
+
+        call_command("refresh_frontify_assets", dry_run=True, stdout=output)
+        picture.refresh_from_db()
+        self.assertEqual(picture.frontify_reference.revision, "revision-7")
+        self.assertIn('"status": "would_refresh"', output.getvalue())
+
+        call_command("refresh_frontify_assets", stdout=StringIO())
+        picture.refresh_from_db()
+        self.assertEqual(picture.frontify_reference.revision, "settings-refresh")
+
+        revoked = Picture.objects.create(backend="frontify")
+        backend.set_form_value(
+            revoked,
+            {**FRONTIFY_PAYLOAD, "id": "revoked"},
+            commit=True,
+        )
+        call_command(
+            "refresh_frontify_assets",
+            asset_id="revoked",
+            stdout=StringIO(),
+        )
+        revoked.refresh_from_db()
+        self.assertTrue(revoked.frontify_reference.disabled)

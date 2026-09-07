@@ -1,8 +1,12 @@
 import json
 from collections.abc import Mapping, Sequence
+from datetime import datetime
+from datetime import timezone as datetime_timezone
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
 
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.utils.translation import get_language
 
 
@@ -23,12 +27,15 @@ def normalize_frontify_payload(
     if identifier is None or not str(identifier):
         raise FrontifyPayloadError("The Frontify payload does not contain an asset id.")
 
+    expires_at = _expiry(payload.get("expires_at") or payload.get("expiresAt"))
+
     processing_url = _safe_url(
         payload.get("processing_url")
         or payload.get("generic_url")
         or payload.get("previewUrl")
         or payload.get("preview_url"),
         allowed_hosts=allowed_hosts,
+        preserve_query=bool(expires_at),
     )
     original_url = _safe_url(
         payload.get("original_url")
@@ -36,6 +43,7 @@ def normalize_frontify_payload(
         or payload.get("download_url")
         or processing_url,
         allowed_hosts=allowed_hosts,
+        preserve_query=bool(expires_at),
     )
     if not processing_url:
         processing_url = original_url
@@ -65,7 +73,26 @@ def normalize_frontify_payload(
         "processing_url": processing_url,
         "original_url": original_url,
         "focal_point": focal_point,
+        "expires_at": expires_at,
     }
+
+
+def is_frontify_snapshot_expired(
+    snapshot: Mapping[str, Any],
+    *,
+    at: datetime | None = None,
+    leeway_seconds: int = 0,
+) -> bool:
+    """Return whether a normalized snapshot's signed URLs are no longer usable."""
+
+    expires_at = _expiry(snapshot.get("expires_at") or snapshot.get("expiresAt"))
+    if not expires_at:
+        return False
+    expiry = parse_datetime(expires_at)
+    if expiry is None:
+        return True
+    current = at or timezone.now()
+    return current.timestamp() + leeway_seconds >= expiry.timestamp()
 
 
 def _parse_payload(value: Any) -> Mapping[str, Any]:
@@ -79,7 +106,12 @@ def _parse_payload(value: Any) -> Mapping[str, Any]:
     return value
 
 
-def _safe_url(value: Any, *, allowed_hosts: Sequence[str]) -> str:
+def _safe_url(
+    value: Any,
+    *,
+    allowed_hosts: Sequence[str],
+    preserve_query: bool = False,
+) -> str:
     if not value:
         return ""
     parsed = urlsplit(str(value))
@@ -88,7 +120,27 @@ def _safe_url(value: Any, *, allowed_hosts: Sequence[str]) -> str:
     normalized_hosts = {host.lower() for host in allowed_hosts}
     if normalized_hosts and parsed.hostname.lower() not in normalized_hosts:
         raise FrontifyPayloadError(f'Frontify image host "{parsed.hostname}" is not allowed.')
-    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+    query = parsed.query if preserve_query else ""
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, ""))
+
+
+def _expiry(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        try:
+            parsed = datetime.fromtimestamp(value, tz=datetime_timezone.utc)
+        except (OverflowError, OSError, ValueError) as error:
+            raise FrontifyPayloadError("Frontify URL expiry is invalid.") from error
+    elif isinstance(value, str):
+        parsed = parse_datetime(value)
+        if parsed is None:
+            raise FrontifyPayloadError("Frontify URL expiry must be an ISO 8601 datetime.")
+        if timezone.is_naive(parsed):
+            parsed = timezone.make_aware(parsed, datetime_timezone.utc)
+    else:
+        raise FrontifyPayloadError("Frontify URL expiry must be a datetime string or timestamp.")
+    return parsed.astimezone(datetime_timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _dimension(value: Any) -> int | None:

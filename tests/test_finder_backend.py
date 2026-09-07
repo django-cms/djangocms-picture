@@ -1,7 +1,9 @@
+from io import StringIO
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from unittest.mock import patch
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from django.apps import apps
@@ -10,9 +12,13 @@ pytest.importorskip("finder")
 if not apps.is_installed("djangocms_picture.contrib.finder"):
     pytest.skip("The finder contrib app is not installed.", allow_module_level=True)
 
+from cms.api import add_plugin
+from cms.models import Placeholder
+from cms.utils.plugins import copy_plugins_to_placeholder
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.core.files.base import ContentFile
+from django.core.management import call_command
 from django.forms import modelform_factory
 from django.test import TestCase
 from finder.contrib.image.models import ImageFileModel
@@ -26,7 +32,7 @@ from djangocms_picture.fields import BackendSelection
 from djangocms_picture.forms import PictureForm
 from djangocms_picture.models import Picture
 
-from .helpers import get_image
+from .helpers import get_filer_image, get_image
 
 
 class FinderBackendTestCase(TestCase):
@@ -41,6 +47,8 @@ class FinderBackendTestCase(TestCase):
             _original_storage="finder_public",
             _sample_storage="finder_public_samples",
         )
+        cls.trash = FolderModel.objects.create(name="__trash__")
+        cls.ambit.trash_folders.add(cls.trash)
         payload = get_image(size=(800, 600))
         cls.image = ImageFileModel.objects.create(
             parent=cls.root,
@@ -54,6 +62,26 @@ class FinderBackendTestCase(TestCase):
         )
         with Path(payload["path"]).open("rb") as image_file:
             cls.ambit.original_storage.save(cls.image.file_path, File(image_file))
+
+        cls.private_root = FolderModel.objects.create(name="Private root")
+        cls.private_ambit = AmbitModel.objects.create(
+            slug="private",
+            verbose_name="Private",
+            site=None,
+            root_folder=cls.private_root,
+            _original_storage="finder_private",
+            _sample_storage="finder_private_samples",
+        )
+        cls.private_image = ImageFileModel.objects.create(
+            parent=cls.private_root,
+            name="private.jpg",
+            file_name="private.jpg",
+            file_size=100,
+            mime_type="image/jpeg",
+            width=100,
+            height=100,
+            sha1="private-revision",
+        )
 
     def test_backend_declares_current_finder_capabilities(self) -> None:
         backend = get_backend("finder")
@@ -205,18 +233,144 @@ class FinderBackendTestCase(TestCase):
 
         self.assertEqual(
             serialized,
-            {"backend": "finder", "value": str(self.image.id)},
+            {"version": 1, "backend": "finder", "value": str(self.image.id)},
         )
         self.assertEqual(restored, selection)
 
     def test_picker_rejects_missing_and_non_image_inodes(self) -> None:
-        field = FinderImageChoiceField(required=False, ambit="public")
+        field = FinderImageChoiceField(
+            required=False,
+            ambit="public",
+            allowed_ambits=("public",),
+        )
 
         self.assertIsNone(field.clean(""))
         with self.assertRaises(ValidationError):
             field.clean(uuid4())
         with self.assertRaises(ValidationError):
             field.clean(self.root.id)
+
+    def test_private_ambit_is_rejected_by_picker_and_resolver(self) -> None:
+        backend = get_backend("finder")
+
+        with self.assertRaisesMessage(ValidationError, "not available"):
+            backend.form_field().clean(self.private_image.id)
+        self.assertIsNone(
+            backend.resolve(
+                PictureReference(backend="finder", id=str(self.private_image.id))
+            )
+        )
+
+    def test_trashed_image_keeps_rendering_but_cannot_be_selected_again(self) -> None:
+        image = ImageFileModel.objects.get(pk=self.image.pk)
+        image.parent = self.trash
+        image.save(update_fields=("parent",))
+        backend = get_backend("finder")
+
+        with self.assertRaisesMessage(ValidationError, "in the trash"):
+            backend.form_field().clean(image.id)
+        self.assertIsNotNone(
+            backend.resolve(PictureReference(backend="finder", id=str(image.id)))
+        )
+
+    def test_hard_deleted_finder_image_leaves_a_non_rendering_tombstone(self) -> None:
+        image = ImageFileModel.objects.get(pk=self.image.pk)
+        picture = Picture.objects.create(backend="finder")
+        get_backend("finder").set_form_value(picture, image.id, commit=True)
+
+        image.delete()
+        picture.refresh_from_db()
+
+        self.assertIsNone(picture.finder_reference.image)
+        self.assertIsNone(picture.image_asset)
+
+    def test_real_cms_plugin_copy_preserves_finder_reference(self) -> None:
+        source_placeholder = Placeholder.objects.create(slot="source")
+        target_placeholder = Placeholder.objects.create(slot="target")
+        source = add_plugin(
+            source_placeholder,
+            "PicturePlugin",
+            "en",
+            backend="finder",
+            template="default",
+        )
+        get_backend("finder").set_form_value(source, self.image.id, commit=True)
+
+        copies = copy_plugins_to_placeholder(
+            [source],
+            target_placeholder,
+            language="en",
+            plugins_are_downcast=True,
+        )
+
+        copied = copies[0]
+        copied.refresh_from_db()
+        self.assertEqual(copied.backend, "finder")
+        self.assertEqual(copied.finder_reference.image.id, self.image.id)
+
+    def test_filer_migration_is_dry_runnable_auditable_and_reversible(self) -> None:
+        filer_image = get_filer_image("migration.jpg")
+        finder_id = UUID(Path(filer_image.file.name).parent.name)
+        migrated_image = ImageFileModel.objects.create(
+            id=finder_id,
+            parent=self.root,
+            name="migration.jpg",
+            file_name="migration.jpg",
+            file_size=filer_image._file_size,
+            mime_type="image/jpeg",
+            width=filer_image.width,
+            height=filer_image.height,
+            sha1=filer_image.sha1,
+        )
+        picture = Picture.objects.create(
+            backend="filer",
+            picture=filer_image,
+            template="default",
+        )
+        output = StringIO()
+
+        with TemporaryDirectory() as audit_directory:
+            audit_file = Path(audit_directory) / "pictures.jsonl"
+            call_command(
+                "migrate_picture_backend",
+                source="filer",
+                destination="finder",
+                ambit="public",
+                dry_run=True,
+                batch_size=1,
+                after_pk=picture.pk - 1,
+                limit=1,
+                audit_file=audit_file,
+                stdout=output,
+            )
+            self.assertIn('"status": "would_migrate"', audit_file.read_text())
+        picture.refresh_from_db()
+        self.assertEqual(picture.backend, "filer")
+        self.assertIn('"status": "would_migrate"', output.getvalue())
+
+        call_command(
+            "migrate_picture_backend",
+            source="filer",
+            destination="finder",
+            ambit="public",
+            stdout=StringIO(),
+        )
+        picture.refresh_from_db()
+        self.assertEqual(picture.backend, "finder")
+        self.assertEqual(picture.picture_id, filer_image.pk)
+        self.assertEqual(picture.finder_reference.image.id, migrated_image.id)
+
+        call_command(
+            "migrate_picture_backend",
+            source="finder",
+            destination="filer",
+            ambit="public",
+            stdout=StringIO(),
+        )
+        picture.refresh_from_db()
+        self.assertEqual(picture.backend, "filer")
+        self.assertEqual(picture.picture_id, filer_image.pk)
+        self.assertEqual(picture.finder_reference.image.id, migrated_image.id)
 
     def test_focal_crop_is_generated_in_sample_storage(self) -> None:
         asset = get_backend("finder").resolve(

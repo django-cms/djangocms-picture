@@ -22,10 +22,12 @@ class FrontifyImageChoiceField(forms.JSONField):
         finder_script_url: str,
         allowed_hosts: Sequence[str] = (),
         alt_text_field: str = "alt-tag_{language_code}",
+        allow_expiring_urls: bool = False,
         **kwargs: Any,
     ) -> None:
         self.allowed_hosts = tuple(allowed_hosts)
         self.alt_text_field = alt_text_field
+        self.allow_expiring_urls = allow_expiring_urls
         kwargs.setdefault(
             "widget",
             FrontifyPickerWidget(
@@ -41,11 +43,14 @@ class FrontifyImageChoiceField(forms.JSONField):
         if value in self.empty_values:
             return None
         try:
-            return normalize_frontify_payload(
+            snapshot = normalize_frontify_payload(
                 value,
                 allowed_hosts=self.allowed_hosts,
                 alt_text_field=self.alt_text_field,
             )
+            if snapshot.get("expires_at") and not self.allow_expiring_urls:
+                raise FrontifyPayloadError("Expiring Frontify URLs are not enabled.")
+            return snapshot
         except FrontifyPayloadError as error:
             raise ValidationError(
                 self.error_messages["invalid_asset"],
