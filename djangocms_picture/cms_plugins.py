@@ -7,10 +7,14 @@ from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from .forms import PictureForm
+from .linking import DJANGOCMS_LINK_ENABLED
 from .models import Picture
 
 # enable nesting of plugins inside the picture plugin
 PICTURE_NESTING = getattr(settings, 'DJANGOCMS_PICTURE_NESTING', False)
+PICTURE_LINK_FIELDS: tuple[str | tuple[str, str], ...] = (
+    ('link',) if DJANGOCMS_LINK_ENABLED else (('link_url', 'link_page'),)
+)
 
 
 class PicturePlugin(CMSPluginBase):
@@ -36,20 +40,20 @@ class PicturePlugin(CMSPluginBase):
                 'attributes',
             )
         }),
-        (_('Link'), {
-            'classes': ('collapse',),
-            'fields': (
-                ('link_url', 'link_page'),
-                'link_target',
-                'link_attributes',
-            )
-        }),
         (_('Cropping'), {
             'classes': ('collapse',),
             'fields': (
                 ('use_automatic_scaling', 'use_no_cropping'),
                 ('use_crop', 'use_upscale'),
                 'thumbnail_options',
+            )
+        }),
+        (_('Link'), {
+            'classes': ('collapse',),
+            'fields': (
+                *PICTURE_LINK_FIELDS,
+                'link_target',
+                'link_attributes',
             )
         })
     ]

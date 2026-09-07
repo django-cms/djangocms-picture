@@ -20,6 +20,13 @@ from .helpers import get_filer_image
 
 
 class PictureBackendFormTestCase(TestCase):
+    def test_legacy_link_fields_are_used_without_djangocms_link(self) -> None:
+        form = PictureForm()
+
+        self.assertNotIn("link", form.fields)
+        self.assertIn("link_url", form.fields)
+        self.assertIn("link_page", form.fields)
+
     def test_single_template_is_a_hidden_input(self) -> None:
         form = PictureForm()
 

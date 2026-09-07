@@ -43,6 +43,9 @@ dependencies = [
     "easy_thumbnails",
 ]
 
+[project.optional-dependencies]
+link = ["djangocms-link>=5"]
+
 [tool.setuptools.packages.find]
 include = ["djangocms_picture*"]
 

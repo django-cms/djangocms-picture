@@ -1,0 +1,3 @@
+-r dj52_cms51.txt
+
+djangocms-link>=5

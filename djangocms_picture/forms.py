@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .backends import BasePictureBackend, get_backend_for_instance, get_backends
 from .fields import BackendImageField, BackendSelection
+from .linking import DJANGOCMS_LINK_ENABLED
 from .models import Picture, get_templates
 
 
@@ -33,6 +34,13 @@ class PictureForm(forms.ModelForm):
     ) -> None:
         super().__init__(*args, **kwargs)
         self.request = request
+        if DJANGOCMS_LINK_ENABLED:
+            self.fields.pop("link_url", None)
+            self.fields.pop("link_page", None)
+            if not self.is_bound and not self.initial.get("link"):
+                self.initial["link"] = self.instance.get_legacy_link_value()
+        else:
+            self.fields.pop("link", None)
         self.backends = get_backends()
         self.fields["image_source"] = BackendImageField(
             backends=self.backends,
@@ -114,6 +122,9 @@ class PictureForm(forms.ModelForm):
 
     def save(self, commit: bool = True) -> Picture:
         instance = super().save(commit=False)
+        if DJANGOCMS_LINK_ENABLED:
+            instance.link_url = None
+            instance.link_page = None
         selection: BackendSelection = self.cleaned_data["image_source"]
         self._apply_selection(instance, selection)
 

@@ -102,3 +102,24 @@ jobs:
       uses: codecov/codecov-action@v6
       with:
         flags: frontify
+
+  link:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.14"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip uv
+        uv pip install --system -r tests/requirements/dj52_cms51_link.txt
+    - name: Run djangocms-link integration tests
+      env:
+        DJANGO_SETTINGS_MODULE: tests.settings_link
+      run: coverage run -m pytest tests/test_link_integration.py tests/test_link_migration.py -q
+    - name: Upload djangocms-link coverage to Codecov
+      uses: codecov/codecov-action@v6
+      with:
+        flags: link

@@ -24,6 +24,7 @@ from .backends import (
     RenditionSpec,
     get_backend_for_instance,
 )
+from .linking import DJANGOCMS_LINK_ENABLED, PictureLinkField, resolve_picture_link
 from .rendering import build_srcset, calculate_size
 
 
@@ -168,6 +169,10 @@ class AbstractPicture(CMSPlugin):
         verbose_name=_('Link attributes'),
         blank=True,
         excluded_keys=['href', 'target'],
+    )
+    link = PictureLinkField(
+        verbose_name=_('Link'),
+        blank=True,
     )
     # cropping models
     # active per default
@@ -328,6 +333,8 @@ class AbstractPicture(CMSPlugin):
         return options
 
     def get_link(self) -> str | bool:
+        if DJANGOCMS_LINK_ENABLED and self.link:
+            return resolve_picture_link(self.link) or False
         if self.link_url:
             return self.link_url
         elif self.link_page_id:
@@ -336,9 +343,18 @@ class AbstractPicture(CMSPlugin):
             return self.external_picture
         return False
 
+    def get_legacy_link_value(self) -> dict[str, str]:
+        """Return legacy link columns in djangocms-link's JSON representation."""
+
+        if self.link_url:
+            return {"external_link": self.link_url}
+        if self.link_page_id:
+            return {"internal_link": f"cms.page:{self.link_page_id}"}
+        return {}
+
     def clean(self) -> None:
         # there can be only one link type
-        if self.link_url and self.link_page_id:
+        if not DJANGOCMS_LINK_ENABLED and self.link_url and self.link_page_id:
             raise ValidationError(
                 gettext(
                     'You have given both external and internal links. '

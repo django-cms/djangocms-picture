@@ -35,6 +35,15 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
 
         self.assertEqual(fields, ("template", "image_source"))
 
+    def test_legacy_link_fields_are_in_the_last_fieldset(self) -> None:
+        title, options = PicturePlugin.fieldsets[-1]
+
+        self.assertEqual(str(title), "Link")
+        self.assertEqual(
+            options["fields"],
+            (("link_url", "link_page"), "link_target", "link_attributes"),
+        )
+
     def test_admin_form_forwards_the_request_to_backend_fields(self) -> None:
         request = RequestFactory().get("/admin/")
         request.user = self.superuser

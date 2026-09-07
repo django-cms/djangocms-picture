@@ -72,6 +72,25 @@ Configuration
 Note that the provided templates are very minimal by design. You are encouraged
 to adapt and override them to your project's requirements.
 
+Optional djangocms-link integration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install the ``link`` extra and add ``djangocms_link`` to ``INSTALLED_APPS`` to
+use the djangocms-link 5+ destination picker for picture links::
+
+    pip install "djangocms-picture[link]"
+
+    INSTALLED_APPS = [
+        # ...
+        "djangocms_link",
+        "djangocms_picture",
+    ]
+
+Run migrations after enabling the integration. Existing external and internal
+page links are copied into the new link field. The legacy URL and page fields
+remain in the database and continue to be used when djangocms-link 5 or newer
+is not installed as a Django app.
+
 Reusable backend picker
 ~~~~~~~~~~~~~~~~~~~~~~~
 
