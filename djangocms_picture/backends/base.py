@@ -93,3 +93,28 @@ class BasePictureBackend(ABC):
 
     def refresh(self, reference: PictureReference, *, request: Any = None) -> PictureReference:
         raise UnsupportedBackendOperation(f'The "{self.alias}" backend does not support refreshes.')
+
+
+class UnavailablePictureBackend(BasePictureBackend):
+    """Read-only marker for a persisted backend alias no longer configured."""
+
+    label = "Unavailable image source"
+    selection_field_name = ""
+    configuration_fields: frozenset[str] = frozenset()
+    capabilities = BackendCapabilities()
+
+    def __init__(self, alias: str) -> None:
+        super().__init__()
+        self.alias = alias
+
+    def serialize(self, value: Any) -> None:
+        return None
+
+    def resolve(self, reference: PictureReference) -> None:
+        return None
+
+    def get_asset(self, picture_instance: Any) -> None:
+        return None
+
+    def copy_reference(self, source: Any, target: Any) -> None:
+        return None

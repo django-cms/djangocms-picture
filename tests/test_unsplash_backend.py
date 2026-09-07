@@ -28,6 +28,8 @@ from djangocms_picture.forms import PictureForm
 from djangocms_picture.models import Picture
 from djangocms_picture.rendering import build_srcset
 
+from .helpers import get_filer_image
+
 UNSPLASH_PAYLOAD = {
     "id": "photo-42",
     "description": "Mountain lake at sunrise",
@@ -208,6 +210,15 @@ class UnsplashBackendTestCase(TestCase):
         )
         self.assertIn("ixid=required-view-token", extension.snapshot["raw_url"])
         self.assertEqual(picture.image_asset.info.width, 2400)
+
+    def test_active_backend_alt_text_is_not_shadowed_by_retained_filer_image(self) -> None:
+        picture = Picture.objects.create(
+            backend="unsplash",
+            picture=get_filer_image(),
+        )
+        get_backend("unsplash").set_form_value(picture, UNSPLASH_PAYLOAD, commit=True)
+
+        self.assertEqual(picture.image_alt_text, UNSPLASH_PAYLOAD["alt_description"])
 
     def test_selection_serialization_round_trip_is_identical(self) -> None:
         backend = get_backend("unsplash")

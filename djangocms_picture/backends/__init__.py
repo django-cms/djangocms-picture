@@ -5,7 +5,13 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.module_loading import import_string
 
-from .base import BaseImageAsset, BasePictureBackend, PictureBackendError, UnsupportedBackendOperation
+from .base import (
+    BaseImageAsset,
+    BasePictureBackend,
+    PictureBackendError,
+    UnavailablePictureBackend,
+    UnsupportedBackendOperation,
+)
 from .types import (
     BackendCapabilities,
     ImageAttribution,
@@ -23,7 +29,11 @@ DEFAULT_BACKENDS = {
 
 def get_backend_aliases() -> tuple[str, ...]:
     configured = getattr(settings, "DJANGOCMS_PICTURE_BACKENDS", {})
-    aliases = dict.fromkeys((*DEFAULT_BACKENDS, *configured))
+    aliases = dict.fromkeys(
+        alias
+        for alias in (*DEFAULT_BACKENDS, *configured)
+        if configured.get(alias, DEFAULT_BACKENDS.get(alias)) is not None
+    )
     return tuple(aliases)
 
 
@@ -72,14 +82,16 @@ def get_backend_for_instance(instance: Any) -> BasePictureBackend:
 
     alias = getattr(instance, "backend", None)
     if alias and alias not in {"filer", "url"}:
-        return get_backend(alias)
-    if alias == "url" or getattr(instance, "external_picture", None):
-        return get_backend("url")
-    if not alias and getattr(instance, "picture_id", None):
-        alias = "filer"
-    if not alias:
-        alias = getattr(settings, "DJANGOCMS_PICTURE_DEFAULT_BACKEND", "filer")
-    return get_backend(alias)
+        selected_alias = alias
+    elif alias == "url" or getattr(instance, "external_picture", None):
+        selected_alias = "url"
+    elif alias == "filer" or getattr(instance, "picture_id", None):
+        selected_alias = "filer"
+    else:
+        selected_alias = getattr(settings, "DJANGOCMS_PICTURE_DEFAULT_BACKEND", "filer")
+    if selected_alias not in get_backend_aliases():
+        return UnavailablePictureBackend(selected_alias)
+    return get_backend(selected_alias)
 
 
 __all__ = [
@@ -93,6 +105,7 @@ __all__ = [
     "Rendition",
     "RenditionSpec",
     "UnsupportedBackendOperation",
+    "UnavailablePictureBackend",
     "clear_backend_cache",
     "get_backend",
     "get_backend_aliases",

@@ -89,7 +89,34 @@ use the djangocms-link 5+ destination picker for picture links::
 Run migrations after enabling the integration. Existing external and internal
 page links are copied into the new link field. The legacy URL and page fields
 remain in the database and continue to be used when djangocms-link 5 or newer
-is not installed as a Django app.
+is not installed as a Django app. When the new field contains an HTTP(S) URL or
+a django CMS page, the form also mirrors it into the corresponding legacy
+column. Link types that the legacy fields cannot represent, such as files,
+email addresses and anchors, are only stored in the new field.
+
+Backend configuration and lifecycle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The filer and external-URL backends are enabled by default. A default backend
+can be disabled explicitly with ``None``; at least one backend must remain::
+
+    DJANGOCMS_PICTURE_BACKENDS = {
+        "url": None,
+    }
+
+This example leaves only filer enabled, so the backend selector is hidden. A
+custom backend is added by putting its configuration in the same dictionary.
+
+Backend aliases are persistent data identifiers. Keep an alias stable for as
+long as picture records use it, and migrate those records before permanently
+removing or renaming the backend. An already persisted unknown alias renders as
+an unavailable image rather than failing the complete page, allowing the
+affected plugins to be edited and moved to an available backend.
+
+Changing backends retains inactive references and supported presentation
+settings. This permits an editor to switch back without losing the previous
+selection. Rendition options unsupported by the active backend are ignored at
+render time.
 
 Reusable backend picker
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -291,6 +318,28 @@ Backend implementers should read
 `docs/backend-authoring.rst <docs/backend-authoring.rst>`_. A concrete proposal
 for the missing finder resize contract is in
 `docs/finder-rendition-api-proposal.rst <docs/finder-rendition-api-proposal.rst>`_.
+
+Upgrading custom picture templates to 5.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Version 5.0 introduces backend-neutral image assets. Existing custom templates
+for the picture plugin must be reviewed and may require adjustment. In
+particular, ``instance.picture`` only contains a value for the filer backend,
+and ``instance.external_picture`` only contains a value for the URL backend.
+Templates supporting every backend should use:
+
+* ``instance.img_src`` for the rendered URL;
+* ``instance.image_alt_text`` for the backend-provided alternative text;
+* ``img_srcset_data`` for responsive renditions;
+* ``instance.image_asset`` and ``instance.image_attribution`` for portable
+  metadata; and
+* ``picture_link`` or ``instance.get_link`` for the resolved destination.
+
+Entries in ``img_srcset_data`` are now backend-neutral ``Rendition`` objects.
+They retain ``url``, ``width`` and ``height``, but filer/easy-thumbnails-specific
+attributes are no longer portable. Templates intended only for filer may
+continue to access ``instance.picture``, although the backend-neutral helpers
+are recommended.
 
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``

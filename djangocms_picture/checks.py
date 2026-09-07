@@ -11,6 +11,7 @@ FILER_CONTRIB_APP = "djangocms_picture.contrib.filer"
 FINDER_APP = "finder"
 FINDER_CONTRIB_APP = "djangocms_picture.contrib.finder"
 FRONTIFY_CONTRIB_APP = "djangocms_picture.contrib.frontify"
+UNSPLASH_CONTRIB_APP = "djangocms_picture.contrib.unsplash"
 
 
 @register(Tags.compatibility)
@@ -85,5 +86,24 @@ def check_frontify_backend(
             "is not in INSTALLED_APPS.",
             hint=f'Add "{FRONTIFY_CONTRIB_APP}" to INSTALLED_APPS and run migrations.',
             id="djangocms_picture.E003",
+        )
+    ]
+
+
+@register(Tags.compatibility)
+def check_unsplash_backend(
+    app_configs: Iterable[AppConfig] | None = None,
+    **kwargs: Any,
+) -> list[CheckMessage]:
+    """Require the reference model and admin picker when Unsplash is configured."""
+
+    if "unsplash" not in get_backend_aliases() or apps.is_installed(UNSPLASH_CONTRIB_APP):
+        return []
+    return [
+        Error(
+            f'The Unsplash backend is configured, but "{UNSPLASH_CONTRIB_APP}" '
+            "is not in INSTALLED_APPS.",
+            hint=f'Add "{UNSPLASH_CONTRIB_APP}" to INSTALLED_APPS and run migrations.',
+            id="djangocms_picture.E004",
         )
     ]

@@ -7,9 +7,11 @@ from djangocms_picture.checks import (
     FILER_CONTRIB_APP,
     FINDER_CONTRIB_APP,
     FRONTIFY_CONTRIB_APP,
+    UNSPLASH_CONTRIB_APP,
     check_filer_contrib_app,
     check_finder_backend,
     check_frontify_backend,
+    check_unsplash_backend,
 )
 
 
@@ -98,3 +100,22 @@ class PictureSystemChecksTestCase(SimpleTestCase):
             patch("djangocms_picture.checks.apps.is_installed", return_value=True),
         ):
             self.assertEqual(check_frontify_backend(), [])
+
+    def test_configured_unsplash_requires_its_contrib_app(self) -> None:
+        with (
+            patch("djangocms_picture.checks.get_backend_aliases", return_value=("unsplash",)),
+            patch("djangocms_picture.checks.apps.is_installed", return_value=False),
+        ):
+            messages = check_unsplash_backend()
+
+        self.assertEqual([message.id for message in messages], ["djangocms_picture.E004"])
+        self.assertIn(UNSPLASH_CONTRIB_APP, messages[0].hint)
+
+    def test_unsplash_check_is_satisfied_or_not_configured(self) -> None:
+        with patch("djangocms_picture.checks.get_backend_aliases", return_value=("url",)):
+            self.assertEqual(check_unsplash_backend(), [])
+        with (
+            patch("djangocms_picture.checks.get_backend_aliases", return_value=("unsplash",)),
+            patch("djangocms_picture.checks.apps.is_installed", return_value=True),
+        ):
+            self.assertEqual(check_unsplash_backend(), [])

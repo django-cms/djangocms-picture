@@ -12,6 +12,7 @@ from djangocms_picture.backends import (
     ImageAttribution,
     PictureReference,
     RenditionSpec,
+    UnavailablePictureBackend,
     UnsupportedBackendOperation,
     clear_backend_cache,
     get_backend,
@@ -130,6 +131,25 @@ class BackendContractTestCase(SimpleTestCase):
 
         self.assertEqual(backend.options, {"library": "marketing"})
         self.assertEqual(get_backend_aliases(), ("filer", "url", "custom"))
+
+    @override_settings(DJANGOCMS_PICTURE_BACKENDS={"url": None})
+    def test_default_backends_can_be_disabled_explicitly(self) -> None:
+        self.assertEqual(get_backend_aliases(), ("filer",))
+        backend = get_backend_for_instance(
+            SimpleNamespace(backend="url", external_picture="https://example.com/image.jpg")
+        )
+        self.assertIsInstance(backend, UnavailablePictureBackend)
+
+    def test_removed_persisted_backend_becomes_unavailable(self) -> None:
+        backend = get_backend_for_instance(SimpleNamespace(backend="removed"))
+
+        self.assertIsInstance(backend, UnavailablePictureBackend)
+        self.assertEqual(backend.alias, "removed")
+        self.assertIsNone(backend.get_asset(object()))
+
+        picture = Picture(backend="removed")
+        self.assertEqual(picture.img_src, "")
+        self.assertEqual(picture.get_short_description(), "<file is missing>")
 
     @override_settings(DJANGOCMS_PICTURE_BACKENDS={"broken": {}})
     def test_malformed_backend_configuration_is_rejected(self) -> None:

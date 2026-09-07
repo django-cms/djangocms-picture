@@ -24,7 +24,7 @@ class PicturePlugin(CMSPluginBase):
     allow_children = PICTURE_NESTING
     text_enabled = True
 
-    change_form_template = "djangocms_frontend/admin/base.html"
+    change_form_template = "djangocms_picture/admin/base.html"
 
     fieldsets = [
         (None, {

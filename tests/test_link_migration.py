@@ -10,9 +10,12 @@ from djangocms_picture.models import Picture
 class PictureLinkMigrationTestCase(TestCase):
     def test_existing_external_and_internal_links_are_migrated(self) -> None:
         page = create_page("Linked page", "page.html", "en")
-        external = Picture.objects.create(link_url="https://example.com/external/")
-        internal = Picture.objects.create(link_page=page)
+        external = Picture.objects.create()
+        internal = Picture.objects.create()
+        Picture.objects.filter(pk=external.pk).update(link_url="https://example.com/external/")
+        Picture.objects.filter(pk=internal.pk).update(link_page=page)
         migration = import_module("djangocms_picture.migrations.0014_picture_link")
+
         def get_model(app_label: str, model_name: str) -> type[Picture]:
             return Picture
 

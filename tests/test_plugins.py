@@ -34,6 +34,10 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
         fields = PicturePlugin.fieldsets[0][1]["fields"]
 
         self.assertEqual(fields, ("template", "image_source"))
+        self.assertEqual(
+            PicturePlugin.change_form_template,
+            "djangocms_picture/admin/base.html",
+        )
 
     def test_legacy_link_fields_are_in_the_last_fieldset(self) -> None:
         title, options = PicturePlugin.fieldsets[-1]

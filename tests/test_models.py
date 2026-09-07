@@ -1,7 +1,7 @@
 from cms.api import create_page
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from filer.models import ThumbnailOption
 
 from djangocms_picture.backends import Rendition
@@ -64,8 +64,8 @@ class PictureModelTestCase(TestCase):
 
     def test_settings(self):
         self.assertEqual(get_templates(), [('default', 'Default')])
-        settings.DJANGOCMS_PICTURE_TEMPLATES = [('feature', 'Feature')]
-        self.assertEqual(get_templates(), [('default', 'Default'), ('feature', 'Feature')])
+        with override_settings(DJANGOCMS_PICTURE_TEMPLATES=[('feature', 'Feature')]):
+            self.assertEqual(get_templates(), [('default', 'Default'), ('feature', 'Feature')])
 
         self.assertEqual(PICTURE_RATIO, 1.6180)
         self.assertEqual(

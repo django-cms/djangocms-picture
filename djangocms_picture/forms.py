@@ -122,9 +122,6 @@ class PictureForm(forms.ModelForm):
 
     def save(self, commit: bool = True) -> Picture:
         instance = super().save(commit=False)
-        if DJANGOCMS_LINK_ENABLED:
-            instance.link_url = None
-            instance.link_page = None
         selection: BackendSelection = self.cleaned_data["image_source"]
         self._apply_selection(instance, selection)
 

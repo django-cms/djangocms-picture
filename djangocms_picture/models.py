@@ -2,12 +2,14 @@
 Enables the user to add an "Image" plugin that displays an image
 using the HTML <img> tag.
 """
+from collections.abc import Mapping
 from typing import Any
 
 from cms.models import CMSPlugin
 from cms.models.fields import PageField
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.db import models
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -244,6 +246,11 @@ class AbstractPicture(CMSPlugin):
         # create plugins through the ORM/API instead of PictureForm.
         if self.external_picture and self.backend in {"", "filer", "url"}:
             self.backend = "url"
+        if DJANGOCMS_LINK_ENABLED:
+            self.sync_legacy_link_fields()
+            update_fields = kwargs.get("update_fields")
+            if update_fields is not None and "link" in update_fields:
+                kwargs["update_fields"] = {*update_fields, "link_url", "link_page"}
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -271,8 +278,8 @@ class AbstractPicture(CMSPlugin):
     @property
     def image_alt_text(self) -> str:
         # Keep the historical filer fallback when an external URL overrides a
-        # selected image. New backends expose their own fallback through info.
-        if self.picture and self.picture.default_alt_text:
+        # selected image. Other backends expose their own fallback through info.
+        if self.picture_backend.alias == "url" and self.picture and self.picture.default_alt_text:
             return self.picture.default_alt_text
         asset = self.image_asset
         return asset.info.alt_text if asset else ''
@@ -352,6 +359,41 @@ class AbstractPicture(CMSPlugin):
             return {"internal_link": f"cms.page:{self.link_page_id}"}
         return {}
 
+    def sync_legacy_link_fields(self) -> None:
+        """Mirror link values that the legacy URL and page fields can represent."""
+
+        self.link_url = None
+        self.link_page_id = None
+        if not isinstance(self.link, Mapping):
+            return
+
+        external_link = self.link.get("external_link")
+        if isinstance(external_link, str) and external_link:
+            link_url_field = self._meta.get_field("link_url")
+            try:
+                URLValidator(schemes=("http", "https"))(external_link)
+            except ValidationError:
+                pass
+            else:
+                if link_url_field.max_length is None or len(external_link) <= link_url_field.max_length:
+                    self.link_url = external_link
+                    return
+
+        internal_link = self.link.get("internal_link")
+        if not isinstance(internal_link, str):
+            return
+        model_label, separator, raw_pk = internal_link.partition(":")
+        if model_label.lower() != "cms.page" or not separator or not raw_pk:
+            return
+        link_page_field = self._meta.get_field("link_page")
+        try:
+            page_pk = link_page_field.target_field.to_python(raw_pk)
+        except (TypeError, ValueError, ValidationError):
+            return
+        page_model = link_page_field.remote_field.model
+        if page_model._base_manager.filter(pk=page_pk).exists():
+            self.link_page_id = page_pk
+
     def clean(self) -> None:
         # there can be only one link type
         if not DJANGOCMS_LINK_ENABLED and self.link_url and self.link_page_id:
@@ -427,7 +469,7 @@ class AbstractPicture(CMSPlugin):
             asset,
             widths=breakpoints,
             width=picture_width,
-            crop=picture_options['crop'],
+            crop=picture_options['crop'] and self.picture_backend.capabilities.crop,
         )
 
     @property
@@ -443,12 +485,13 @@ class AbstractPicture(CMSPlugin):
             width=self.width or 0,
             height=self.height or 0,
         )
+        capabilities = self.picture_backend.capabilities
         return asset.get_rendition(
             RenditionSpec(
                 width=picture_options['size'][0],
                 height=picture_options['size'][1],
-                crop=picture_options['crop'],
-                upscale=picture_options['upscale'],
+                crop=picture_options['crop'] and capabilities.crop,
+                upscale=picture_options['upscale'] and capabilities.upscale,
             )
         ).url
 

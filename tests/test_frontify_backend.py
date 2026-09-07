@@ -177,6 +177,19 @@ class FrontifyBackendTestCase(TestCase):
         with self.assertRaisesMessage(Exception, "between 0 and 100"):
             asset.get_rendition(RenditionSpec(quality=101))
 
+    def test_picture_rendering_masks_unsupported_stored_upscaling(self) -> None:
+        picture = Picture.objects.create(
+            backend="frontify",
+            width=3200,
+            use_automatic_scaling=False,
+            use_upscale=True,
+        )
+        get_backend("frontify").set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
+
+        rendition_url = picture.img_src
+
+        self.assertIn("width=3200", rendition_url)
+
     def test_picker_rejects_insecure_and_untrusted_urls(self) -> None:
         field = get_backend("frontify").form_field()
 

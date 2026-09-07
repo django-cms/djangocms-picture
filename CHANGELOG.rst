@@ -10,6 +10,10 @@ Changelog
 * Added a reusable, capability-aware backend picker field and JSON-serializable
   backend selections.
 * Added an experimental, snapshot-backed Frontify backend.
+* Custom picture templates must be reviewed for the backend-neutral rendering
+  API; use ``img_src`` and ``image_alt_text`` instead of assuming a filer image.
+* Safe djangocms-link URL and django CMS page destinations are mirrored to the
+  legacy link columns for compatibility with existing integrations.
 
 
 4.1.1 (2023-10-19)

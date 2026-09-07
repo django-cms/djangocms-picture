@@ -37,7 +37,7 @@ class DjangocmsLinkIntegrationTestCase(TestCase):
         )
         self.assertIn('class="link-widget widget"', form["link"].as_widget())
 
-    def test_form_saves_link_and_clears_legacy_columns(self) -> None:
+    def test_form_saves_link_and_mirrors_safe_legacy_url(self) -> None:
         image = get_filer_image()
         unbound_form = PictureForm()
         external_position = unbound_form.fields["link"].widget.data_pos["external_link"]
@@ -58,9 +58,31 @@ class DjangocmsLinkIntegrationTestCase(TestCase):
         picture.refresh_from_db()
 
         self.assertEqual(picture.link, {"external_link": "https://example.com/new/"})
-        self.assertIsNone(picture.link_url)
+        self.assertEqual(picture.link_url, "https://example.com/new/")
         self.assertIsNone(picture.link_page_id)
         self.assertEqual(picture.get_link(), "https://example.com/new/")
+
+    def test_legacy_mirror_supports_cms_pages_but_not_other_link_types(self) -> None:
+        page = create_page("Mirrored page", "page.html", "en")
+        picture = Picture.objects.create(link={"internal_link": f"cms.page:{page.pk}"})
+
+        self.assertEqual(picture.link_page_id, page.pk)
+        self.assertIsNone(picture.link_url)
+
+        picture.link = {"external_link": "mailto:editor@example.com"}
+        picture.save(update_fields=("link",))
+        picture.refresh_from_db()
+        self.assertIsNone(picture.link_url)
+        self.assertIsNone(picture.link_page_id)
+
+        picture.link = {"file_link": "filer.file:1"}
+        picture.sync_legacy_link_fields()
+        self.assertIsNone(picture.link_url)
+        self.assertIsNone(picture.link_page_id)
+
+        picture.link = {"internal_link": "cms.page:999999"}
+        picture.sync_legacy_link_fields()
+        self.assertIsNone(picture.link_page_id)
 
     def test_internal_link_resolves_through_djangocms_link(self) -> None:
         page = create_page("Linked page", "page.html", "en")
