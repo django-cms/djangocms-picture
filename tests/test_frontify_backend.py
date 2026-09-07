@@ -1,11 +1,14 @@
 import json
 from datetime import timedelta
 from io import StringIO
+from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 from django.apps import apps
+from django.contrib.staticfiles import finders
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.management import call_command
+from django.template.loader import get_template
 from django.test import TestCase
 from django.utils import timezone
 
@@ -90,6 +93,21 @@ class FrontifyBackendTestCase(TestCase):
         self.assertIn('data-domain="example.frontify.com"', html)
         self.assertIn('name="image_source_frontify"', html)
         self.assertIn("Campaign hero", html)
+
+    def test_templates_and_static_assets_are_owned_by_the_contrib_app(self) -> None:
+        app_path = Path(apps.get_app_config("djangocms_picture_frontify").path).resolve()
+        template = get_template("djangocms_picture/widgets/frontify.html")
+
+        self.assertTrue(Path(template.origin.name).resolve().is_relative_to(app_path))
+        for static_name in (
+            "djangocms_picture/css/frontify-picker.css",
+            "djangocms_picture/js/frontify-picker.js",
+            DEFAULT_FINDER_SCRIPT_URL,
+        ):
+            with self.subTest(static_name=static_name):
+                static_path = finders.find(static_name)
+                self.assertIsInstance(static_path, str)
+                self.assertTrue(Path(static_path).resolve().is_relative_to(app_path))
 
     def test_form_persists_a_normalized_snapshot(self) -> None:
         form = PictureForm(

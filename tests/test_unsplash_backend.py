@@ -1,8 +1,12 @@
 import json
+from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
+from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.contrib.staticfiles import finders
 from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.template.loader import get_template
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -145,6 +149,21 @@ class UnsplashBackendTestCase(TestCase):
         self.assertIn("Select Unsplash image", html)
         self.assertIn("Mountain lake at sunrise", html)
         self.assertIn("Annie Example", html)
+
+    def test_templates_and_static_assets_are_owned_by_the_contrib_app(self) -> None:
+        app_path = Path(apps.get_app_config("djangocms_picture_unsplash").path).resolve()
+        template = get_template("djangocms_picture/widgets/unsplash.html")
+
+        self.assertTrue(Path(template.origin.name).resolve().is_relative_to(app_path))
+        for static_name in (
+            "djangocms_picture/css/unsplash-picker.css",
+            "djangocms_picture/js/unsplash-picker.js",
+            "djangocms_picture/js/unsplash-popup.js",
+        ):
+            with self.subTest(static_name=static_name):
+                static_path = finders.find(static_name)
+                self.assertIsInstance(static_path, str)
+                self.assertTrue(Path(static_path).resolve().is_relative_to(app_path))
 
     def test_picker_is_an_authenticated_django_admin_popup(self) -> None:
         url = get_backend("unsplash").get_picker_url()
