@@ -160,7 +160,12 @@ class FinderPictureBackend(BasePictureBackend):
         return FinderImageAsset(image) if image else None
 
     def get_asset(self, picture_instance: Any) -> FinderImageAsset | None:
-        image = getattr(picture_instance, "picture", None)
+        source = getattr(picture_instance, "image_source", None)
+        image = (
+            source.source_object
+            if isinstance(source, StoredPictureSource)
+            else getattr(picture_instance, "picture", None)
+        )
         if image is None:
             return None
         if not isinstance(image, AbstractFileModel):

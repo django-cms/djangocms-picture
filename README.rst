@@ -117,18 +117,69 @@ Changing backends replaces the stored source while retaining supported
 presentation settings. Rendition options unsupported by the active backend are
 ignored at render time.
 
-Reusable backend picker
-~~~~~~~~~~~~~~~~~~~~~~~
+Backend-aware models and forms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Other forms can reuse the backend selector and all configured picker widgets as
-one field::
+A normal Django model can reuse the same storage and all configured picker
+widgets. It needs an alias, a textual generic relation and a JSON field. The
+virtual descriptor combines them into one value::
+
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.contrib.contenttypes.models import ContentType
+    from django.db import models
+
+    from djangocms_picture.backends import PictureSourceDescriptor
+
+
+    class Hero(models.Model):
+        image_backend = models.CharField(max_length=32, default="filer")
+        image_content_type = models.ForeignKey(
+            ContentType, blank=True, null=True, on_delete=models.PROTECT,
+        )
+        image_object_id = models.CharField(max_length=255, blank=True, null=True)
+        image_object = GenericForeignKey("image_content_type", "image_object_id")
+        image_config = models.JSONField(blank=True, default=dict)
+        image_source = PictureSourceDescriptor(
+            backend_field="image_backend",
+            content_type_field="image_content_type",
+            object_id_field="image_object_id",
+            config_field="image_config",
+            object_field="image_object",
+        )
+
+The model form declares one logical field, initializes it from the descriptor
+and applies its cleaned selection back to the descriptor::
 
     from django import forms
+
     from djangocms_picture.fields import BackendImageField, BackendSelection
 
 
-    class HeroImageForm(forms.Form):
-        image = BackendImageField()
+    class HeroForm(forms.ModelForm):
+        image_source = BackendImageField(required=False)
+
+        class Meta:
+            model = Hero
+            fields = ("image_source",)
+
+        def __init__(self, *args, request=None, **kwargs):
+            super().__init__(*args, **kwargs)
+            field = BackendImageField(request=request, required=False)
+            self.fields["image_source"] = field
+            if not self.is_bound:
+                backend = field.backends_by_alias[self.instance.image_backend]
+                self.initial["image_source"] = field.selection_from_instance(
+                    self.instance, backend,
+                )
+
+        def save(self, commit=True):
+            instance = super().save(commit=False)
+            selection = self.cleaned_data["image_source"]
+            if isinstance(selection, BackendSelection):
+                self.fields["image_source"].apply_selection(instance, selection)
+            if commit:
+                instance.save()
+            return instance
 
 
 The cleaned value is a ``BackendSelection`` containing the configured backend
@@ -154,10 +205,15 @@ model values use django-entangled's foreign-key convention:
 ``{"model": "app_label.model_name", "pk": primary_key}``.
 
 Subwidgets have stable names based on backend aliases, for example
-``image_backend``, ``image_filer``, and ``image_url``. Only the selected
+``image_source_backend``, ``image_source_filer``, and ``image_source_url``.
+Only the selected
 backend's field is validated. Capability metadata and supported configuration
 fields are exposed to the controller so the active picker and related form
 options stay in sync.
+
+The complete `standalone backend-aware model and form example
+<examples/standalone_backend_form.py>`_ also includes a database constraint,
+backend validation, clearing an optional value and backend-neutral rendering.
 
 Experimental django-finder backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

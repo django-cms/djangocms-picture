@@ -24,6 +24,17 @@ class PictureSourceDescriptor:
         self.config_field = config_field
         self.object_field = object_field
 
+    @property
+    def concrete_fields(self) -> tuple[str, str, str, str]:
+        """Return fields that must be persisted after assigning the source."""
+
+        return (
+            self.backend_field,
+            self.content_type_field,
+            self.object_id_field,
+            self.config_field,
+        )
+
     def __get__(
         self,
         instance: Any | None,

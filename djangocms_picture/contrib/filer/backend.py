@@ -109,8 +109,18 @@ class FilerPictureBackend(BasePictureBackend):
         return FilerImageAsset(image)
 
     def get_asset(self, picture_instance: Any) -> FilerImageAsset | None:
-        image = getattr(picture_instance, "picture", None)
+        source = getattr(picture_instance, "image_source", None)
+        image = (
+            source.source_object
+            if isinstance(source, StoredPictureSource)
+            else getattr(picture_instance, "picture", None)
+        )
         return FilerImageAsset(image) if image else None
 
     def get_form_value(self, picture_instance: Any) -> Any:
-        return getattr(picture_instance, "picture", None)
+        source = getattr(picture_instance, "image_source", None)
+        return (
+            source.source_object
+            if isinstance(source, StoredPictureSource)
+            else getattr(picture_instance, "picture", None)
+        )

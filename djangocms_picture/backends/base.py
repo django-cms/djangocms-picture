@@ -93,7 +93,11 @@ class BasePictureBackend(ABC):
     def validate_storage(self, picture_instance: Any) -> None:
         """Validate the relationship between this backend and its backing columns."""
 
-        config = getattr(picture_instance, "picture_config", None)
+        descriptor = self._get_source_descriptor(picture_instance)
+        config_field = descriptor.config_field if descriptor else "picture_config"
+        content_type_field = descriptor.content_type_field if descriptor else "picture_content_type"
+        object_id_field = descriptor.object_id_field if descriptor else "picture_object_id"
+        config = getattr(picture_instance, config_field, None)
         reference = None
         if config:
             if not isinstance(config, Mapping):
@@ -105,8 +109,8 @@ class BasePictureBackend(ABC):
             if reference.backend != self.alias:
                 raise PictureBackendError("Image source configuration belongs to another backend.")
 
-        content_type_id = getattr(picture_instance, "picture_content_type_id", None)
-        object_id = getattr(picture_instance, "picture_object_id", None)
+        content_type_id = getattr(picture_instance, f"{content_type_field}_id", None)
+        object_id = getattr(picture_instance, object_id_field, None)
         if (content_type_id is None) != (object_id is None):
             raise PictureBackendError("A model image requires both a content type and an object ID.")
 
@@ -121,7 +125,8 @@ class BasePictureBackend(ABC):
 
     def set_form_value(self, picture_instance: Any, value: Any, *, commit: bool = False) -> None:
         stored = self.prepare_storage(value)
-        if isinstance(getattr(type(picture_instance), "image_source", None), PictureSourceDescriptor):
+        descriptor = self._get_source_descriptor(picture_instance)
+        if descriptor is not None:
             picture_instance.image_source = stored
         else:
             picture_instance.backend = stored.backend
@@ -129,37 +134,32 @@ class BasePictureBackend(ABC):
             picture_instance.picture_config = stored.as_config()
         if commit:
             picture_instance.save(
-                update_fields=(
-                    "backend",
-                    "picture_content_type",
-                    "picture_object_id",
-                    "picture_config",
-                )
+                update_fields=descriptor.concrete_fields
+                if descriptor is not None
+                else ("backend", "picture_content_type", "picture_object_id", "picture_config")
             )
 
     def copy_reference(self, source: Any, target: Any) -> None:
         """Copy this backend's selected value to an already-saved target."""
 
-        if isinstance(
-            getattr(type(target), "image_source", None),
-            PictureSourceDescriptor,
-        ) and isinstance(
-            getattr(type(source), "image_source", None),
-            PictureSourceDescriptor,
-        ):
+        target_descriptor = self._get_source_descriptor(target)
+        source_descriptor = self._get_source_descriptor(source)
+        if target_descriptor is not None and source_descriptor is not None:
             target.image_source = source.image_source
         else:
             target.backend = self.alias
             target.picture = getattr(source, "picture", None)
             target.picture_config = dict(getattr(source, "picture_config", {}) or {})
         target.save(
-            update_fields=(
-                "backend",
-                "picture_content_type",
-                "picture_object_id",
-                "picture_config",
-            )
+            update_fields=target_descriptor.concrete_fields
+            if target_descriptor is not None
+            else ("backend", "picture_content_type", "picture_object_id", "picture_config")
         )
+
+    @staticmethod
+    def _get_source_descriptor(picture_instance: Any) -> PictureSourceDescriptor | None:
+        descriptor = getattr(type(picture_instance), "image_source", None)
+        return descriptor if isinstance(descriptor, PictureSourceDescriptor) else None
 
     def clear_reference(self, picture_instance: Any, *, commit: bool = False) -> None:
         """Remove this backend's selected value from a picture instance."""
