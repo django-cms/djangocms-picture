@@ -18,6 +18,7 @@ from filer.models import ThumbnailOption
 from .backends import (
     BaseImageAsset,
     BasePictureBackend,
+    ImageAttribution,
     PictureReference,
     Rendition,
     RenditionSpec,
@@ -270,6 +271,13 @@ class AbstractPicture(CMSPlugin):
             return self.picture.default_alt_text
         asset = self.image_asset
         return asset.info.alt_text if asset else ''
+
+    @property
+    def image_attribution(self) -> ImageAttribution | None:
+        """Return provider-required linked credit, when present."""
+
+        asset = self.image_asset
+        return asset.attribution if asset else None
 
     def get_short_description(self) -> str:
         asset = self.image_asset

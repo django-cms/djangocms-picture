@@ -10,6 +10,7 @@ from django.db import transaction
 from finder.models.ambit import AmbitModel
 from finder.models.file import FileModel
 
+from djangocms_picture.contrib.finder.backend import FinderImageAsset
 from djangocms_picture.contrib.finder.models import FinderPictureReference
 from djangocms_picture.models import Picture
 
@@ -167,14 +168,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def _snapshot(image: Any) -> dict[str, Any]:
-        return {
-            "label": image.name,
-            "width": image.width,
-            "height": image.height,
-            "alt_text": image.meta_data.get("alt_text", image.name),
-            "mime_type": image.mime_type,
-            "revision": image.sha1,
-        }
+        return dict(FinderImageAsset(image).reference.snapshot)
 
     def _audit(self, record: dict[str, Any], stream: TextIO | None) -> None:
         line = json.dumps(record, sort_keys=True)

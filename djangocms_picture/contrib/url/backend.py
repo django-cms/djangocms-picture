@@ -4,7 +4,14 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from djangocms_picture.backends.base import BaseImageAsset, BasePictureBackend
-from djangocms_picture.backends.types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
+from djangocms_picture.backends.types import (
+    BackendCapabilities,
+    ImageAttribution,
+    ImageInfo,
+    PictureReference,
+    Rendition,
+    RenditionSpec,
+)
 
 URL_CAPABILITIES = BackendCapabilities(remote=True)
 
@@ -21,6 +28,7 @@ class URLImageAsset(BaseImageAsset):
             height=snapshot.get("height"),
             alt_text=snapshot.get("alt_text", ""),
         )
+        self.attribution = ImageAttribution.from_mapping(snapshot.get("attribution"))
 
     def get_original(self) -> Rendition:
         return Rendition(url=self.reference.id, width=self.info.width, height=self.info.height)

@@ -15,6 +15,7 @@ from djangocms_picture.backends.base import (
 )
 from djangocms_picture.backends.types import (
     BackendCapabilities,
+    ImageAttribution,
     ImageInfo,
     PictureReference,
     Rendition,
@@ -59,6 +60,7 @@ class FrontifyImageAsset(BaseImageAsset):
             height=snapshot.get("height"),
             alt_text=str(snapshot.get("alt_text") or ""),
         )
+        self.attribution = ImageAttribution.from_mapping(snapshot.get("attribution"))
 
     def get_original(self) -> Rendition:
         snapshot = self.reference.snapshot

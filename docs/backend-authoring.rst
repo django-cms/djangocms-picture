@@ -42,7 +42,9 @@ Subclass ``BasePictureBackend`` and implement:
 
 An asset exposes ``reference``, ``info``, ``get_original()`` and
 ``get_rendition(spec)``. Both rendition methods return a backend-neutral
-``Rendition`` with URL and actual dimensions.
+``Rendition`` with URL and actual dimensions. Providers that require visible
+credit expose an ``ImageAttribution`` through ``asset.attribution``; consuming
+templates must render its creator and provider links.
 
 Selection and persistence
 =========================
@@ -120,4 +122,4 @@ real CMS plugin copy/paste. Run the backend against every supported Django and
 django CMS combination, not only the newest pair.
 
 See ``examples/standalone_backend_form.py`` for use outside a CMS plugin and the
-shipped filer, finder and Frontify adapters for complete integrations.
+shipped filer, finder, Frontify and Unsplash adapters for complete integrations.

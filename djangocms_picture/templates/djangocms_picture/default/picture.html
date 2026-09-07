@@ -1,4 +1,4 @@
-{% load l10n %}
+{% load i18n l10n %}
 
 {% if picture_link %}
     <a href="{{ picture_link }}"
@@ -46,6 +46,30 @@
 {% if picture_link %}
     </a>
 {% endif %}
+
+{% with attribution=instance.image_attribution %}
+    {% if attribution %}
+        <small class="djangocms-picture-attribution">
+            {% if attribution.creator_name %}
+                {% translate "Photo by" %}
+                {% if attribution.creator_url %}<a href="{{ attribution.creator_url }}" rel="noopener noreferrer">{% endif %}{{ attribution.creator_name }}{% if attribution.creator_url %}</a>{% endif %}
+            {% endif %}
+            {% if attribution.provider_name %}
+                {% if attribution.creator_name %}{% translate "on" %}{% endif %}
+                {% if attribution.provider_url %}<a href="{{ attribution.provider_url }}" rel="noopener noreferrer">{% endif %}{{ attribution.provider_name }}{% if attribution.provider_url %}</a>{% endif %}
+            {% endif %}
+            {% if attribution.copyright_notice %}
+                <span>{{ attribution.copyright_notice }}</span>
+            {% endif %}
+            {% if attribution.license_name %}
+                <span>
+                    {% translate "License:" %}
+                    {% if attribution.license_url %}<a href="{{ attribution.license_url }}" rel="noopener noreferrer">{% endif %}{{ attribution.license_name }}{% if attribution.license_url %}</a>{% endif %}
+                </span>
+            {% endif %}
+        </small>
+    {% endif %}
+{% endwith %}
 
 {% comment %}
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img

@@ -9,6 +9,7 @@ from filer.fields.image import AdminImageFormField
 
 from djangocms_picture.backends import (
     BasePictureBackend,
+    ImageAttribution,
     PictureReference,
     RenditionSpec,
     UnsupportedBackendOperation,
@@ -63,6 +64,27 @@ class BackendContractTestCase(SimpleTestCase):
             PictureReference.from_dict({"backend": "url", "id": "legacy"}),
             PictureReference(backend="url", id="legacy"),
         )
+
+    def test_attribution_round_trip_and_url_safety(self) -> None:
+        attribution = ImageAttribution.from_mapping(
+            {
+                "creator_name": "Example Photographer",
+                "creator_url": "https://example.com/photographer",
+                "provider_name": "Example DAM",
+                "provider_url": "javascript:alert(1)",
+                "copyright_notice": "© Example Photographer",
+                "license_name": "Example licence",
+                "license_url": "https://example.com/licence",
+            }
+        )
+
+        self.assertIsNotNone(attribution)
+        self.assertEqual(
+            ImageAttribution.from_mapping(attribution.as_dict()),
+            attribution,
+        )
+        self.assertEqual(attribution.provider_url, "")
+        self.assertIsNone(ImageAttribution.from_mapping({}))
 
     def test_reference_rejects_invalid_values(self) -> None:
         with self.assertRaises(TypeError):
@@ -197,6 +219,20 @@ class BackendContractTestCase(SimpleTestCase):
         self.assertIsNone(backend.resolve(PictureReference(backend="filer", id=reference.id)))
         self.assertIsNone(backend.get_asset(SimpleNamespace(external_picture=None)))
 
+        attributed = backend.resolve(
+            PictureReference(
+                backend="url",
+                id="https://example.com/image.jpg",
+                snapshot={
+                    "attribution": {
+                        "creator_name": "Example Photographer",
+                        "creator_url": "https://example.com/photographer",
+                    }
+                },
+            )
+        )
+        self.assertEqual(attributed.attribution.creator_name, "Example Photographer")
+
     def test_template_tag_renders_a_backend_neutral_rendition(self) -> None:
         picture = Picture(external_picture="https://example.com/image.jpg")
         template = Template(
@@ -251,6 +287,24 @@ class BackendContractTestCase(SimpleTestCase):
             }
         )
         self.assertEqual((rendition.url, rendition.width, rendition.height), ("/media/image_320x200.jpg", 320, 200))
+
+    def test_filer_asset_exposes_author_as_generic_attribution(self) -> None:
+        image = SimpleNamespace(
+            pk=7,
+            label="Image",
+            width=800,
+            height=600,
+            url="/media/image.jpg",
+            subject_location=None,
+            default_alt_text="Alternative",
+            author="Example Photographer",
+        )
+
+        attribution = FilerImageAsset(image).attribution
+
+        self.assertIsNotNone(attribution)
+        self.assertEqual(attribution.creator_name, "Example Photographer")
+        self.assertEqual(attribution.creator_url, "")
 
 
 class FilerBackendCompatibilityTestCase(TestCase):

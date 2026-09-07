@@ -6,7 +6,14 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.module_loading import import_string
 
 from .base import BaseImageAsset, BasePictureBackend, PictureBackendError, UnsupportedBackendOperation
-from .types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
+from .types import (
+    BackendCapabilities,
+    ImageAttribution,
+    ImageInfo,
+    PictureReference,
+    Rendition,
+    RenditionSpec,
+)
 
 DEFAULT_BACKENDS = {
     "filer": "djangocms_picture.contrib.filer.backend.FilerPictureBackend",
@@ -79,6 +86,7 @@ __all__ = [
     "BackendCapabilities",
     "BaseImageAsset",
     "BasePictureBackend",
+    "ImageAttribution",
     "ImageInfo",
     "PictureBackendError",
     "PictureReference",

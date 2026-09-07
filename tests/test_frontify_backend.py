@@ -227,6 +227,24 @@ class FrontifyBackendTestCase(TestCase):
         self.assertIsNone(snapshot["focal_point"])
         self.assertIsNone(snapshot["width"])
 
+    def test_asset_exposes_generic_attribution_metadata(self) -> None:
+        reference = get_backend("frontify").serialize(
+            {
+                **FRONTIFY_PAYLOAD,
+                "author": "Example Photographer",
+                "author_url": "https://example.com/photographer",
+                "copyright": "© Example Photographer",
+                "license": "Internal brand licence",
+            }
+        )
+
+        self.assertIsNotNone(reference)
+        attribution = FrontifyImageAsset(reference).attribution
+        self.assertIsNotNone(attribution)
+        self.assertEqual(attribution.creator_name, "Example Photographer")
+        self.assertEqual(attribution.copyright_notice, "© Example Photographer")
+        self.assertEqual(attribution.license_name, "Internal brand licence")
+
     def test_rendition_dimensions_preserve_source_aspect_ratio(self) -> None:
         reference = get_backend("frontify").serialize(FRONTIFY_PAYLOAD)
         self.assertIsNotNone(reference)

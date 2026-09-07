@@ -8,7 +8,14 @@ from filer.fields.image import AdminImageFormField
 from filer.utils.loader import load_model
 
 from djangocms_picture.backends.base import BaseImageAsset, BasePictureBackend
-from djangocms_picture.backends.types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
+from djangocms_picture.backends.types import (
+    BackendCapabilities,
+    ImageAttribution,
+    ImageInfo,
+    PictureReference,
+    Rendition,
+    RenditionSpec,
+)
 
 FILER_CAPABILITIES = BackendCapabilities(
     resize=True,
@@ -31,6 +38,9 @@ class FilerImageAsset(BaseImageAsset):
             width=image.width,
             height=image.height,
             alt_text=getattr(image, "default_alt_text", "") or "",
+        )
+        self.attribution = ImageAttribution.from_mapping(
+            {"creator_name": getattr(image, "author", "") or ""}
         )
 
     def get_original(self) -> Rendition:

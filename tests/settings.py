@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "filer",
     "djangocms_picture",
     "djangocms_picture.contrib.filer",
+    "djangocms_picture.contrib.unsplash",
 ]
 
 try:  # V4 test?

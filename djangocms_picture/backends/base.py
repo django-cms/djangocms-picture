@@ -1,7 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from .types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
+from .types import (
+    BackendCapabilities,
+    ImageAttribution,
+    ImageInfo,
+    PictureReference,
+    Rendition,
+    RenditionSpec,
+)
 
 
 class PictureBackendError(Exception):
@@ -15,6 +22,7 @@ class UnsupportedBackendOperation(PictureBackendError):
 class BaseImageAsset(ABC):
     reference: PictureReference
     info: ImageInfo
+    attribution: ImageAttribution | None = None
     capabilities = BackendCapabilities()
 
     @abstractmethod

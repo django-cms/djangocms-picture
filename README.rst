@@ -216,6 +216,49 @@ stop rendering until refresh. ``expiry_leeway_seconds`` can prevent emitting a
 URL that is about to expire. Credentials and access tokens remain deployment
 configuration and are never stored in picture references.
 
+Unsplash backend
+~~~~~~~~~~~~~~~~
+
+The Unsplash backend provides an editor-side search picker and hotlinks the
+image URLs returned by the Unsplash API. Add its contrib app::
+
+    INSTALLED_APPS = [
+        # ...
+        "djangocms_picture",
+        "djangocms_picture.contrib.unsplash",
+    ]
+
+Configure your application's public Unsplash access key and a stable name used
+for attribution links::
+
+    import os
+
+    DJANGOCMS_PICTURE_BACKENDS = {
+        "unsplash": {
+            "BACKEND": "djangocms_picture.contrib.unsplash.backend.UnsplashPictureBackend",
+            "OPTIONS": {
+                "access_key": os.environ["UNSPLASH_ACCESS_KEY"],
+                "application_name": "my-django-cms-site",
+                "content_filter": "high",
+                "per_page": 20,
+            },
+        },
+    }
+
+Then run migrations. ``orientation`` may optionally be ``landscape``,
+``portrait`` or ``squarish``. The picker authenticates directly with Unsplash
+public authentication; never configure or expose the Unsplash secret key. A
+site's Content Security Policy must permit connections to
+``https://api.unsplash.com`` and images from ``https://images.unsplash.com``.
+
+Selecting a photo triggers its ``download_location`` event, and stored
+renditions preserve Unsplash's ``ixid`` view-tracking parameter. The default
+template renders linked photographer and Unsplash attribution with the required
+``utm_source`` and ``utm_medium`` parameters. Custom picture templates must also
+render ``instance.image_attribution`` to remain API-compliant. Consult the
+`Unsplash API guidelines <https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines>`_
+before deploying the integration.
+
 Backend implementers should read
 `docs/backend-authoring.rst <docs/backend-authoring.rst>`_. A concrete proposal
 for the missing finder resize contract is in

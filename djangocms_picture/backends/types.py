@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Any, ClassVar, Mapping
+from urllib.parse import urlsplit
 
 
 @dataclass(frozen=True)
@@ -52,6 +53,91 @@ class ImageInfo:
     width: int | None
     height: int | None
     alt_text: str = ""
+
+
+@dataclass(frozen=True)
+class ImageAttribution:
+    """Provider-neutral creator, copyright and licence credit."""
+
+    creator_name: str = ""
+    creator_url: str = ""
+    provider_name: str = ""
+    provider_url: str = ""
+    copyright_notice: str = ""
+    license_name: str = ""
+    license_url: str = ""
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "creator_name",
+            "provider_name",
+            "copyright_notice",
+            "license_name",
+        ):
+            object.__setattr__(
+                self,
+                field_name,
+                str(getattr(self, field_name) or "").strip(),
+            )
+        for field_name in ("creator_url", "provider_url", "license_url"):
+            object.__setattr__(
+                self,
+                field_name,
+                _safe_credit_url(getattr(self, field_name)),
+            )
+
+    def as_dict(self) -> dict[str, str]:
+        """Return non-empty attribution values as JSON-compatible data."""
+
+        return {
+            key: value
+            for key, value in {
+                "creator_name": self.creator_name,
+                "creator_url": self.creator_url,
+                "provider_name": self.provider_name,
+                "provider_url": self.provider_url,
+                "copyright_notice": self.copyright_notice,
+                "license_name": self.license_name,
+                "license_url": self.license_url,
+            }.items()
+            if value
+        }
+
+    @classmethod
+    def from_mapping(cls, value: Any) -> "ImageAttribution | None":
+        """Build safe attribution from provider or local metadata."""
+
+        if not isinstance(value, Mapping):
+            return None
+        attribution = cls(
+            creator_name=str(value.get("creator_name") or "").strip(),
+            creator_url=_safe_credit_url(value.get("creator_url")),
+            provider_name=str(value.get("provider_name") or "").strip(),
+            provider_url=_safe_credit_url(value.get("provider_url")),
+            copyright_notice=str(value.get("copyright_notice") or "").strip(),
+            license_name=str(value.get("license_name") or "").strip(),
+            license_url=_safe_credit_url(value.get("license_url")),
+        )
+        if not any(
+            (
+                attribution.creator_name,
+                attribution.provider_name,
+                attribution.copyright_notice,
+                attribution.license_name,
+            )
+        ):
+            return None
+        return attribution
+
+
+def _safe_credit_url(value: Any) -> str:
+    if not value:
+        return ""
+    url = str(value).strip()
+    parsed = urlsplit(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        return ""
+    return url
 
 
 @dataclass(frozen=True)

@@ -174,6 +174,22 @@ class FinderBackendTestCase(TestCase):
         )
         self.assertEqual(picture.image_alt_text, self.image.name)
 
+    def test_asset_exposes_generic_attribution_metadata(self) -> None:
+        self.image.meta_data = {
+            "author": "Example Photographer",
+            "author_url": "https://example.com/photographer",
+            "copyright": "© Example Photographer",
+            "license": "CC BY 4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        }
+
+        attribution = FinderImageAsset(self.image).attribution
+
+        self.assertIsNotNone(attribution)
+        self.assertEqual(attribution.creator_name, "Example Photographer")
+        self.assertEqual(attribution.copyright_notice, "© Example Photographer")
+        self.assertEqual(attribution.license_name, "CC BY 4.0")
+
     def test_reference_is_persisted_in_typed_extension(self) -> None:
         picture = Picture.objects.create(backend="finder")
         backend = get_backend("finder")

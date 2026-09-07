@@ -1,0 +1,31 @@
+{% load i18n %}
+<div
+  class="djangocms-picture-unsplash"
+  data-unsplash-picker
+  data-access-key="{{ widget.access_key }}"
+  data-application-name="{{ widget.application_name }}"
+  data-per-page="{{ widget.per_page }}"
+  data-content-filter="{{ widget.content_filter }}"
+  data-orientation="{{ widget.orientation }}"
+>
+  {% include "django/forms/widgets/textarea.html" %}
+  <div class="djangocms-picture-unsplash-preview" data-unsplash-current{% if not widget.preview_url %} hidden{% endif %}>
+    <img src="{{ widget.preview_url }}" alt="" data-unsplash-preview>
+    <span>
+      <span data-unsplash-label>{{ widget.label }}</span>
+      <small data-unsplash-attribution>
+        {% translate "Photo by" %}
+        <a href="{{ widget.photographer_url }}" target="_blank" rel="noopener noreferrer" data-unsplash-photographer>{{ widget.photographer_name }}</a>
+        {% translate "on" %}
+        <a href="{{ widget.photo_url }}" target="_blank" rel="noopener noreferrer" data-unsplash-provider>Unsplash</a>
+      </small>
+    </span>
+  </div>
+  <div class="djangocms-picture-unsplash-search">
+    <input type="search" placeholder="{% translate 'Search Unsplash' %}" data-unsplash-query>
+    <button type="button" data-unsplash-search>{% translate "Search" %}</button>
+    <button type="button" data-unsplash-clear{% if not widget.preview_url %} hidden{% endif %}>{% translate "Clear" %}</button>
+  </div>
+  <div class="djangocms-picture-unsplash-status" role="status" aria-live="polite" data-unsplash-status></div>
+  <div class="djangocms-picture-unsplash-results" data-unsplash-results></div>
+</div>

@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import get_language
 
+from djangocms_picture.backends.types import ImageAttribution
+
 
 class FrontifyPayloadError(ValueError):
     """Raised when a picker payload cannot be stored or rendered safely."""
@@ -56,6 +58,23 @@ def normalize_frontify_payload(
     alt_text = payload.get("alt_text") or metadata.get(metadata_key) or ""
     label = payload.get("label") or payload.get("title") or payload.get("name") or str(identifier)
     focal_point = _focal_point(payload.get("focal_point") or payload.get("focalPoint"))
+    attribution = ImageAttribution.from_mapping(payload.get("attribution"))
+    if attribution is None:
+        attribution = ImageAttribution.from_mapping(
+            {
+                "creator_name": payload.get("creator_name")
+                or payload.get("author")
+                or metadata.get("Author")
+                or metadata.get("author"),
+                "creator_url": payload.get("creator_url") or payload.get("author_url"),
+                "copyright_notice": payload.get("copyright_notice")
+                or payload.get("copyright")
+                or metadata.get("Copyright")
+                or metadata.get("copyright"),
+                "license_name": payload.get("license_name") or payload.get("license"),
+                "license_url": payload.get("license_url"),
+            }
+        )
 
     return {
         "id": str(identifier),
@@ -74,6 +93,7 @@ def normalize_frontify_payload(
         "original_url": original_url,
         "focal_point": focal_point,
         "expires_at": expires_at,
+        "attribution": attribution.as_dict() if attribution else {},
     }
 
 

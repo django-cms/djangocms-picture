@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -7,7 +8,14 @@ from django.utils.translation import gettext_lazy as _
 from finder.models.file import AbstractFileModel, FileModel
 
 from djangocms_picture.backends.base import BaseImageAsset, BasePictureBackend, PictureBackendError
-from djangocms_picture.backends.types import BackendCapabilities, ImageInfo, PictureReference, Rendition, RenditionSpec
+from djangocms_picture.backends.types import (
+    BackendCapabilities,
+    ImageAttribution,
+    ImageInfo,
+    PictureReference,
+    Rendition,
+    RenditionSpec,
+)
 
 from .forms import FinderImageChoiceField
 from .models import FinderPictureReference
@@ -28,6 +36,17 @@ class FinderImageAsset(BaseImageAsset):
     def __init__(self, image: AbstractFileModel) -> None:
         self.image = image
         self.ambit = image.folder.get_ambit()
+        metadata = image.meta_data if isinstance(image.meta_data, Mapping) else {}
+        attribution = ImageAttribution.from_mapping(
+            metadata.get("attribution")
+            or {
+                "creator_name": metadata.get("creator_name") or metadata.get("author"),
+                "creator_url": metadata.get("creator_url") or metadata.get("author_url"),
+                "copyright_notice": metadata.get("copyright_notice") or metadata.get("copyright"),
+                "license_name": metadata.get("license_name") or metadata.get("license"),
+                "license_url": metadata.get("license_url"),
+            }
+        )
         self.reference = PictureReference(
             backend="finder",
             id=str(image.pk),
@@ -39,6 +58,7 @@ class FinderImageAsset(BaseImageAsset):
                 "alt_text": image.meta_data.get("alt_text", image.name),
                 "mime_type": image.mime_type,
                 "revision": image.sha1,
+                "attribution": attribution.as_dict() if attribution else {},
             },
         )
         self.info = ImageInfo(
@@ -47,6 +67,7 @@ class FinderImageAsset(BaseImageAsset):
             height=image.height or None,
             alt_text=image.meta_data.get("alt_text", image.name),
         )
+        self.attribution = attribution
 
     def get_original(self) -> Rendition:
         return Rendition(
