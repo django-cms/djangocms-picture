@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: djangocms-picture\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-08 08:53+0200\n"
 "PO-Revision-Date: 2026-09-08 00:00+0200\n"
@@ -31,7 +31,9 @@ msgstr "De geselecteerde Finder-afbeelding bestaat niet meer."
 
 #: forms.py:15
 msgid "The selected finder image is not available in this image source."
-msgstr "De geselecteerde Finder-afbeelding is niet beschikbaar in deze afbeeldingsbron."
+msgstr ""
+"De geselecteerde Finder-afbeelding is niet beschikbaar in deze "
+"afbeeldingsbron."
 
 #: forms.py:16
 msgid "The selected finder image is in the trash."
