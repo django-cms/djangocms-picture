@@ -6,6 +6,10 @@ recursive-include djangocms_picture/contrib/frontify/templates *
 recursive-include djangocms_picture/contrib/frontify/static *
 recursive-include djangocms_picture/contrib/unsplash/templates *
 recursive-include djangocms_picture/contrib/unsplash/static *
+recursive-include djangocms_picture/contrib/filer/locale *
+recursive-include djangocms_picture/contrib/finder/locale *
+recursive-include djangocms_picture/contrib/frontify/locale *
+recursive-include djangocms_picture/contrib/unsplash/locale *
 recursive-include djangocms_picture/locale *
 recursive-exclude * *.py[co]
 recursive-include tests *.py

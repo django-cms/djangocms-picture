@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: ko\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "djangocms-picture용 Unsplash 백엔드"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Unsplash 관리자 엔드포인트"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "유효한 Unsplash 이미지를 선택하세요."
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "선택한 이미지"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "초점"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "자르기"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "자동 피사체"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "얼굴"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "높은 디테일(엔트로피)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "가장자리"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "가운데"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "위"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "아래"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "왼쪽"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "오른쪽"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "출력 형식"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "자동"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "품질"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "선택 저장"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "취소"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "Unsplash 검색"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "방향"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "색상"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "정렬"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "검색"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "검색 결과 페이지"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "이전"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "다음"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "사진:"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "출처:"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "Unsplash 이미지 선택"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "지우기"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "Unsplash 이미지 선택"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "모든 방향"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "가로"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "세로"
+
+#: views.py:36
+msgid "Square"
+msgstr "정사각형"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "모든 색상"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "흑백"
+
+#: views.py:43
+msgid "Black"
+msgstr "검정"
+
+#: views.py:44
+msgid "White"
+msgstr "흰색"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "노랑"
+
+#: views.py:46
+msgid "Orange"
+msgstr "주황"
+
+#: views.py:47
+msgid "Red"
+msgstr "빨강"
+
+#: views.py:48
+msgid "Purple"
+msgstr "보라"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "마젠타"
+
+#: views.py:50
+msgid "Green"
+msgstr "초록"
+
+#: views.py:51
+msgid "Teal"
+msgstr "청록"
+
+#: views.py:52
+msgid "Blue"
+msgstr "파랑"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "관련도순"
+
+#: views.py:58
+msgid "Latest"
+msgstr "최신순"

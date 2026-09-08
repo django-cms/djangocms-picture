@@ -1,0 +1,229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: ar\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "واجهة Unsplash الخلفية لـ djangocms-picture"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "نقاط نهاية إدارة Unsplash"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "حدد صورة Unsplash صالحة."
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "الصورة المحددة"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "نقطة التركيز"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "الاقتصاص"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "الموضوع التلقائي"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "الوجوه"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "تفاصيل عالية (الإنتروبيا)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "الحواف"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "الوسط"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "الأعلى"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "الأسفل"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "اليسار"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "اليمين"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "تنسيق الإخراج"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "تلقائي"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "الجودة"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "حفظ التحديد"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "البحث في Unsplash"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "الاتجاه"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "اللون"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "الترتيب"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "بحث"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "صفحات نتائج البحث"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "السابق"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "التالي"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "صورة بواسطة"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "على"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "تحديد صورة Unsplash"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "مسح"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "تحديد صورة من Unsplash"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "أي اتجاه"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "أفقي"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "عمودي"
+
+#: views.py:36
+msgid "Square"
+msgstr "مربع"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "أي لون"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "أبيض وأسود"
+
+#: views.py:43
+msgid "Black"
+msgstr "أسود"
+
+#: views.py:44
+msgid "White"
+msgstr "أبيض"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "أصفر"
+
+#: views.py:46
+msgid "Orange"
+msgstr "برتقالي"
+
+#: views.py:47
+msgid "Red"
+msgstr "أحمر"
+
+#: views.py:48
+msgid "Purple"
+msgstr "أرجواني"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "فوشيا"
+
+#: views.py:50
+msgid "Green"
+msgstr "أخضر"
+
+#: views.py:51
+msgid "Teal"
+msgstr "أزرق مخضر"
+
+#: views.py:52
+msgid "Blue"
+msgstr "أزرق"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "ذو صلة"
+
+#: views.py:58
+msgid "Latest"
+msgstr "الأحدث"

@@ -2,228 +2,250 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-13 18:18+0100\n"
-"PO-Revision-Date: 2016-09-07 09:44+0000\n"
+"POT-Creation-Date: 2026-09-08 09:04+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
 "Language-Team: Bengali (https://www.transifex.com/divio/teams/58664/bn/)\n"
+"Language: bn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: bn\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: cms_plugins.py:17 models.py:72
+#: apps.py:7
+msgid "django CMS Picture"
+msgstr "django CMS ছবি"
+
+#: cms_plugins.py:23
 msgid "Image"
-msgstr ""
+msgstr "ছবি"
 
-#: cms_plugins.py:28
-msgid "Advanced settings"
-msgstr ""
+#: cms_plugins.py:33 models.py:158
+msgid "Attributes"
+msgstr "বৈশিষ্ট্য"
 
-#: cms_plugins.py:39
-msgid "Link settings"
-msgstr ""
+#: cms_plugins.py:43
+msgid "Cropping"
+msgstr "ক্রপিং"
 
-#: cms_plugins.py:47
-msgid "Cropping settings"
-msgstr ""
+#: cms_plugins.py:51 models.py:189
+msgid "Link"
+msgstr "লিংক"
 
-#: models.py:25
+#: fields.py:110
+msgid "Select a valid image source."
+msgstr "একটি বৈধ ছবির উৎস নির্বাচন করুন।"
+
+#: fields.py:111
+msgid "Select an image from this source."
+msgstr "এই উৎস থেকে একটি ছবি নির্বাচন করুন।"
+
+#: fields.py:144 forms.py:19 forms.py:53 models.py:97
+msgid "Image source"
+msgstr "ছবির উৎস"
+
+#: models.py:45
 msgid "Align left"
-msgstr ""
+msgstr "বামে সারিবদ্ধ করুন"
 
-#: models.py:26
+#: models.py:46
 msgid "Align right"
-msgstr ""
+msgstr "ডানে সারিবদ্ধ করুন"
 
-#: models.py:27
+#: models.py:47
 msgid "Align center"
-msgstr ""
+msgstr "কেন্দ্রে সারিবদ্ধ করুন"
 
-#: models.py:35
-msgid "Open in new window"
-msgstr ""
-
-#: models.py:36
-msgid "Open in same window"
-msgstr ""
-
-#: models.py:37
-msgid "Delegate to parent"
-msgstr ""
-
-#: models.py:38
-msgid "Delegate to top"
-msgstr ""
-
-#: models.py:42
-msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
-msgstr ""
-
-#: models.py:43
-msgid "Yes"
-msgstr ""
-
-#: models.py:44
-msgid "No"
-msgstr ""
-
-#: models.py:50
+#: models.py:56
 msgid "Default"
-msgstr ""
+msgstr "ডিফল্ট"
 
-#: models.py:66
-msgid "Template"
-msgstr ""
+#: models.py:73
+msgid "Open in new window"
+msgstr "নতুন উইন্ডোতে খুলুন"
 
-#: models.py:79
-msgid "External image"
-msgstr ""
+#: models.py:74
+msgid "Open in same window"
+msgstr "একই উইন্ডোতে খুলুন"
+
+#: models.py:75
+msgid "Delegate to parent"
+msgstr "মূল উইন্ডোতে দিন"
+
+#: models.py:76
+msgid "Delegate to top"
+msgstr "শীর্ষ উইন্ডোতে দিন"
+
+#: models.py:80
+msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
+msgstr "settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES-কে সিদ্ধান্ত নিতে দিন"
+
+#: models.py:81
+msgid "Yes"
+msgstr "হ্যাঁ"
 
 #: models.py:82
-msgid ""
-"If provided, overrides the embedded image. Certain options such as cropping "
-"are not applicable to external images."
-msgstr ""
+msgid "No"
+msgstr "না"
 
-#: models.py:86
-msgid "Width"
-msgstr ""
+#: models.py:91
+msgid "Template"
+msgstr "টেমপ্লেট"
 
-#: models.py:89
-msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr ""
+#: models.py:103
+msgid "Image model"
+msgstr "ছবির মডেল"
 
-#: models.py:93
-msgid "Height"
-msgstr ""
-
-#: models.py:96
-msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr ""
-
-#: models.py:100
-msgid "Alignment"
-msgstr ""
-
-#: models.py:104
-msgid "Aligns the image according to the selected option."
-msgstr ""
-
-#: models.py:107
-msgid "Caption text"
-msgstr ""
-
-#: models.py:109
-msgid "Provide a description, attribution, copyright or other information."
-msgstr ""
-
-#: models.py:112
-msgid "Attributes"
-msgstr ""
-
-#: models.py:118
-msgid "External URL"
-msgstr ""
+#: models.py:110
+msgid "Image object ID"
+msgstr "ছবির অবজেক্ট আইডি"
 
 #: models.py:121
-msgid "Wraps the image in a link to an external URL."
-msgstr ""
+msgid "Image source configuration"
+msgstr "ছবির উৎসের কনফিগারেশন"
 
-#: models.py:124
-msgid "Internal URL"
-msgstr ""
-
-#: models.py:128
-msgid "Wraps the image in a link to an internal (page) URL."
-msgstr ""
+#: models.py:127
+msgid "Width"
+msgstr "প্রস্থ"
 
 #: models.py:131
-msgid "Link target"
-msgstr ""
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "পিক্সেলে সংখ্যা হিসেবে ছবির প্রস্থ। উদাহরণ: \"720\", \"720px\" নয়।"
 
-#: models.py:137
-msgid "Link attributes"
-msgstr ""
+#: models.py:136
+msgid "Height"
+msgstr "উচ্চতা"
 
-#: models.py:144
-msgid "Automatic scaling"
-msgstr ""
+#: models.py:140
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "পিক্সেলে সংখ্যা হিসেবে ছবির উচ্চতা। উদাহরণ: \"720\", \"720px\" নয়।"
 
-#: models.py:147
-msgid "Uses the placeholder dimensions to automatically calculate the size."
-msgstr ""
+#: models.py:145
+msgid "Alignment"
+msgstr "সারিবদ্ধকরণ"
+
+#: models.py:149
+msgid "Aligns the image according to the selected option."
+msgstr "নির্বাচিত বিকল্প অনুযায়ী ছবিটি সারিবদ্ধ করে।"
 
 #: models.py:152
-msgid "Use original image"
-msgstr ""
+msgid "Caption text"
+msgstr "ক্যাপশনের লেখা"
 
 #: models.py:155
+msgid "Provide a description, attribution, copyright or other information."
+msgstr "বিবরণ, স্বীকৃতি, কপিরাইট বা অন্যান্য তথ্য দিন।"
+
+#: models.py:164
+msgid "External URL"
+msgstr "বাহ্যিক URL"
+
+#: models.py:168
+msgid "Wraps the image in a link to an external URL."
+msgstr "ছবিটিকে একটি বাহ্যিক URL-এর লিংকে মোড়ায়।"
+
+#: models.py:171
+msgid "Internal URL"
+msgstr "অভ্যন্তরীণ URL"
+
+#: models.py:175
+msgid "Wraps the image in a link to an internal (page) URL."
+msgstr "ছবিটিকে একটি অভ্যন্তরীণ (পৃষ্ঠা) URL-এর লিংকে মোড়ায়।"
+
+#: models.py:178
+msgid "Link target"
+msgstr "লিংকের লক্ষ্য"
+
+#: models.py:184
+msgid "Link attributes"
+msgstr "লিংকের বৈশিষ্ট্য"
+
+#: models.py:195
+msgid "Automatic scaling"
+msgstr "স্বয়ংক্রিয় স্কেলিং"
+
+#: models.py:198
+msgid "Uses the placeholder dimensions to automatically calculate the size."
+msgstr "আকার স্বয়ংক্রিয়ভাবে গণনা করতে প্লেসহোল্ডারের মাত্রা ব্যবহার করে।"
+
+#: models.py:203
+msgid "Use original image"
+msgstr "মূল ছবি ব্যবহার করুন"
+
+#: models.py:206
 msgid "Outputs the raw image without cropping."
-msgstr ""
+msgstr "ক্রপ না করে কাঁচা ছবিটি আউটপুট করে।"
 
-#: models.py:160
+#: models.py:211
 msgid "Crop image"
-msgstr ""
+msgstr "ছবি ক্রপ করুন"
 
-#: models.py:163
+#: models.py:214
 msgid ""
 "Crops the image according to the thumbnail settings provided in the "
 "template."
-msgstr ""
+msgstr "টেমপ্লেটে দেওয়া থাম্বনেইল সেটিং অনুযায়ী ছবিটি ক্রপ করে।"
 
-#: models.py:166
+#: models.py:217
 msgid "Upscale image"
-msgstr ""
+msgstr "ছবি বড় করুন"
 
-#: models.py:169
+#: models.py:220
 msgid ""
 "Upscales the image to the size of the thumbnail settings in the template."
-msgstr ""
+msgstr "টেমপ্লেটের থাম্বনেইল সেটিংয়ের আকারে ছবিটি বড় করে।"
 
-#: models.py:172
+#: models.py:223
 msgid "Use responsive image"
-msgstr ""
+msgstr "রেসপনসিভ ছবি ব্যবহার করুন"
 
-#: models.py:177
+#: models.py:228
 msgid ""
 "Uses responsive image technique to choose better image to display based upon"
 " screen viewport. This configuration only applies to uploaded images "
 "(external pictures will not be affected). "
 msgstr ""
+"স্ক্রিন ভিউপোর্ট অনুযায়ী প্রদর্শনের জন্য ভালো ছবি বেছে নিতে রেসপনসিভ ছবি "
+"প্রযুক্তি ব্যবহার করে। এই কনফিগারেশন শুধু আপলোড করা ছবিতে প্রযোজ্য (বাহ্যিক "
+"ছবি প্রভাবিত হবে না)। "
 
-#: models.py:185
+#: models.py:236
 msgid "Thumbnail options"
-msgstr ""
+msgstr "থাম্বনেইল বিকল্প"
 
-#: models.py:188
+#: models.py:239
 msgid ""
 "Overrides width, height, and crop; scales up to the provided preset "
 "dimensions."
 msgstr ""
+"প্রস্থ, উচ্চতা ও ক্রপ উপেক্ষা করে; দেওয়া প্রিসেট মাত্রা পর্যন্ত বড় করে।"
 
-#: models.py:216
+#: models.py:400
 msgid "<file is missing>"
-msgstr ""
+msgstr "<ফাইলটি নেই>"
 
-#: models.py:264
+#: models.py:507
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
 msgstr ""
+"আপনি বাহ্যিক ও অভ্যন্তরীণ উভয় লিংক দিয়েছেন। শুধু একটি বিকল্প অনুমোদিত।"
 
-#: models.py:271
+#: models.py:521
 msgid ""
 "You need to add either an image, or a URL linking to an external image."
-msgstr ""
+msgstr "আপনাকে একটি ছবি অথবা বাহ্যিক ছবির URL যোগ করতে হবে।"
 
-#: models.py:295
+#: models.py:547
 #, python-brace-format
 msgid ""
 "Invalid cropping settings. You cannot combine \"{field_a}\" with "
 "\"{field_b}\"."
 msgstr ""
+"অবৈধ ক্রপিং সেটিং। আপনি \"{field_a}\"-এর সঙ্গে \"{field_b}\" একত্র করতে "
+"পারবেন না।"

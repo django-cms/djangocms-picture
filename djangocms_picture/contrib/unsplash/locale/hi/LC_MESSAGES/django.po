@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: hi\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "djangocms-picture के लिए Unsplash बैकएंड"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Unsplash व्यवस्थापन एंडपॉइंट"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "एक मान्य Unsplash छवि चुनें।"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "चयनित छवि"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "फ़ोकस बिंदु"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "क्रॉपिंग"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "स्वचालित विषय"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "चेहरे"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "उच्च विवरण (एंट्रॉपी)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "किनारे"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "केंद्र"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "ऊपर"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "नीचे"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "बाएँ"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "दाएँ"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "आउटपुट प्रारूप"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "स्वचालित"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "गुणवत्ता"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "चयन सहेजें"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "रद्द करें"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "Unsplash में खोजें"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "अभिविन्यास"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "रंग"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "क्रम"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "खोजें"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "खोज परिणाम पृष्ठ"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "पिछला"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "अगला"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "फ़ोटो:"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "पर"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "Unsplash छवि चुनें"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "साफ़ करें"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "Unsplash से एक छवि चुनें"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "कोई भी अभिविन्यास"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "लैंडस्केप"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "पोर्ट्रेट"
+
+#: views.py:36
+msgid "Square"
+msgstr "वर्गाकार"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "कोई भी रंग"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "श्वेत-श्याम"
+
+#: views.py:43
+msgid "Black"
+msgstr "काला"
+
+#: views.py:44
+msgid "White"
+msgstr "सफ़ेद"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "पीला"
+
+#: views.py:46
+msgid "Orange"
+msgstr "नारंगी"
+
+#: views.py:47
+msgid "Red"
+msgstr "लाल"
+
+#: views.py:48
+msgid "Purple"
+msgstr "बैंगनी"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "मैजेंटा"
+
+#: views.py:50
+msgid "Green"
+msgstr "हरा"
+
+#: views.py:51
+msgid "Teal"
+msgstr "टील"
+
+#: views.py:52
+msgid "Blue"
+msgstr "नीला"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "प्रासंगिक"
+
+#: views.py:58
+msgid "Latest"
+msgstr "नवीनतम"

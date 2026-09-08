@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: fi\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "djangocms-picturen Unsplash-taustajärjestelmä"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Unsplashin ylläpidon päätepisteet"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "Valitse kelvollinen Unsplash-kuva."
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "Valittu kuva"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "Kohdistuspiste"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "Rajaus"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "Automaattinen kohde"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "Kasvot"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "Paljon yksityiskohtia (entropia)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "Reunat"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "Keskellä"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "Ylhäällä"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "Alhaalla"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "Vasemmalla"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "Oikealla"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "Tulostusmuoto"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "Automaattinen"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "Laatu"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "Tallenna valinta"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "Hae Unsplashista"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "Suunta"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "Väri"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "Järjestys"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "Hae"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "Hakutulossivut"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "Edellinen"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "Seuraava"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "Kuva:"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "palvelussa"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "Valitse Unsplash-kuva"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "Tyhjennä"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "Valitse kuva Unsplashista"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "Mikä tahansa suunta"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "Vaaka"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "Pysty"
+
+#: views.py:36
+msgid "Square"
+msgstr "Neliö"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "Mikä tahansa väri"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "Mustavalkoinen"
+
+#: views.py:43
+msgid "Black"
+msgstr "Musta"
+
+#: views.py:44
+msgid "White"
+msgstr "Valkoinen"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "Keltainen"
+
+#: views.py:46
+msgid "Orange"
+msgstr "Oranssi"
+
+#: views.py:47
+msgid "Red"
+msgstr "Punainen"
+
+#: views.py:48
+msgid "Purple"
+msgstr "Violetti"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "Magenta"
+
+#: views.py:50
+msgid "Green"
+msgstr "Vihreä"
+
+#: views.py:51
+msgid "Teal"
+msgstr "Sinivihreä"
+
+#: views.py:52
+msgid "Blue"
+msgstr "Sininen"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "Osuvimmat"
+
+#: views.py:58
+msgid "Latest"
+msgstr "Uusimmat"

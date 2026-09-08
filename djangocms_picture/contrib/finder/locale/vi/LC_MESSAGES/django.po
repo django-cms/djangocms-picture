@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: vi\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8
+msgid "djangocms-picture finder backend"
+msgstr "Phần phụ trợ Finder cho djangocms-picture"
+
+#: backend.py:107
+msgid "Finder"
+msgstr "Finder"
+
+#: forms.py:14
+msgid "The selected finder image no longer exists."
+msgstr "Ảnh Finder đã chọn không còn tồn tại."
+
+#: forms.py:15
+msgid "The selected finder image is not available in this image source."
+msgstr "Ảnh Finder đã chọn không khả dụng trong nguồn ảnh này."
+
+#: forms.py:16
+msgid "The selected finder image is in the trash."
+msgstr "Ảnh Finder đã chọn nằm trong thùng rác."

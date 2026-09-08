@@ -1,0 +1,244 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 09:04+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:7
+msgid "django CMS Picture"
+msgstr "django CMS 图片"
+
+#: cms_plugins.py:23
+msgid "Image"
+msgstr "图像"
+
+#: cms_plugins.py:33 models.py:158
+msgid "Attributes"
+msgstr "属性"
+
+#: cms_plugins.py:43
+msgid "Cropping"
+msgstr "裁剪"
+
+#: cms_plugins.py:51 models.py:189
+msgid "Link"
+msgstr "链接"
+
+#: fields.py:110
+msgid "Select a valid image source."
+msgstr "请选择有效的图像源。"
+
+#: fields.py:111
+msgid "Select an image from this source."
+msgstr "请从此来源选择一张图像。"
+
+#: fields.py:144 forms.py:19 forms.py:53 models.py:97
+msgid "Image source"
+msgstr "图像源"
+
+#: models.py:45
+msgid "Align left"
+msgstr "左对齐"
+
+#: models.py:46
+msgid "Align right"
+msgstr "右对齐"
+
+#: models.py:47
+msgid "Align center"
+msgstr "居中对齐"
+
+#: models.py:56
+msgid "Default"
+msgstr "默认"
+
+#: models.py:73
+msgid "Open in new window"
+msgstr "在新窗口中打开"
+
+#: models.py:74
+msgid "Open in same window"
+msgstr "在同一窗口中打开"
+
+#: models.py:75
+msgid "Delegate to parent"
+msgstr "交由父窗口处理"
+
+#: models.py:76
+msgid "Delegate to top"
+msgstr "交由顶层窗口处理"
+
+#: models.py:80
+msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
+msgstr "由 settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES 决定"
+
+#: models.py:81
+msgid "Yes"
+msgstr "是"
+
+#: models.py:82
+msgid "No"
+msgstr "否"
+
+#: models.py:91
+msgid "Template"
+msgstr "模板"
+
+#: models.py:103
+msgid "Image model"
+msgstr "图像模型"
+
+#: models.py:110
+msgid "Image object ID"
+msgstr "图像对象 ID"
+
+#: models.py:121
+msgid "Image source configuration"
+msgstr "图像源配置"
+
+#: models.py:127
+msgid "Width"
+msgstr "宽度"
+
+#: models.py:131
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "图像宽度，以像素数表示。例如：\"720\"，而不是 \"720px\"。"
+
+#: models.py:136
+msgid "Height"
+msgstr "高度"
+
+#: models.py:140
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "图像高度，以像素数表示。例如：\"720\"，而不是 \"720px\"。"
+
+#: models.py:145
+msgid "Alignment"
+msgstr "对齐方式"
+
+#: models.py:149
+msgid "Aligns the image according to the selected option."
+msgstr "根据所选选项对齐图像。"
+
+#: models.py:152
+msgid "Caption text"
+msgstr "说明文字"
+
+#: models.py:155
+msgid "Provide a description, attribution, copyright or other information."
+msgstr "提供描述、署名、版权或其他信息。"
+
+#: models.py:164
+msgid "External URL"
+msgstr "外部 URL"
+
+#: models.py:168
+msgid "Wraps the image in a link to an external URL."
+msgstr "将图像包装为指向外部 URL 的链接。"
+
+#: models.py:171
+msgid "Internal URL"
+msgstr "内部 URL"
+
+#: models.py:175
+msgid "Wraps the image in a link to an internal (page) URL."
+msgstr "将图像包装为指向内部（页面）URL 的链接。"
+
+#: models.py:178
+msgid "Link target"
+msgstr "链接目标"
+
+#: models.py:184
+msgid "Link attributes"
+msgstr "链接属性"
+
+#: models.py:195
+msgid "Automatic scaling"
+msgstr "自动缩放"
+
+#: models.py:198
+msgid "Uses the placeholder dimensions to automatically calculate the size."
+msgstr "使用占位区域的尺寸自动计算大小。"
+
+#: models.py:203
+msgid "Use original image"
+msgstr "使用原始图像"
+
+#: models.py:206
+msgid "Outputs the raw image without cropping."
+msgstr "输出未经裁剪的原始图像。"
+
+#: models.py:211
+msgid "Crop image"
+msgstr "裁剪图像"
+
+#: models.py:214
+msgid ""
+"Crops the image according to the thumbnail settings provided in the "
+"template."
+msgstr "根据模板中提供的缩略图设置裁剪图像。"
+
+#: models.py:217
+msgid "Upscale image"
+msgstr "放大图像"
+
+#: models.py:220
+msgid ""
+"Upscales the image to the size of the thumbnail settings in the template."
+msgstr "将图像放大到模板中缩略图设置的大小。"
+
+#: models.py:223
+msgid "Use responsive image"
+msgstr "使用响应式图像"
+
+#: models.py:228
+msgid ""
+"Uses responsive image technique to choose better image to display based upon"
+" screen viewport. This configuration only applies to uploaded images "
+"(external pictures will not be affected). "
+msgstr "使用响应式图像技术，根据屏幕视口选择更合适的图像。此配置仅适用于上传的图像（外部图像不受影响）。 "
+
+#: models.py:236
+msgid "Thumbnail options"
+msgstr "缩略图选项"
+
+#: models.py:239
+msgid ""
+"Overrides width, height, and crop; scales up to the provided preset "
+"dimensions."
+msgstr "覆盖宽度、高度和裁剪设置；最大放大到给定的预设尺寸。"
+
+#: models.py:400
+msgid "<file is missing>"
+msgstr "<文件缺失>"
+
+#: models.py:507
+msgid ""
+"You have given both external and internal links. Only one option is allowed."
+msgstr "同时提供了外部链接和内部链接。只能选择其中一种。"
+
+#: models.py:521
+msgid ""
+"You need to add either an image, or a URL linking to an external image."
+msgstr "必须添加图像或指向外部图像的 URL。"
+
+#: models.py:547
+#, python-brace-format
+msgid ""
+"Invalid cropping settings. You cannot combine \"{field_a}\" with "
+"\"{field_b}\"."
+msgstr "裁剪设置无效。不能同时使用“{field_a}”和“{field_b}”。"

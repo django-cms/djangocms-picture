@@ -2,228 +2,251 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-13 18:18+0100\n"
-"PO-Revision-Date: 2016-09-07 09:44+0000\n"
+"POT-Creation-Date: 2026-09-08 09:04+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
 "Language-Team: Vietnamese (https://www.transifex.com/divio/teams/58664/vi/)\n"
+"Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: vi\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: cms_plugins.py:17 models.py:72
+#: apps.py:7
+msgid "django CMS Picture"
+msgstr "Ảnh django CMS"
+
+#: cms_plugins.py:23
 msgid "Image"
-msgstr ""
+msgstr "Ảnh"
 
-#: cms_plugins.py:28
-msgid "Advanced settings"
-msgstr ""
+#: cms_plugins.py:33 models.py:158
+msgid "Attributes"
+msgstr "Thuộc tính"
 
-#: cms_plugins.py:39
-msgid "Link settings"
-msgstr ""
+#: cms_plugins.py:43
+msgid "Cropping"
+msgstr "Cắt ảnh"
 
-#: cms_plugins.py:47
-msgid "Cropping settings"
-msgstr ""
+#: cms_plugins.py:51 models.py:189
+msgid "Link"
+msgstr "Liên kết"
 
-#: models.py:25
+#: fields.py:110
+msgid "Select a valid image source."
+msgstr "Chọn một nguồn ảnh hợp lệ."
+
+#: fields.py:111
+msgid "Select an image from this source."
+msgstr "Chọn một ảnh từ nguồn này."
+
+#: fields.py:144 forms.py:19 forms.py:53 models.py:97
+msgid "Image source"
+msgstr "Nguồn ảnh"
+
+#: models.py:45
 msgid "Align left"
-msgstr ""
+msgstr "Căn trái"
 
-#: models.py:26
+#: models.py:46
 msgid "Align right"
-msgstr ""
+msgstr "Căn phải"
 
-#: models.py:27
+#: models.py:47
 msgid "Align center"
-msgstr ""
+msgstr "Căn giữa"
 
-#: models.py:35
-msgid "Open in new window"
-msgstr ""
-
-#: models.py:36
-msgid "Open in same window"
-msgstr ""
-
-#: models.py:37
-msgid "Delegate to parent"
-msgstr ""
-
-#: models.py:38
-msgid "Delegate to top"
-msgstr ""
-
-#: models.py:42
-msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
-msgstr ""
-
-#: models.py:43
-msgid "Yes"
-msgstr ""
-
-#: models.py:44
-msgid "No"
-msgstr ""
-
-#: models.py:50
+#: models.py:56
 msgid "Default"
-msgstr ""
+msgstr "Mặc định"
 
-#: models.py:66
-msgid "Template"
-msgstr ""
+#: models.py:73
+msgid "Open in new window"
+msgstr "Mở trong cửa sổ mới"
 
-#: models.py:79
-msgid "External image"
-msgstr ""
+#: models.py:74
+msgid "Open in same window"
+msgstr "Mở trong cùng cửa sổ"
+
+#: models.py:75
+msgid "Delegate to parent"
+msgstr "Chuyển cho cửa sổ cha"
+
+#: models.py:76
+msgid "Delegate to top"
+msgstr "Chuyển cho cửa sổ trên cùng"
+
+#: models.py:80
+msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
+msgstr "Để settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES quyết định"
+
+#: models.py:81
+msgid "Yes"
+msgstr "Có"
 
 #: models.py:82
-msgid ""
-"If provided, overrides the embedded image. Certain options such as cropping "
-"are not applicable to external images."
-msgstr ""
+msgid "No"
+msgstr "Không"
 
-#: models.py:86
-msgid "Width"
-msgstr ""
+#: models.py:91
+msgid "Template"
+msgstr "Mẫu"
 
-#: models.py:89
-msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr ""
+#: models.py:103
+msgid "Image model"
+msgstr "Mô hình ảnh"
 
-#: models.py:93
-msgid "Height"
-msgstr ""
-
-#: models.py:96
-msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr ""
-
-#: models.py:100
-msgid "Alignment"
-msgstr ""
-
-#: models.py:104
-msgid "Aligns the image according to the selected option."
-msgstr ""
-
-#: models.py:107
-msgid "Caption text"
-msgstr ""
-
-#: models.py:109
-msgid "Provide a description, attribution, copyright or other information."
-msgstr ""
-
-#: models.py:112
-msgid "Attributes"
-msgstr ""
-
-#: models.py:118
-msgid "External URL"
-msgstr ""
+#: models.py:110
+msgid "Image object ID"
+msgstr "ID đối tượng ảnh"
 
 #: models.py:121
-msgid "Wraps the image in a link to an external URL."
-msgstr ""
+msgid "Image source configuration"
+msgstr "Cấu hình nguồn ảnh"
 
-#: models.py:124
-msgid "Internal URL"
-msgstr ""
-
-#: models.py:128
-msgid "Wraps the image in a link to an internal (page) URL."
-msgstr ""
+#: models.py:127
+msgid "Width"
+msgstr "Chiều rộng"
 
 #: models.py:131
-msgid "Link target"
-msgstr ""
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "Chiều rộng ảnh bằng số pixel. Ví dụ: \"720\", không phải \"720px\"."
 
-#: models.py:137
-msgid "Link attributes"
-msgstr ""
+#: models.py:136
+msgid "Height"
+msgstr "Chiều cao"
 
-#: models.py:144
-msgid "Automatic scaling"
-msgstr ""
+#: models.py:140
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "Chiều cao ảnh bằng số pixel. Ví dụ: \"720\", không phải \"720px\"."
 
-#: models.py:147
-msgid "Uses the placeholder dimensions to automatically calculate the size."
-msgstr ""
+#: models.py:145
+msgid "Alignment"
+msgstr "Căn chỉnh"
+
+#: models.py:149
+msgid "Aligns the image according to the selected option."
+msgstr "Căn chỉnh ảnh theo tùy chọn đã chọn."
 
 #: models.py:152
-msgid "Use original image"
-msgstr ""
+msgid "Caption text"
+msgstr "Văn bản chú thích"
 
 #: models.py:155
+msgid "Provide a description, attribution, copyright or other information."
+msgstr "Cung cấp mô tả, ghi công, bản quyền hoặc thông tin khác."
+
+#: models.py:164
+msgid "External URL"
+msgstr "URL bên ngoài"
+
+#: models.py:168
+msgid "Wraps the image in a link to an external URL."
+msgstr "Bọc ảnh trong liên kết đến một URL bên ngoài."
+
+#: models.py:171
+msgid "Internal URL"
+msgstr "URL nội bộ"
+
+#: models.py:175
+msgid "Wraps the image in a link to an internal (page) URL."
+msgstr "Bọc ảnh trong liên kết đến một URL nội bộ (trang)."
+
+#: models.py:178
+msgid "Link target"
+msgstr "Đích liên kết"
+
+#: models.py:184
+msgid "Link attributes"
+msgstr "Thuộc tính liên kết"
+
+#: models.py:195
+msgid "Automatic scaling"
+msgstr "Tự động co giãn"
+
+#: models.py:198
+msgid "Uses the placeholder dimensions to automatically calculate the size."
+msgstr "Sử dụng kích thước vùng giữ chỗ để tự động tính kích thước."
+
+#: models.py:203
+msgid "Use original image"
+msgstr "Sử dụng ảnh gốc"
+
+#: models.py:206
 msgid "Outputs the raw image without cropping."
-msgstr ""
+msgstr "Hiển thị ảnh gốc mà không cắt."
 
-#: models.py:160
+#: models.py:211
 msgid "Crop image"
-msgstr ""
+msgstr "Cắt ảnh"
 
-#: models.py:163
+#: models.py:214
 msgid ""
 "Crops the image according to the thumbnail settings provided in the "
 "template."
-msgstr ""
+msgstr "Cắt ảnh theo thiết lập ảnh thu nhỏ được cung cấp trong mẫu."
 
-#: models.py:166
+#: models.py:217
 msgid "Upscale image"
-msgstr ""
+msgstr "Phóng to ảnh"
 
-#: models.py:169
+#: models.py:220
 msgid ""
 "Upscales the image to the size of the thumbnail settings in the template."
-msgstr ""
+msgstr "Phóng to ảnh đến kích thước của thiết lập ảnh thu nhỏ trong mẫu."
 
-#: models.py:172
+#: models.py:223
 msgid "Use responsive image"
-msgstr ""
+msgstr "Sử dụng ảnh đáp ứng"
 
-#: models.py:177
+#: models.py:228
 msgid ""
 "Uses responsive image technique to choose better image to display based upon"
 " screen viewport. This configuration only applies to uploaded images "
 "(external pictures will not be affected). "
 msgstr ""
+"Sử dụng kỹ thuật ảnh đáp ứng để chọn ảnh phù hợp hơn dựa trên khung nhìn màn"
+" hình. Cấu hình này chỉ áp dụng cho ảnh đã tải lên (ảnh bên ngoài không bị "
+"ảnh hưởng). "
 
-#: models.py:185
+#: models.py:236
 msgid "Thumbnail options"
-msgstr ""
+msgstr "Tùy chọn ảnh thu nhỏ"
 
-#: models.py:188
+#: models.py:239
 msgid ""
 "Overrides width, height, and crop; scales up to the provided preset "
 "dimensions."
 msgstr ""
+"Ghi đè chiều rộng, chiều cao và cắt ảnh; phóng to đến kích thước cài sẵn đã "
+"cung cấp."
 
-#: models.py:216
+#: models.py:400
 msgid "<file is missing>"
-msgstr ""
+msgstr "<thiếu tệp>"
 
-#: models.py:264
+#: models.py:507
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
 msgstr ""
+"Bạn đã cung cấp cả liên kết bên ngoài và nội bộ. Chỉ được phép chọn một."
 
-#: models.py:271
+#: models.py:521
 msgid ""
 "You need to add either an image, or a URL linking to an external image."
-msgstr ""
+msgstr "Bạn cần thêm một ảnh hoặc URL liên kết đến ảnh bên ngoài."
 
-#: models.py:295
+#: models.py:547
 #, python-brace-format
 msgid ""
 "Invalid cropping settings. You cannot combine \"{field_a}\" with "
 "\"{field_b}\"."
 msgstr ""
+"Thiết lập cắt ảnh không hợp lệ. Không thể kết hợp \"{field_a}\" với "
+"\"{field_b}\"."

@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: zh_Hant\n"
+"Language: zh_Hant\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "用於 djangocms-picture 的 Unsplash 後端"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Unsplash 管理端點"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "請選擇有效的 Unsplash 圖片。"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "已選圖片"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "焦點"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "裁切"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "自動主體"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "人臉"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "高細節（熵）"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "邊緣"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "置中"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "頂端"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "底端"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "左側"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "右側"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "輸出格式"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "自動"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "品質"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "儲存選擇"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "取消"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "搜尋 Unsplash"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "方向"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "顏色"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "排序"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "搜尋"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "搜尋結果頁"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "上一頁"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "下一頁"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "照片作者"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "來自"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "選擇 Unsplash 圖片"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "清除"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "選擇一張 Unsplash 圖片"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "任意方向"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "橫向"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "直向"
+
+#: views.py:36
+msgid "Square"
+msgstr "正方形"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "任意顏色"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "黑白"
+
+#: views.py:43
+msgid "Black"
+msgstr "黑色"
+
+#: views.py:44
+msgid "White"
+msgstr "白色"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "黃色"
+
+#: views.py:46
+msgid "Orange"
+msgstr "橙色"
+
+#: views.py:47
+msgid "Red"
+msgstr "紅色"
+
+#: views.py:48
+msgid "Purple"
+msgstr "紫色"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "洋紅色"
+
+#: views.py:50
+msgid "Green"
+msgstr "綠色"
+
+#: views.py:51
+msgid "Teal"
+msgstr "藍綠色"
+
+#: views.py:52
+msgid "Blue"
+msgstr "藍色"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "相關性"
+
+#: views.py:58
+msgid "Latest"
+msgstr "最新"

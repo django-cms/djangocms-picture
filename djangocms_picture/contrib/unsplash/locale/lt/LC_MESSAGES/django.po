@@ -1,0 +1,230 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 09:03+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: lt\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < "
+"11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? "
+"1 : n % 1 != 0 ? 2: 3);\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "„djangocms-picture“ Unsplash posistemė"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Unsplash administravimo galiniai taškai"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "Pasirinkite tinkamą Unsplash vaizdą."
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "Pasirinktas vaizdas"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "Fokusavimo taškas"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "Apkarpymas"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "Automatinis objektas"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "Veidai"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "Didelis detalumas (entropija)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "Kraštai"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "Centras"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "Viršus"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "Apačia"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "Kairė"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "Dešinė"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "Išvesties formatas"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "Automatiškai"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "Kokybė"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "Išsaugoti pasirinkimą"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "Atšaukti"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "Ieškoti Unsplash"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "Orientacija"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "Spalva"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "Rikiavimas"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "Ieškoti"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "Paieškos rezultatų puslapiai"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "Ankstesnis"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "Kitas"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "Nuotrauka:"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "platformoje"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "Pasirinkti Unsplash vaizdą"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "Išvalyti"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "Pasirinkti vaizdą iš Unsplash"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "Bet kokia orientacija"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "Gulsčias"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "Stačias"
+
+#: views.py:36
+msgid "Square"
+msgstr "Kvadratas"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "Bet kokia spalva"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "Nespalvota"
+
+#: views.py:43
+msgid "Black"
+msgstr "Juoda"
+
+#: views.py:44
+msgid "White"
+msgstr "Balta"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "Geltona"
+
+#: views.py:46
+msgid "Orange"
+msgstr "Oranžinė"
+
+#: views.py:47
+msgid "Red"
+msgstr "Raudona"
+
+#: views.py:48
+msgid "Purple"
+msgstr "Violetinė"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "Purpurinė"
+
+#: views.py:50
+msgid "Green"
+msgstr "Žalia"
+
+#: views.py:51
+msgid "Teal"
+msgstr "Melsvai žalia"
+
+#: views.py:52
+msgid "Blue"
+msgstr "Mėlyna"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "Aktualiausi"
+
+#: views.py:58
+msgid "Latest"
+msgstr "Naujausi"
