@@ -251,6 +251,8 @@ class AbstractPicture(CMSPlugin):
         on_delete=models.CASCADE,
     )
 
+    max_width = None
+
     class Meta:
         abstract = True
         indexes = [
@@ -573,6 +575,9 @@ class AbstractPicture(CMSPlugin):
             'DJANGOCMS_PICTURE_RESPONSIVE_IMAGES_VIEWPORT_BREAKPOINTS',
             [576, 768, 992],
         )
+        if self.max_width:
+            breakpoints = [bp for bp in breakpoints if bp <= self.max_width]
+
         return build_srcset(
             asset,
             widths=breakpoints,

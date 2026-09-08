@@ -72,10 +72,13 @@ to adapt and override them to your project's requirements.
 Optional djangocms-link integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Install the ``link`` extra and add ``djangocms_link`` to ``INSTALLED_APPS`` to
-use the djangocms-link 5+ destination picker for picture links::
+django CMS Picture can use the unified destination picker from
+``djangocms-link`` 5 or newer. Install it through the ``link`` extra::
 
     pip install "djangocms-picture[link]"
+
+Installing ``djangocms-link>=5`` directly is equivalent. Then explicitly
+enable the integration by adding ``djangocms_link`` to ``INSTALLED_APPS``::
 
     INSTALLED_APPS = [
         # ...
@@ -83,13 +86,33 @@ use the djangocms-link 5+ destination picker for picture links::
         "djangocms_picture",
     ]
 
-Run migrations after enabling the integration. Existing external and internal
-page links are copied into the new link field. The legacy URL and page fields
-remain in the database and continue to be used when djangocms-link 5 or newer
-is not installed as a Django app. When the new field contains an HTTP(S) URL or
-a django CMS page, the form also mirrors it into the corresponding legacy
-column. Link types that the legacy fields cannot represent, such as files,
-email addresses and anchors, are only stored in the new field.
+The integration is active if and only if version 5 or newer is installed and
+``djangocms_link`` is listed in ``INSTALLED_APPS``. Merely installing the
+Python package does not change the picture form, and versions older than 5 are
+ignored. Restart the application after changing ``INSTALLED_APPS`` and apply
+the normal package migrations::
+
+    python manage.py migrate djangocms_picture
+
+With the integration active, the picture plugin's Link fieldset contains one
+``djangocms-link`` field instead of the separate external URL and internal page
+fields. It supports every destination type provided by ``djangocms-link``,
+including pages, URLs, files, email addresses and anchors. Without the
+integration, the legacy URL and page inputs remain available and no
+``djangocms-link`` import is required.
+
+Migration ``0014_picture_link`` copies existing external URLs and internal
+pages into the unified link field. New HTTP(S) URLs and django CMS page links
+are also mirrored back to the legacy columns whenever a picture is saved. This
+keeps those two link types usable if the integration is later disabled and by
+older application code. Destination types that cannot be represented safely
+by the legacy fields, such as files, email addresses and anchors, live only in
+the unified field and therefore require the integration to resolve.
+
+Custom templates should render the resolved ``picture_link`` context variable
+or call ``instance.get_link``. Do not choose between ``link``, ``link_url`` and
+``link_page`` in templates; the resolver handles the active integration and
+the backwards-compatible fallback.
 
 Backend configuration and lifecycle
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
