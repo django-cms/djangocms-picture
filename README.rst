@@ -17,9 +17,8 @@ that allows you to add images on your site.
 
 
 
-*******************************************
 Contribute to this project and win rewards
-*******************************************
+===========================================
 
 Because this is a an open-source project, we welcome everyone to
 `get involved in the project <https://www.django-cms.org/en/contribute/>`_ and
@@ -385,38 +384,6 @@ Backend implementers should read
 for the missing finder resize contract is in
 `docs/finder-rendition-api-proposal.rst <docs/finder-rendition-api-proposal.rst>`_.
 
-Upgrading custom picture templates to 5.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Version 5.0 introduces backend-neutral image assets. Existing custom templates
-for the picture plugin must be reviewed and may require adjustment. In
-particular, ``instance.picture`` contains the generic Django object for local
-model-backed sources such as filer and finder, while ``instance.external_picture``
-is a compatibility accessor for the URL backend.
-Templates supporting every backend should use:
-
-* ``instance.img_src`` for the rendered URL;
-* ``instance.image_alt_text`` for the backend-provided alternative text;
-* ``img_srcset_data`` for responsive renditions;
-* ``instance.image_asset`` and ``instance.image_attribution`` for portable
-  metadata; and
-* ``picture_link`` or ``instance.get_link`` for the resolved destination.
-
-Entries in ``img_srcset_data`` are now backend-neutral ``Rendition`` objects.
-They retain ``url``, ``width`` and ``height``, but filer/easy-thumbnails-specific
-attributes are no longer portable. Templates intended only for filer may
-continue to access ``instance.picture``, although the backend-neutral helpers
-are recommended.
-
-At the Python object level, filer-only code can continue reading
-``instance.picture`` and ``instance.picture_id`` and assigning either value.
-The database field itself is now generic, however, so ORM and model-introspection
-code must be adjusted: ``select_related("picture")``,
-``filter(picture_id=...)`` and ``Picture._meta.get_field("picture")`` no longer
-refer to a concrete filer foreign key. Use ``picture_content_type`` plus
-``picture_object_id`` for low-level queries, or use ``image_source`` and the
-backend-neutral rendering properties in application code.
-
 This addon provides a ``default`` template for all instances. You can provide
 additional template choices by adding a ``DJANGOCMS_PICTURE_TEMPLATES``
 setting::
@@ -500,6 +467,67 @@ Further configuration can be achieved through the
 `django Filer settings <https://django-filer.readthedocs.io/en/latest/settings.html>`_.
 
 
+Updating from versions below 5
+------------------------------
+
+Version 5 requires django CMS 5.0 or newer and Django 5.2 or newer. Back up the
+database, then upgrade the dependencies and package::
+
+    python -m pip install --upgrade "djangocms-picture>=5,<6"
+
+After installing version 5, add the explicit filer integration to
+``INSTALLED_APPS`` if the project uses django-filer images::
+
+    INSTALLED_APPS = [
+        # ...
+        "djangocms_picture",
+        "djangocms_picture.contrib.filer",
+    ]
+
+Then apply the migrations::
+
+    python manage.py migrate djangocms_picture
+
+The migrations preserve existing content. Filer images are assigned to the
+``filer`` backend, external image URLs to the ``url`` backend, and existing
+page and URL destinations are copied to the new link representation.
+
+Custom picture templates
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Version 5 introduces backend-neutral image assets. Existing custom templates
+for the picture plugin must be reviewed and may require adjustment. In
+particular, ``instance.picture`` contains the generic Django object for local
+model-backed sources such as filer and finder, while
+``instance.external_picture`` is a compatibility accessor for the URL backend.
+Templates supporting every backend should use:
+
+* ``instance.img_src`` for the rendered URL;
+* ``instance.image_alt_text`` for the backend-provided alternative text;
+* ``img_srcset_data`` for responsive renditions;
+* ``instance.image_asset`` and ``instance.image_attribution`` for portable
+  metadata; and
+* ``picture_link`` or ``instance.get_link`` for the resolved destination.
+
+Entries in ``img_srcset_data`` are now backend-neutral ``Rendition`` objects.
+They retain ``url``, ``width`` and ``height``, but filer/easy-thumbnails-specific
+attributes are no longer portable. Templates intended only for filer may
+continue to access ``instance.picture``, although the backend-neutral helpers
+are recommended.
+
+Application code
+~~~~~~~~~~~~~~~~
+
+Filer-only code can continue reading ``instance.picture`` and
+``instance.picture_id`` and assigning either value. The database field itself
+is now generic, however, so ORM and model-introspection code must be adjusted:
+``select_related("picture")``, ``filter(picture_id=...)`` and
+``Picture._meta.get_field("picture")`` no longer refer to a concrete filer
+foreign key. Use ``picture_content_type`` plus ``picture_object_id`` for
+low-level queries, or use ``image_source`` and the backend-neutral rendering
+properties in application code.
+
+
 Running Tests
 -------------
 
@@ -529,19 +557,3 @@ Run ``tox`` to test all supported Django and django CMS combinations.
 .. |djangocms| image:: https://img.shields.io/pypi/frameworkversions/django-cms/djangocms-picture
     :alt: PyPI - django CMS Versions from Framework Classifiers
     :target: https://www.django-cms.org/
-
-
-Updating from `cmsplugin-filer <https://github.com/django-cms/cmsplugin-filer>`_
---------------------------------------------------------------------------------
-
-Historically, `cmsplugin-filer` was used to create file, folder, image, link, teaser & video plugins on your django CMS projects. Now `cmsplugin-filer` has been archived, you can still migrate your old instances without having to copy them manually to the new `djangocms-<file|picture|link|...>` plugins.
-
-There's a third-party management command that supports your migration:
-
-`migrate_cmsplugin_filer.py <https://gist.github.com/corentinbettiol/84a6ea7e4d047fc01861b0af15fd60f0>`_
-
-This management command is only a starting point. It *has* worked out of the box for some people, but we encourage you to read the code, understand what it does, and test it on a development environment before running it on your production server.
-
-The management command is only configured to transfer your `cmsplugin_link`, `cmsplugin_file`, `cmsplugin_folder` and `cmsplugin_image` plugins to modern `djangocms_*` plugins. If you need to transfer other `cmsplugin_*` plugins, you'll have to write your own code.
-
-Alternatively you can use the `deprecate_cmsplugin_filer <https://github.com/ImaginaryLandscape/deprecate_cmsplugin_filer>`_ app, which only adds a small migration that transfer the old `cmsplugin-filer` plugins instances to the new `djangocms-<file|picture|link|...>` plugins.
