@@ -2,7 +2,7 @@
 django CMS Picture
 ==================
 
-|pypi| |build| |coverage|
+|pypi| |build| |coverage| |python| |django| |djangocms|
 
 **django CMS Picture** is a plugin for `django CMS <http://django-cms.org>`_
 that allows you to add images on your site.
@@ -38,12 +38,10 @@ section.
 Documentation
 =============
 
-See ``REQUIREMENTS`` in the `setup.py <https://github.com/divio/djangocms-picture/blob/master/setup.py>`_
+See ``dependencies`` in the `pyproject.toml <https://github.com/django-cms/djangocms-picture/blob/master/pyproject.toml>`_
 file for additional dependencies:
 
-|python| |django| |djangocms|
-
-* Django Filer 1.7 or higher
+* Django Filer 2.2 or higher
 
 Make sure `django-filer <http://django-filer.readthedocs.io/en/latest/installation.html>`_
 is installed and configured appropriately.
@@ -155,22 +153,25 @@ You can run tests by executing::
 
     virtualenv env
     source env/bin/activate
-    pip install -r test_requirements/base.txt
-    python setup.py test
+    pip install -U pip tox
+    tox
 
 
 .. |pypi| image:: https://badge.fury.io/py/djangocms-picture.svg
-    :target: http://badge.fury.io/py/djangocms-picture
-.. |build| image:: https://travis-ci.org/divio/djangocms-picture.svg?branch=master
-    :target: https://travis-ci.org/divio/djangocms-picture
-.. |coverage| image:: https://codecov.io/gh/divio/djangocms-picture/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/divio/djangocms-picture
+    :target: https://badge.fury.io/py/djangocms-picture
+.. |build| image:: https://github.com/django-cms/djangocms-picture/actions/workflows/test.yml/badge.svg
+    :target: https://github.com/django-cms/djangocms-picture/actions/workflows/test.yml
+.. |coverage| image:: https://codecov.io/gh/django-cms/djangocms-picture/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/django-cms/djangocms-picture
 
-.. |python| image:: https://img.shields.io/badge/python-3.5+-blue.svg
+.. |python| image:: https://img.shields.io/pypi/pyversions/djangocms-picture
+    :alt: PyPI - Python Version
     :target: https://pypi.org/project/djangocms-picture/
-.. |django| image:: https://img.shields.io/badge/django-2.2,%203.0,%203.1-blue.svg
+.. |django| image:: https://img.shields.io/pypi/frameworkversions/django/djangocms-picture
+    :alt: PyPI - Django Versions from Framework Classifiers
     :target: https://www.djangoproject.com/
-.. |djangocms| image:: https://img.shields.io/badge/django%20CMS-3.7%2B-blue.svg
+.. |djangocms| image:: https://img.shields.io/pypi/frameworkversions/django-cms/djangocms-picture
+    :alt: PyPI - django CMS Versions from Framework Classifiers
     :target: https://www.django-cms.org/
 
 
