@@ -2,7 +2,7 @@
 django CMS Picture
 ==================
 
-|pypi| |build| |coverage|
+|pypi| |build| |coverage| |python| |django| |djangocms|
 
 **django CMS Picture** is a plugin for `django CMS <http://django-cms.org>`_
 that allows you to add images on your site.
@@ -41,9 +41,7 @@ Documentation
 See ``dependencies`` in the `pyproject.toml <https://github.com/django-cms/djangocms-picture/blob/master/pyproject.toml>`_
 file for additional dependencies:
 
-|python| |django| |djangocms|
-
-* Django Filer 1.7 or higher
+* Django Filer 2.2 or higher
 
 Make sure `django-filer <http://django-filer.readthedocs.io/en/latest/installation.html>`_
 is installed and configured appropriately.
