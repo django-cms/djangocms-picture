@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djangocms-picture\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: ru\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: apps.py:8
+msgid "djangocms-picture finder backend"
+msgstr "Бэкенд Finder для djangocms-picture"
+
+#: backend.py:107
+msgid "Finder"
+msgstr "Finder"
+
+#: forms.py:14
+msgid "The selected finder image no longer exists."
+msgstr "Выбранное изображение Finder больше не существует."
+
+#: forms.py:15
+msgid "The selected finder image is not available in this image source."
+msgstr "Выбранное изображение Finder недоступно в этом источнике изображений."
+
+#: forms.py:16
+msgid "The selected finder image is in the trash."
+msgstr "Выбранное изображение Finder находится в корзине."

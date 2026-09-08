@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djangocms-picture\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: bn\n"
+"Language: bn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "djangocms-picture-এর Unsplash ব্যাকএন্ড"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Unsplash অ্যাডমিন এন্ডপয়েন্ট"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "একটি বৈধ Unsplash ছবি নির্বাচন করুন।"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "নির্বাচিত ছবি"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "ফোকাস পয়েন্ট"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "ক্রপিং"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "স্বয়ংক্রিয় বিষয়"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "মুখমণ্ডল"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "উচ্চ বিস্তারিত (এনট্রপি)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "প্রান্তসমূহ"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "কেন্দ্র"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "উপরে"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "নিচে"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "বামে"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "ডানে"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "আউটপুট ফরম্যাট"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "স্বয়ংক্রিয়"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "গুণমান"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "নির্বাচন সংরক্ষণ করুন"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "বাতিল"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "Unsplash-এ অনুসন্ধান করুন"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "দিকবিন্যাস"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "রং"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "ক্রম"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "অনুসন্ধান"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "অনুসন্ধান ফলাফলের পৃষ্ঠা"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "পূর্ববর্তী"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "পরবর্তী"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "ছবি:"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "এ"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "Unsplash ছবি নির্বাচন করুন"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "পরিষ্কার করুন"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "Unsplash থেকে একটি ছবি নির্বাচন করুন"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "যেকোনো দিকবিন্যাস"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "ল্যান্ডস্কেপ"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "পোর্ট্রেট"
+
+#: views.py:36
+msgid "Square"
+msgstr "বর্গাকার"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "যেকোনো রং"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "সাদা-কালো"
+
+#: views.py:43
+msgid "Black"
+msgstr "কালো"
+
+#: views.py:44
+msgid "White"
+msgstr "সাদা"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "হলুদ"
+
+#: views.py:46
+msgid "Orange"
+msgstr "কমলা"
+
+#: views.py:47
+msgid "Red"
+msgstr "লাল"
+
+#: views.py:48
+msgid "Purple"
+msgstr "বেগুনি"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "ম্যাজেন্টা"
+
+#: views.py:50
+msgid "Green"
+msgstr "সবুজ"
+
+#: views.py:51
+msgid "Teal"
+msgstr "টিল"
+
+#: views.py:52
+msgid "Blue"
+msgstr "নীল"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "প্রাসঙ্গিক"
+
+#: views.py:58
+msgid "Latest"
+msgstr "সর্বশেষ"

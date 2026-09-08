@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djangocms-picture\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: id\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8
+msgid "djangocms-picture finder backend"
+msgstr "Backend Finder untuk djangocms-picture"
+
+#: backend.py:107
+msgid "Finder"
+msgstr "Finder"
+
+#: forms.py:14
+msgid "The selected finder image no longer exists."
+msgstr "Gambar Finder yang dipilih sudah tidak ada."
+
+#: forms.py:15
+msgid "The selected finder image is not available in this image source."
+msgstr "Gambar Finder yang dipilih tidak tersedia di sumber gambar ini."
+
+#: forms.py:16
+msgid "The selected finder image is in the trash."
+msgstr "Gambar Finder yang dipilih berada di sampah."

@@ -2,228 +2,246 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: djangocms-picture\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-13 18:18+0100\n"
-"PO-Revision-Date: 2016-09-07 09:44+0000\n"
-"Language-Team: Arabic (https://www.transifex.com/divio/teams/58664/ar/)\n"
+"POT-Creation-Date: 2026-09-08 09:04+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: ar\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: cms_plugins.py:17 models.py:72
+#: apps.py:7
+msgid "django CMS Picture"
+msgstr "صور django CMS"
+
+#: cms_plugins.py:23
 msgid "Image"
-msgstr ""
+msgstr "صورة"
 
-#: cms_plugins.py:28
-msgid "Advanced settings"
-msgstr ""
+#: cms_plugins.py:33 models.py:158
+msgid "Attributes"
+msgstr "السمات"
 
-#: cms_plugins.py:39
-msgid "Link settings"
-msgstr ""
+#: cms_plugins.py:43
+msgid "Cropping"
+msgstr "الاقتصاص"
 
-#: cms_plugins.py:47
-msgid "Cropping settings"
-msgstr ""
+#: cms_plugins.py:51 models.py:189
+msgid "Link"
+msgstr "الرابط"
 
-#: models.py:25
+#: fields.py:110
+msgid "Select a valid image source."
+msgstr "حدد مصدر صور صالحًا."
+
+#: fields.py:111
+msgid "Select an image from this source."
+msgstr "حدد صورة من هذا المصدر."
+
+#: fields.py:144 forms.py:19 forms.py:53 models.py:97
+msgid "Image source"
+msgstr "مصدر الصورة"
+
+#: models.py:45
 msgid "Align left"
-msgstr ""
+msgstr "محاذاة لليسار"
 
-#: models.py:26
+#: models.py:46
 msgid "Align right"
-msgstr ""
+msgstr "محاذاة لليمين"
 
-#: models.py:27
+#: models.py:47
 msgid "Align center"
-msgstr ""
+msgstr "محاذاة للوسط"
 
-#: models.py:35
-msgid "Open in new window"
-msgstr ""
-
-#: models.py:36
-msgid "Open in same window"
-msgstr ""
-
-#: models.py:37
-msgid "Delegate to parent"
-msgstr ""
-
-#: models.py:38
-msgid "Delegate to top"
-msgstr ""
-
-#: models.py:42
-msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
-msgstr ""
-
-#: models.py:43
-msgid "Yes"
-msgstr ""
-
-#: models.py:44
-msgid "No"
-msgstr ""
-
-#: models.py:50
+#: models.py:56
 msgid "Default"
-msgstr ""
+msgstr "افتراضي"
 
-#: models.py:66
-msgid "Template"
-msgstr ""
+#: models.py:73
+msgid "Open in new window"
+msgstr "فتح في نافذة جديدة"
 
-#: models.py:79
-msgid "External image"
-msgstr ""
+#: models.py:74
+msgid "Open in same window"
+msgstr "فتح في النافذة نفسها"
+
+#: models.py:75
+msgid "Delegate to parent"
+msgstr "إسناد إلى الأصل"
+
+#: models.py:76
+msgid "Delegate to top"
+msgstr "إسناد إلى الأعلى"
+
+#: models.py:80
+msgid "Let settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES decide"
+msgstr "دع settings.DJANGOCMS_PICTURE_RESPONSIVE_IMAGES يقرر"
+
+#: models.py:81
+msgid "Yes"
+msgstr "نعم"
 
 #: models.py:82
-msgid ""
-"If provided, overrides the embedded image. Certain options such as cropping "
-"are not applicable to external images."
-msgstr ""
+msgid "No"
+msgstr "لا"
 
-#: models.py:86
-msgid "Width"
-msgstr ""
+#: models.py:91
+msgid "Template"
+msgstr "القالب"
 
-#: models.py:89
-msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr ""
+#: models.py:103
+msgid "Image model"
+msgstr "نموذج الصورة"
 
-#: models.py:93
-msgid "Height"
-msgstr ""
-
-#: models.py:96
-msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
-msgstr ""
-
-#: models.py:100
-msgid "Alignment"
-msgstr ""
-
-#: models.py:104
-msgid "Aligns the image according to the selected option."
-msgstr ""
-
-#: models.py:107
-msgid "Caption text"
-msgstr ""
-
-#: models.py:109
-msgid "Provide a description, attribution, copyright or other information."
-msgstr ""
-
-#: models.py:112
-msgid "Attributes"
-msgstr ""
-
-#: models.py:118
-msgid "External URL"
-msgstr ""
+#: models.py:110
+msgid "Image object ID"
+msgstr "معرّف كائن الصورة"
 
 #: models.py:121
-msgid "Wraps the image in a link to an external URL."
-msgstr ""
+msgid "Image source configuration"
+msgstr "إعدادات مصدر الصورة"
 
-#: models.py:124
-msgid "Internal URL"
-msgstr ""
-
-#: models.py:128
-msgid "Wraps the image in a link to an internal (page) URL."
-msgstr ""
+#: models.py:127
+msgid "Width"
+msgstr "العرض"
 
 #: models.py:131
-msgid "Link target"
-msgstr ""
+msgid "The image width as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "عرض الصورة كعدد بالبكسل. مثال: \"720\" وليس \"720px\"."
 
-#: models.py:137
-msgid "Link attributes"
-msgstr ""
+#: models.py:136
+msgid "Height"
+msgstr "الارتفاع"
 
-#: models.py:144
-msgid "Automatic scaling"
-msgstr ""
+#: models.py:140
+msgid "The image height as number in pixels. Example: \"720\" and not \"720px\"."
+msgstr "ارتفاع الصورة كعدد بالبكسل. مثال: \"720\" وليس \"720px\"."
 
-#: models.py:147
-msgid "Uses the placeholder dimensions to automatically calculate the size."
-msgstr ""
+#: models.py:145
+msgid "Alignment"
+msgstr "المحاذاة"
+
+#: models.py:149
+msgid "Aligns the image according to the selected option."
+msgstr "يحاذي الصورة وفقًا للخيار المحدد."
 
 #: models.py:152
-msgid "Use original image"
-msgstr ""
+msgid "Caption text"
+msgstr "نص التسمية"
 
 #: models.py:155
+msgid "Provide a description, attribution, copyright or other information."
+msgstr "قدّم وصفًا أو إسنادًا أو حقوق نشر أو معلومات أخرى."
+
+#: models.py:164
+msgid "External URL"
+msgstr "عنوان URL خارجي"
+
+#: models.py:168
+msgid "Wraps the image in a link to an external URL."
+msgstr "يلف الصورة برابط إلى عنوان URL خارجي."
+
+#: models.py:171
+msgid "Internal URL"
+msgstr "عنوان URL داخلي"
+
+#: models.py:175
+msgid "Wraps the image in a link to an internal (page) URL."
+msgstr "يلف الصورة برابط إلى عنوان URL داخلي (صفحة)."
+
+#: models.py:178
+msgid "Link target"
+msgstr "هدف الرابط"
+
+#: models.py:184
+msgid "Link attributes"
+msgstr "سمات الرابط"
+
+#: models.py:195
+msgid "Automatic scaling"
+msgstr "التحجيم التلقائي"
+
+#: models.py:198
+msgid "Uses the placeholder dimensions to automatically calculate the size."
+msgstr "يستخدم أبعاد العنصر النائب لحساب الحجم تلقائيًا."
+
+#: models.py:203
+msgid "Use original image"
+msgstr "استخدام الصورة الأصلية"
+
+#: models.py:206
 msgid "Outputs the raw image without cropping."
-msgstr ""
+msgstr "يعرض الصورة الخام دون اقتصاص."
 
-#: models.py:160
+#: models.py:211
 msgid "Crop image"
-msgstr ""
+msgstr "اقتصاص الصورة"
 
-#: models.py:163
+#: models.py:214
 msgid ""
 "Crops the image according to the thumbnail settings provided in the "
 "template."
-msgstr ""
+msgstr "يقتص الصورة وفقًا لإعدادات الصورة المصغرة المحددة في القالب."
 
-#: models.py:166
+#: models.py:217
 msgid "Upscale image"
-msgstr ""
+msgstr "تكبير الصورة"
 
-#: models.py:169
+#: models.py:220
 msgid ""
 "Upscales the image to the size of the thumbnail settings in the template."
-msgstr ""
+msgstr "يكبّر الصورة إلى حجم إعدادات الصورة المصغرة في القالب."
 
-#: models.py:172
+#: models.py:223
 msgid "Use responsive image"
-msgstr ""
+msgstr "استخدام صورة متجاوبة"
 
-#: models.py:177
+#: models.py:228
 msgid ""
 "Uses responsive image technique to choose better image to display based upon"
 " screen viewport. This configuration only applies to uploaded images "
 "(external pictures will not be affected). "
 msgstr ""
+"يستخدم تقنية الصور المتجاوبة لاختيار صورة أفضل للعرض استنادًا إلى إطار عرض "
+"الشاشة. ينطبق هذا الإعداد على الصور المرفوعة فقط (لن تتأثر الصور الخارجية). "
 
-#: models.py:185
+#: models.py:236
 msgid "Thumbnail options"
-msgstr ""
+msgstr "خيارات الصورة المصغرة"
 
-#: models.py:188
+#: models.py:239
 msgid ""
 "Overrides width, height, and crop; scales up to the provided preset "
 "dimensions."
 msgstr ""
+"يتجاوز العرض والارتفاع والاقتصاص؛ ويكبّر حتى أبعاد الإعداد المسبق المحددة."
 
-#: models.py:216
+#: models.py:400
 msgid "<file is missing>"
-msgstr ""
+msgstr "<الملف مفقود>"
 
-#: models.py:264
+#: models.py:507
 msgid ""
 "You have given both external and internal links. Only one option is allowed."
-msgstr ""
+msgstr "لقد أدخلت رابطًا خارجيًا ورابطًا داخليًا معًا. يُسمح بخيار واحد فقط."
 
-#: models.py:271
+#: models.py:521
 msgid ""
 "You need to add either an image, or a URL linking to an external image."
-msgstr ""
+msgstr "تحتاج إلى إضافة صورة أو عنوان URL يشير إلى صورة خارجية."
 
-#: models.py:295
+#: models.py:547
 #, python-brace-format
 msgid ""
 "Invalid cropping settings. You cannot combine \"{field_a}\" with "
 "\"{field_b}\"."
-msgstr ""
+msgstr "إعدادات اقتصاص غير صالحة. لا يمكنك دمج \"{field_a}\" مع \"{field_b}\"."

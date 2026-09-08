@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djangocms-picture\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: vi\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8
+msgid "djangocms-picture Unsplash backend"
+msgstr "Phần phụ trợ Unsplash cho djangocms-picture"
+
+#: backend.py:143
+msgid "Unsplash"
+msgstr "Unsplash"
+
+#: cms_plugins.py:13
+msgid "Unsplash admin endpoints"
+msgstr "Các điểm cuối quản trị Unsplash"
+
+#: forms.py:14
+msgid "Select a valid Unsplash image."
+msgstr "Chọn một ảnh Unsplash hợp lệ."
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:31
+msgid "Selected image"
+msgstr "Ảnh đã chọn"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:40
+#: templates/djangocms_picture/admin/unsplash_picker.html:54
+msgid "Focus point"
+msgstr "Điểm lấy nét"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:51
+msgid "Cropping"
+msgstr "Cắt ảnh"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:53
+msgid "Automatic subject"
+msgstr "Chủ thể tự động"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:55
+msgid "Faces"
+msgstr "Khuôn mặt"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:56
+msgid "High detail (entropy)"
+msgstr "Chi tiết cao (entropy)"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:57
+msgid "Edges"
+msgstr "Cạnh"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:58
+msgid "Centre"
+msgstr "Giữa"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:59
+msgid "Top"
+msgstr "Trên"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:60
+msgid "Bottom"
+msgstr "Dưới"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:61
+msgid "Left"
+msgstr "Trái"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:62
+msgid "Right"
+msgstr "Phải"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:68
+msgid "Output format"
+msgstr "Định dạng đầu ra"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:70
+#: templates/djangocms_picture/admin/unsplash_picker.html:78
+msgid "Automatic"
+msgstr "Tự động"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:77
+msgid "Quality"
+msgstr "Chất lượng"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:81
+msgid "Save selection"
+msgstr "Lưu lựa chọn"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:82
+msgid "Cancel"
+msgstr "Hủy"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:88
+msgid "Search Unsplash"
+msgstr "Tìm kiếm Unsplash"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:89
+msgid "Orientation"
+msgstr "Hướng"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:94
+msgid "Colour"
+msgstr "Màu"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:99
+msgid "Order"
+msgstr "Thứ tự"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:104
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:108
+msgid "Search result pages"
+msgstr "Các trang kết quả tìm kiếm"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:109
+msgid "Previous"
+msgstr "Trước"
+
+#: templates/djangocms_picture/admin/unsplash_picker.html:111
+msgid "Next"
+msgstr "Tiếp"
+
+#: templates/djangocms_picture/widgets/unsplash.html:14
+msgid "Photo by"
+msgstr "Ảnh của"
+
+#: templates/djangocms_picture/widgets/unsplash.html:16
+msgid "on"
+msgstr "trên"
+
+#: templates/djangocms_picture/widgets/unsplash.html:22
+msgid "Select Unsplash image"
+msgstr "Chọn ảnh Unsplash"
+
+#: templates/djangocms_picture/widgets/unsplash.html:23
+msgid "Clear"
+msgstr "Xóa"
+
+#: views.py:21
+msgid "Select an Unsplash image"
+msgstr "Chọn một ảnh từ Unsplash"
+
+#: views.py:33
+msgid "Any orientation"
+msgstr "Mọi hướng"
+
+#: views.py:34
+msgid "Landscape"
+msgstr "Ngang"
+
+#: views.py:35
+msgid "Portrait"
+msgstr "Dọc"
+
+#: views.py:36
+msgid "Square"
+msgstr "Vuông"
+
+#: views.py:41
+msgid "Any colour"
+msgstr "Mọi màu"
+
+#: views.py:42
+msgid "Black and white"
+msgstr "Đen trắng"
+
+#: views.py:43
+msgid "Black"
+msgstr "Đen"
+
+#: views.py:44
+msgid "White"
+msgstr "Trắng"
+
+#: views.py:45
+msgid "Yellow"
+msgstr "Vàng"
+
+#: views.py:46
+msgid "Orange"
+msgstr "Cam"
+
+#: views.py:47
+msgid "Red"
+msgstr "Đỏ"
+
+#: views.py:48
+msgid "Purple"
+msgstr "Tím"
+
+#: views.py:49
+msgid "Magenta"
+msgstr "Hồng cánh sen"
+
+#: views.py:50
+msgid "Green"
+msgstr "Xanh lá"
+
+#: views.py:51
+msgid "Teal"
+msgstr "Xanh mòng két"
+
+#: views.py:52
+msgid "Blue"
+msgstr "Xanh dương"
+
+#: views.py:57
+msgid "Relevant"
+msgstr "Liên quan"
+
+#: views.py:58
+msgid "Latest"
+msgstr "Mới nhất"

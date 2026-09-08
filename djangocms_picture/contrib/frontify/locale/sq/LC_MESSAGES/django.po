@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djangocms-picture\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 08:53+0200\n"
+"PO-Revision-Date: 2026-09-08 00:00+0200\n"
+"Last-Translator: django CMS contributors <info@django-cms.org>\n"
+"Language-Team: sq\n"
+"Language: sq\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps.py:8
+msgid "djangocms-picture Frontify backend"
+msgstr "Backend-i Frontify për djangocms-picture"
+
+#: backend.py:122
+msgid "Frontify"
+msgstr "Frontify"
+
+#: forms.py:14
+msgid "Select a valid Frontify image."
+msgstr "Zgjidhni një imazh të vlefshëm Frontify."
+
+#: templates/djangocms_picture/widgets/frontify.html:8
+msgid "Select Frontify image"
+msgstr "Zgjidh imazhin Frontify"
+
+#: templates/djangocms_picture/widgets/frontify.html:9
+msgid "Clear"
+msgstr "Pastro"
