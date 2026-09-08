@@ -520,11 +520,14 @@ Run ``tox`` to test all supported Django and django CMS combinations.
 .. |coverage| image:: https://codecov.io/gh/django-cms/djangocms-picture/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/django-cms/djangocms-picture
 
-.. |python| image:: https://img.shields.io/badge/python-3.10--3.14-blue.svg
+.. |python| image:: https://img.shields.io/pypi/pyversions/djangocms-picture
+    :alt: PyPI - Python Version
     :target: https://pypi.org/project/djangocms-picture/
-.. |django| image:: https://img.shields.io/badge/django-5.2%20%7C%206.0%20%7C%206.1-blue.svg
+.. |django| image:: https://img.shields.io/pypi/frameworkversions/django/djangocms-picture
+    :alt: PyPI - Django Versions from Framework Classifiers
     :target: https://www.djangoproject.com/
-.. |djangocms| image:: https://img.shields.io/badge/django%20CMS-5.0%20%7C%205.1-blue.svg
+.. |djangocms| image:: https://img.shields.io/pypi/frameworkversions/django-cms/djangocms-picture
+    :alt: PyPI - django CMS Versions from Framework Classifiers
     :target: https://www.django-cms.org/
 
 
