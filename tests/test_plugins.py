@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.test import RequestFactory
 
 from djangocms_picture.cms_plugins import PicturePlugin
-from djangocms_picture.models import Picture, get_alignment
+from djangocms_picture.models import Picture, RenditionPreset, get_alignment
 
 from .fixtures import TestFixture
 from .helpers import get_filer_image
@@ -38,6 +38,9 @@ class PicturePluginsTestCase(TestFixture, CMSTestCase):
             PicturePlugin.change_form_template,
             "djangocms_picture/admin/base.html",
         )
+
+    def test_portable_rendition_presets_are_managed_in_admin(self) -> None:
+        self.assertTrue(admin.site.is_registered(RenditionPreset))
 
     def test_legacy_link_fields_are_in_the_last_fieldset(self) -> None:
         title, options = PicturePlugin.fieldsets[-1]

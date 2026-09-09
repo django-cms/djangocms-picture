@@ -31,7 +31,7 @@ from djangocms_picture.contrib.frontify.forms import FrontifyImageChoiceField
 from djangocms_picture.contrib.frontify.widgets import FrontifyPickerWidget
 from djangocms_picture.fields import BackendSelection
 from djangocms_picture.forms import PictureForm
-from djangocms_picture.models import Picture
+from djangocms_picture.models import Picture, RenditionPreset
 from djangocms_picture.rendering import build_srcset
 
 FRONTIFY_PAYLOAD = {
@@ -61,6 +61,7 @@ class FrontifyBackendTestCase(TestCase):
         self.assertTrue(backend.capabilities.resize)
         self.assertTrue(backend.capabilities.crop)
         self.assertTrue(backend.capabilities.responsive)
+        self.assertTrue(backend.capabilities.presets)
         self.assertFalse(backend.capabilities.upscale)
         self.assertFalse(backend.capabilities.upload)
         self.assertTrue(backend.capabilities.refresh)
@@ -207,6 +208,24 @@ class FrontifyBackendTestCase(TestCase):
         rendition_url = picture.img_src
 
         self.assertIn("width=3200", rendition_url)
+
+    def test_portable_preset_rejects_an_unsupported_transformation(self) -> None:
+        preset = RenditionPreset.objects.create(
+            name="Upscaled card",
+            slug="upscaled-card",
+            width=3200,
+            height=1800,
+            upscale=True,
+        )
+        picture = Picture.objects.create(
+            backend="frontify",
+            rendition_preset=preset,
+            use_automatic_scaling=False,
+        )
+        get_backend("frontify").set_form_value(picture, FRONTIFY_PAYLOAD, commit=True)
+
+        with self.assertRaisesMessage(ValidationError, "does not support upscaling"):
+            picture.full_clean()
 
     def test_picker_rejects_insecure_and_untrusted_urls(self) -> None:
         field = get_backend("frontify").form_field()

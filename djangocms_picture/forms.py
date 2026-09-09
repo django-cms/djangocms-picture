@@ -96,6 +96,9 @@ class PictureForm(forms.ModelForm):
             for backend in self.backends
             for field_name in backend.configuration_fields
         }
+        # This field belongs to core and must remain disabled when none of the
+        # configured backends opts into portable presets.
+        configurable_fields.add("rendition_preset")
         for field_name in configurable_fields:
             field = self.fields.get(field_name)
             if field is None:

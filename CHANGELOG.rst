@@ -12,6 +12,8 @@ Changelog
 * Store image sources in a generic model relation and versioned JSON
   configuration, removing backend-specific one-to-one reference tables.
 * Added an experimental, snapshot-backed Frontify backend.
+* Added backend-neutral rendition presets while preserving filer's native
+  ``ThumbnailOption`` presets for the filer backend.
 * Custom picture templates must be reviewed for the backend-neutral rendering
   API; use ``img_src`` and ``image_alt_text`` instead of assuming a filer image.
 * Safe djangocms-link URL and django CMS page destinations are mirrored to the

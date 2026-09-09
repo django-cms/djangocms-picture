@@ -91,6 +91,7 @@ class FinderBackendTestCase(TestCase):
         self.assertFalse(backend.capabilities.resize)
         self.assertFalse(backend.capabilities.upscale)
         self.assertFalse(backend.capabilities.responsive)
+        self.assertFalse(backend.capabilities.presets)
         self.assertFalse(backend.capabilities.upload)
 
     def test_backend_uses_finder_default_ambit_when_unconfigured(self) -> None:
@@ -111,6 +112,7 @@ class FinderBackendTestCase(TestCase):
         self.assertTrue(form.fields["use_upscale"].disabled)
         self.assertTrue(form.fields["use_responsive_image"].disabled)
         self.assertTrue(form.fields["thumbnail_options"].disabled)
+        self.assertTrue(form.fields["rendition_preset"].disabled)
         self.assertIn("finder/js/finder-select.js", str(form.media))
 
         html = source_field.widget.render(

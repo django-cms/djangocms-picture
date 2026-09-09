@@ -105,6 +105,12 @@ preset choices; ``upload`` and ``refresh`` advertise operational methods;
 ``remote`` marks a network-owned asset; ``permanent_urls`` says stored URLs do not
 expire; and ``formats`` lists accepted output formats.
 
+Backends using djangocms-picture's portable ``RenditionPreset`` rows must set
+``presets=True`` and include ``"rendition_preset"`` in
+``configuration_fields``. The filer adapter instead includes
+``"thumbnail_options"`` and continues to use filer's native
+``ThumbnailOption`` model.
+
 Data and security boundary
 ==========================
 

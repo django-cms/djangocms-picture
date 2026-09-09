@@ -46,6 +46,7 @@ UNSPLASH_CAPABILITIES = BackendCapabilities(
     crop=True,
     upscale=True,
     responsive=True,
+    presets=True,
     remote=True,
     permanent_urls=True,
     formats=UNSPLASH_FORMATS,
@@ -149,6 +150,7 @@ class UnsplashPictureBackend(BasePictureBackend):
             "use_crop",
             "use_upscale",
             "use_responsive_image",
+            "rendition_preset",
         }
     )
     capabilities = UNSPLASH_CAPABILITIES

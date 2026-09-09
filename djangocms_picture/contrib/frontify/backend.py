@@ -30,6 +30,7 @@ FRONTIFY_CAPABILITIES = BackendCapabilities(
     resize=True,
     crop=True,
     responsive=True,
+    presets=True,
     remote=True,
     permanent_urls=True,
     formats=FRONTIFY_FORMATS,
@@ -127,6 +128,7 @@ class FrontifyPictureBackend(BasePictureBackend):
             "use_no_cropping",
             "use_crop",
             "use_responsive_image",
+            "rendition_preset",
         }
     )
     capabilities = FRONTIFY_CAPABILITIES

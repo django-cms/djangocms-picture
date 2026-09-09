@@ -83,6 +83,41 @@ RESPONSIVE_IMAGE_CHOICES = (
 )
 
 
+class RenditionPreset(models.Model):
+    """Backend-neutral dimensions and transformation options for renditions."""
+
+    name = models.CharField(
+        verbose_name=_("Name"),
+        max_length=100,
+    )
+    slug = models.SlugField(
+        verbose_name=_("Slug"),
+        max_length=100,
+        unique=True,
+        help_text=_("Stable identifier for this rendition preset."),
+    )
+    width = models.PositiveIntegerField(verbose_name=_("Width"))
+    height = models.PositiveIntegerField(verbose_name=_("Height"))
+    crop = models.BooleanField(verbose_name=_("Crop"), default=False)
+    upscale = models.BooleanField(verbose_name=_("Upscale"), default=False)
+
+    class Meta:
+        ordering = ("width", "height", "name")
+        verbose_name = _("Rendition preset")
+        verbose_name_plural = _("Rendition presets")
+
+    def __str__(self) -> str:
+        return self.name
+
+    def as_rendition_spec(self) -> RenditionSpec:
+        return RenditionSpec(
+            width=self.width,
+            height=self.height,
+            crop=self.crop,
+            upscale=self.upscale,
+        )
+
+
 class AbstractPicture(CMSPlugin):
     """
     Renders an image with the option of adding a link
@@ -238,6 +273,15 @@ class AbstractPicture(CMSPlugin):
         null=True,
         help_text=_('Overrides width, height, and crop; scales up to the provided preset dimensions.'),
         on_delete=models.CASCADE,
+    )
+    rendition_preset = models.ForeignKey(
+        RenditionPreset,
+        verbose_name=_("Rendition preset"),
+        blank=True,
+        null=True,
+        help_text=_("Overrides width, height, crop, and upscale for non-filer image backends."),
+        on_delete=models.SET_NULL,
+        related_name="+",
     )
 
     # Add an app namespace to related_name to avoid field name clashes
@@ -404,25 +448,34 @@ class AbstractPicture(CMSPlugin):
         self.backend = backend.alias
         backend.copy_reference(oldinstance, self)
 
-    def get_size(
+    def get_rendition_spec(
         self,
         width: int | float | None = None,
         height: int | float | None = None,
-    ) -> dict[str, Any]:
+    ) -> RenditionSpec:
         crop = self.use_crop
         upscale = self.use_upscale
-        # use field thumbnail settings
-        if self.thumbnail_options:
+        backend = self.picture_backend
+
+        # django-filer keeps owning its native ThumbnailOption rows. Other
+        # backends can opt into djangocms-picture's portable rendition presets.
+        if backend.supports_configuration_field("thumbnail_options") and self.thumbnail_options:
             width = self.thumbnail_options.width
             height = self.thumbnail_options.height
             crop = self.thumbnail_options.crop
             upscale = self.thumbnail_options.upscale
+        elif backend.supports_configuration_field("rendition_preset") and self.rendition_preset:
+            preset_spec = self.rendition_preset.as_rendition_spec()
+            width = preset_spec.width
+            height = preset_spec.height
+            crop = preset_spec.crop
+            upscale = preset_spec.upscale
         elif not self.use_automatic_scaling:
             width = self.width
             height = self.height
 
         asset = self.image_asset
-        spec = calculate_size(
+        return calculate_size(
             asset.info if asset else None,
             width=width,
             height=height,
@@ -431,12 +484,17 @@ class AbstractPicture(CMSPlugin):
             picture_ratio=PICTURE_RATIO,
         )
 
-        options = {
+    def get_size(
+        self,
+        width: int | float | None = None,
+        height: int | float | None = None,
+    ) -> dict[str, Any]:
+        spec = self.get_rendition_spec(width=width, height=height)
+        return {
             'size': (spec.width, spec.height),
             'crop': spec.crop,
             'upscale': spec.upscale,
         }
-        return options
 
     def get_link(self) -> str | bool:
         if DJANGOCMS_LINK_ENABLED and self.link:
@@ -525,15 +583,37 @@ class AbstractPicture(CMSPlugin):
 
         # certain cropping options do not work together, the following
         # list defines the disallowed options used in the ``clean`` method
+        preset_field = None
+        if backend.supports_configuration_field("thumbnail_options"):
+            preset_field = "thumbnail_options"
+        elif backend.supports_configuration_field("rendition_preset"):
+            preset_field = "rendition_preset"
+
+        if preset_field == "rendition_preset" and self.rendition_preset:
+            capabilities = backend.capabilities
+            if self.rendition_preset.crop and not capabilities.crop:
+                raise ValidationError(
+                    {"rendition_preset": gettext("The selected image backend does not support cropping.")}
+                )
+            if self.rendition_preset.upscale and not capabilities.upscale:
+                raise ValidationError(
+                    {"rendition_preset": gettext("The selected image backend does not support upscaling.")}
+                )
+
         invalid_option_pairs = [
             ('use_automatic_scaling', 'use_no_cropping'),
-            ('use_automatic_scaling', 'thumbnail_options'),
             ('use_no_cropping', 'use_crop'),
             ('use_no_cropping', 'use_upscale'),
-            ('use_no_cropping', 'thumbnail_options'),
-            ('thumbnail_options', 'use_crop'),
-            ('thumbnail_options', 'use_upscale'),
         ]
+        if preset_field:
+            invalid_option_pairs.extend(
+                [
+                    ('use_automatic_scaling', preset_field),
+                    ('use_no_cropping', preset_field),
+                    (preset_field, 'use_crop'),
+                    (preset_field, 'use_upscale'),
+                ]
+            )
         # invalid_option_pairs
         invalid_option_pair = None
 
@@ -594,17 +674,17 @@ class AbstractPicture(CMSPlugin):
         if self.use_no_cropping:
             return asset.get_original().url
 
-        picture_options = self.get_size(
+        spec = self.get_rendition_spec(
             width=self.width or 0,
             height=self.height or 0,
         )
         capabilities = self.picture_backend.capabilities
         return asset.get_rendition(
             RenditionSpec(
-                width=picture_options['size'][0],
-                height=picture_options['size'][1],
-                crop=picture_options['crop'] and capabilities.crop,
-                upscale=picture_options['upscale'] and capabilities.upscale,
+                width=spec.width,
+                height=spec.height,
+                crop=spec.crop and capabilities.crop,
+                upscale=spec.upscale and capabilities.upscale,
             )
         ).url
 

@@ -5,12 +5,13 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase, override_settings
 from filer.models import ThumbnailOption
 
-from djangocms_picture.backends import PictureReference, Rendition, StoredPictureSource
+from djangocms_picture.backends import PictureReference, Rendition, RenditionSpec, StoredPictureSource
 from djangocms_picture.models import (
     LINK_TARGET,
     PICTURE_RATIO,
     RESPONSIVE_IMAGE_CHOICES,
     Picture,
+    RenditionPreset,
     get_alignment,
     get_templates,
 )
@@ -262,6 +263,45 @@ class PictureModelTestCase(TestCase):
         self.assertEqual(
             instance.get_size(),
             {'size': (200, 200), 'crop': False, 'upscale': False},
+        )
+
+    def test_filer_keeps_using_its_native_thumbnail_option(self) -> None:
+        instance = self.picture
+        instance.use_automatic_scaling = False
+        instance.thumbnail_options = ThumbnailOption.objects.create(
+            name="Filer square",
+            width=200,
+            height=200,
+            crop=True,
+            upscale=False,
+        )
+        instance.rendition_preset = RenditionPreset.objects.create(
+            name="Portable card",
+            slug="portable-card",
+            width=640,
+            height=360,
+            crop=False,
+            upscale=True,
+        )
+
+        self.assertEqual(
+            instance.get_rendition_spec(),
+            RenditionSpec(width=200, height=200, crop=True, upscale=False),
+        )
+
+    def test_rendition_preset_exposes_a_portable_spec(self) -> None:
+        preset = RenditionPreset.objects.create(
+            name="Landscape card",
+            slug="landscape-card",
+            width=640,
+            height=360,
+            crop=True,
+        )
+
+        self.assertEqual(str(preset), "Landscape card")
+        self.assertEqual(
+            preset.as_rendition_spec(),
+            RenditionSpec(width=640, height=360, crop=True, upscale=False),
         )
 
     def test_get_link(self):

@@ -77,6 +77,7 @@ class PictureBackendFormTestCase(TestCase):
         self.assertFalse(form.fields["use_upscale"].disabled)
         self.assertFalse(form.fields["use_responsive_image"].disabled)
         self.assertFalse(form.fields["thumbnail_options"].disabled)
+        self.assertTrue(form.fields["rendition_preset"].disabled)
 
     def test_url_disables_transformations(self) -> None:
         form = PictureForm(
@@ -89,6 +90,7 @@ class PictureBackendFormTestCase(TestCase):
         self.assertTrue(form.fields["use_upscale"].disabled)
         self.assertTrue(form.fields["use_responsive_image"].disabled)
         self.assertTrue(form.fields["thumbnail_options"].disabled)
+        self.assertTrue(form.fields["rendition_preset"].disabled)
 
     @override_settings(DJANGOCMS_PICTURE_DEFAULT_BACKEND="url")
     def test_configured_default_backend_is_used_for_new_plugins(self) -> None:

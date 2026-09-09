@@ -28,7 +28,7 @@ from djangocms_picture.contrib.unsplash.forms import UnsplashImageChoiceField
 from djangocms_picture.contrib.unsplash.widgets import UnsplashPickerWidget
 from djangocms_picture.fields import BackendSelection
 from djangocms_picture.forms import PictureForm
-from djangocms_picture.models import Picture
+from djangocms_picture.models import Picture, RenditionPreset
 from djangocms_picture.rendering import build_srcset
 
 from .helpers import get_filer_image
@@ -97,8 +97,40 @@ class UnsplashBackendTestCase(TestCase):
         self.assertTrue(backend.capabilities.crop)
         self.assertTrue(backend.capabilities.upscale)
         self.assertTrue(backend.capabilities.responsive)
+        self.assertTrue(backend.capabilities.presets)
         self.assertFalse(backend.capabilities.upload)
         self.assertTrue(backend.capabilities.permanent_urls)
+
+    def test_form_uses_portable_presets_instead_of_filer_options(self) -> None:
+        form = PictureForm(instance=Picture(backend="unsplash"))
+
+        self.assertFalse(form.fields["rendition_preset"].disabled)
+        self.assertTrue(form.fields["thumbnail_options"].disabled)
+
+    def test_picture_uses_portable_rendition_preset(self) -> None:
+        preset = RenditionPreset.objects.create(
+            name="Campaign card",
+            slug="campaign-card",
+            width=600,
+            height=300,
+            crop=True,
+            upscale=False,
+        )
+        picture = Picture.objects.create(
+            backend="unsplash",
+            rendition_preset=preset,
+            use_automatic_scaling=False,
+        )
+        get_backend("unsplash").set_form_value(picture, UNSPLASH_PAYLOAD, commit=True)
+
+        self.assertEqual(
+            picture.get_rendition_spec(),
+            RenditionSpec(width=600, height=300, crop=True, upscale=False),
+        )
+        query = parse_qs(urlsplit(picture.img_src).query)
+        self.assertEqual(query["w"], ["600"])
+        self.assertEqual(query["h"], ["300"])
+        self.assertEqual(query["fit"], ["crop"])
 
     def test_backend_rejects_incomplete_or_invalid_configuration(self) -> None:
         valid = {

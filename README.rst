@@ -137,6 +137,17 @@ Changing backends replaces the stored source while retaining supported
 presentation settings. Rendition options unsupported by the active backend are
 ignored at render time.
 
+Rendition presets
+~~~~~~~~~~~~~~~~~
+
+Filer continues to own and use its ``ThumbnailOption`` model through the
+existing ``Picture.thumbnail_options`` field. Other backends can opt into the
+backend-neutral ``RenditionPreset`` model, whose rows contain portable width,
+height, crop and upscale intent. Manage those presets in Django admin and
+select them with ``Picture.rendition_preset``. The active backend determines
+which field is shown and used; an inactive value is retained so switching a
+picture back to its previous backend does not discard its preset.
+
 Backend-aware models and forms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -46,6 +46,7 @@ class PicturePlugin(CMSPluginBase):
                 ('use_automatic_scaling', 'use_no_cropping'),
                 ('use_crop', 'use_upscale'),
                 'thumbnail_options',
+                'rendition_preset',
             )
         }),
         (_('Link'), {
